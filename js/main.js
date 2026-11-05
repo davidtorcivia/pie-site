@@ -3,7 +3,7 @@ import { noise2, rng, fit, field, draw, speckle, hatchRect } from './hatch.js';
 import { loadMask, paintSilhouette } from './painter.js';
 import { ramp, cord, wheel as sunWheel } from './illum.js';
 import { mapPlate } from './map.js';
-import { brushGround } from './brush.js';
+import { brushGround, brushStroke } from './brush.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -568,6 +568,8 @@ async function boot() {
   voice(data.hymn); mark('voice(data.hymn);');
   specimens(data.specimens); mark('specimens(data.specimens);');
   translator(); mark('translator();');
+  // a streak of red paint under the credit line
+  { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
 
 
   ScrollTrigger.refresh();

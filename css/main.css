@@ -529,7 +529,10 @@ html, body { overflow-x: clip; }
   #s-voice .voice-bar { order: 0; justify-content: center; margin-top: 14px; }
   #s-voice .disc { order: -2; } #s-voice .voice-bar { order: -1; } #s-voice .hymn { order: 1; margin-top: 18px; }
   /* leaf: text clear of the plants (a paper wash under it) */
-  .leaf .txt, .leaf .rh { background: linear-gradient(to right, transparent, color-mix(in srgb, var(--lf-paper) 92%, transparent) 9%); }
 }
 
 @media (max-width: 700px) { #s-voice { padding-bottom: 50vh !important; } .garden { z-index: 0; } #s-voice .hymn { position: relative; z-index: 2; } }
+
+/* the credit line on a red paint stroke, like the yellow ones */
+.foot-by { display: inline-block; padding: .45em 1.4em .55em 1.1em; background: var(--streak) 0 0 / 100% 100% no-repeat; color: #fff4dc; }
+.foot-by a { color: #fff4dc !important; text-decoration-color: rgba(255, 244, 220, .6); }

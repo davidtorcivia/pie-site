@@ -31,7 +31,7 @@ for (let i = 0; i < n; i++) {
   if (ONLY && !ONLY.includes(i)) continue;
   const k = pal[i % pal.length], main = ROOT + `gardens/leaf-${i}.svg`, rise = ROOT + `gardens/rise-${i}.svg`;
   const top = ends[i] * 208 + 14, Hb = Math.max(14, 208 - 14 - top), Wb = 160 - 50 - 8;
-  const mainArgs = ['--seed', String(101 + i * 7), '--paper', '160x208', '--left', '46mm', '--right', '12mm', '--top', '24mm', '--bottom', '22mm',
+  const mainArgs = ['--seed', String(101 + i * 7), '--paper', '160x208', '--left', '43mm', '--right', '12mm', '--top', '24mm', '--bottom', '22mm',
     '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--background', k.paper.slice(1), '--season', SEASONS[i % SEASONS.length], '--nohead'];
   const riseArgs = ['--seed', String(5003 + i * 11), '--paper', `${Hb.toFixed(1)}x${Wb}`, '--left', `${(Hb - 3).toFixed(1)}mm`, '--right', '1mm', '--top', '2mm', '--bottom', '2mm',
     '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--season', SEASONS[(i + 2) % SEASONS.length], '--density', '.7', '--nohead', '--novisitors'];
@@ -46,9 +46,6 @@ for (let i = 0; i < n; i++) {
       g.drawImage(A, 0, 0, c.width, c.height);
       // rotate the sideways garden so its left edge (where the stems rise) becomes the foot
       if (B) { g.save(); g.translate(50 * mm, (top + Hb) * mm); g.rotate(-Math.PI / 2); g.drawImage(B, 0, 0, Hb * mm, Wb * mm); g.restore(); }
-      // the text column stays clear: paper laid back over it from the head to the text's end, with a soft edge
-      const paperC = getComputedStyle(document.body).getPropertyValue('--p') || PAPER;
-      g.save(); g.filter = `blur(${2.5 * mm}px)`; g.fillStyle = PAPER; g.fillRect(48 * mm, 9 * mm, (160 - 48 - 6) * mm, (top - 6) * mm); g.restore();
       return c.toDataURL(type, .86);
     }, 'data:image/svg+xml;base64,' + readFileSync(main).toString('base64'), hasRise ? 'data:image/svg+xml;base64,' + readFileSync(rise).toString('base64') : null, top, Hb, Wb, type, k.paper);
     return Buffer.from(buf.split(',')[1], 'base64');
