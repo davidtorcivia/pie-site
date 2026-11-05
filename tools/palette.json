@@ -1,0 +1,8 @@
+[
+ {"name": "ochre", "ink": "#8e2a17", "accent": "#2f5e8e", "paper": "#f1e8d8"},
+ {"name": "malachite", "ink": "#1f5a43", "accent": "#a8361f", "paper": "#eee9dc"},
+ {"name": "lapis", "ink": "#1f3478", "accent": "#b07a2a", "paper": "#efebe2"},
+ {"name": "charcoal", "ink": "#2b2924", "accent": "#b23a1e", "paper": "#ece6d8"},
+ {"name": "bronze", "ink": "#5a3b18", "accent": "#1f5a43", "paper": "#f0e6d2"},
+ {"name": "madder", "ink": "#6e1f3a", "accent": "#b07a2a", "paper": "#f1e9df"}
+]

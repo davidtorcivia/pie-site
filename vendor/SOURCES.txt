@@ -1,0 +1,2 @@
+initialis  https://github.com/azlen/initialis  6cf93f7d3d2922efdbeb86cafa27f39758be9398  MIT (vendored)
+florilegium  https://github.com/kevinraymond/florilegium  efee1ffe2e624c0a369e16758e8a52502fa06c05  MIT (build tool, not committed: git clone it into vendor/florilegium)

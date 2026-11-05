@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>*PIE — a language rebuilt</title>
+<meta name="description" content="Proto-Indo-European, reconstructed: a lexicon, a grammar engine, a corpus, a model that writes it and a voice that speaks it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffd21a'/%3E%3Ctext x='50' y='92' font-size='110' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900'%3E*%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<!-- 0 · overture -->
+<section id="s-open" class="s yellow">
+  <canvas id="star" class="star"></canvas>
+  <h1 class="open-h">
+    <span class="line">Proto-</span>
+    <span class="line">Indo-</span>
+    <span class="line">European</span>
+  </h1>
+  <p class="open-p serif">Proto-Indo-European is the ancestor of most languages of Europe, Iran and northern India. It was spoken around 4000 BCE and never written down. Everything known about it is reconstructed from its descendants, and each reconstructed form is marked with an asterisk. This project builds the language as a working system: a lexicon, a grammar engine, a corpus of texts written in it, a language model that reads and writes it, and a synthetic voice.</p>
+</section>
+
+<!-- 1 · migration -->
+<section id="s-mig" class="s ink">
+  <div class="mig-pin">
+    <canvas id="mig" class="mig-canvas"></canvas>
+    <div class="mig-year display" id="migYear">4000 BCE</div>
+    <div class="mig-copy">
+      <p class="serif mig-p" data-step="0">The language was spoken on the Pontic–Caspian steppe, north of the Black Sea and the Caspian. Its speakers herded cattle and sheep, drove wagons and kept horses.</p>
+      <p class="serif mig-p" data-step="1">Over the next two thousand years their descendants moved west into Europe, south into the Balkans and Anatolia, and east into Central Asia and India. The language split into separate branches as they went.</p>
+      <p class="serif mig-p" data-step="2">Each branch appears in writing at a different time. The dates shown are the earliest texts in each, from Hittite tablets in the seventeenth century BCE to Albanian in the fifteenth century CE. No branch wrote down the parent language.</p>
+      <p class="serif mig-p" data-step="3">Arranged by descent instead of geography, the branches form the Indo-European family tree. The ancestor at its root is known only from what the branches preserve.</p>
+    </div>
+    <ol class="mig-labels data" id="migLabels"></ol>
+  </div>
+</section>
+
+<!-- 2 · reconstruction -->
+<section id="s-wheel" class="s yellow">
+  <div class="wheel-pin">
+    <div class="wheel-copy">
+      <h2 class="display h2">Comparative reconstruction</h2>
+      <p class="serif">Words inherited from the parent language survive in its descendants in changed form. The changes are regular, so they can be reversed. Sanskrit <i>pitár</i>, Greek <i>patḗr</i>, Latin <i>pater</i> and Gothic <i>fadar</i> all go back to *ph₂tḗr, “father”. The wheel shows each word with the reconstructed forms of its descendants in each branch, from the project's lexicon.</p>
+      <p class="data small" id="wheelCap"></p>
+    </div>
+    <svg id="wheel" class="wheel" viewBox="-500 -500 1000 1000" aria-label="A PIE word and its descendants"></svg>
+  </div>
+</section>
+
+<!-- 3 · the machine -->
+<section id="s-machine" class="s paper">
+  <canvas class="frame-canvas" data-frame="moss"></canvas>
+  <div class="frame-inset">
+    <h2 class="display h2 center">Method</h2>
+    <div class="cascade" id="cascade"></div>
+    <p class="serif center note">The corpus is not recovered text. It is PIE composed to follow the reconstructed grammar. Each record states its source: a published scholarly reconstruction, an attested poetic formula, a back-projection from parallel phrases in the daughter languages, or a passage generated and checked by the engine.</p>
+  </div>
+</section>
+
+<!-- 4 · results -->
+<section id="s-results" class="s ink">
+  <div class="res-head">
+    <h2 class="display h2">Evaluation</h2>
+    <p class="serif">We tested our model against frontier models on a fixed set of questions held out of all training: inflection, full paradigms, translation in both directions, and dialogue. Each answer gets two scores. The lenient score ignores notation, so a form without accents or with ASCII laryngeals still counts. The strict score requires the standard scholarly notation. The frontier models score well on the lenient measure and lose 25 to 36 points on the strict one. Our model loses about two.</p>
+  </div>
+  <div class="bars" id="bars"></div>
+  <p class="data small res-foot">PIE score, 0–100, weighted over five segments. Frontier models answered without tools; each is shown at its best effort level. Ours is Nemotron 3.5 Super (122B), fine-tuned, stage e3.</p>
+</section>
+
+<!-- 5 · voice -->
+<section id="s-voice" class="s yellow">
+  <div class="voice-top">
+    <h2 class="display h2">A hymn to Dawn</h2>
+    <p class="serif">This hymn to the dawn goddess *h₂éwsōs comes from the corpus. Her name survives as Vedic Uṣás, Greek Ēṓs and Latin Aurōra. The voice is VocalTractLab, an articulatory synthesizer that models the tongue, lips, velum and larynx. Each PIE sound is compiled into movements of that model, including the uvular fricative of h₂, the palatal stops, the breathy-voiced stops and the pitch accent. A voice-conversion pass gives the result a human timbre.</p>
+  </div>
+  <div class="voice-stage">
+    <button class="disc" id="disc" aria-label="Play the hymn"><canvas id="ring"></canvas><span class="disc-label display" id="discLabel">Play</span></button>
+    <div class="hymn" id="hymn"></div>
+  </div>
+  <div class="voice-bar">
+    <div class="voices data" role="group" aria-label="Voice"><button data-v="female" class="on">Female voice</button><button data-v="male">Male voice</button></div>
+    <div class="ipa data" id="ipa">&nbsp;</div>
+  </div>
+  <p class="serif hymn-en" id="hymnEn"></p>
+  <audio id="audio" preload="auto" crossorigin="anonymous"></audio>
+</section>
+
+<!-- 6 · specimens -->
+<section id="s-spec" class="s paper">
+  <div class="spec-pin">
+    <h2 class="display h2 spec-h">Texts from the corpus</h2>
+    <div class="spec-track" id="specTrack"></div>
+  </div>
+</section>
+
+<!-- 7 · apps -->
+<section id="s-apps" class="s ink">
+  <h2 class="display h2">Instruments</h2>
+  <p class="serif apps-p">The translator below runs on the project's grammar engine. It parses English, picks the PIE words, inflects them, and gives a gloss and pronunciation for each. A chat interface to the model and a reader for the corpus are in progress.</p>
+  <div class="tr">
+    <label class="data small" for="trIn">English</label>
+    <textarea id="trIn" class="serif" rows="2">The wolf sees the sheep, and the dog guards them.</textarea>
+    <div class="tr-out" id="trOut"></div>
+  </div>
+  <div class="apps">
+    <a class="app" href="#s-apps"><span class="display">Translator</span><span class="serif">English to PIE, with a gloss and pronunciation for each word.</span><span class="data small">available</span></a>
+    <div class="app"><span class="display">Conversation</span><span class="serif">A conversation with the fine-tuned model, which answers in PIE.</span><span class="data small">in progress</span></div>
+    <div class="app"><span class="display">Reader</span><span class="serif">The corpus line by line, glossed and spoken.</span><span class="data small">in progress</span></div>
+  </div>
+</section>
+
+<footer class="s yellow foot">
+  <div class="foot-pie pie" data-pie>h₂ówis h₁éḱwōs-kʷe</div>
+  <p class="serif">“The sheep and the horses.” August Schleicher wrote the first text in reconstructed PIE, a fable with this title, in 1868.</p>
+  <p class="data small">Lexicon from Wiktionary (CC BY-SA 4.0) and the scholarly literature · Type: Velvetyne (OFL), Google Fonts · Press F to change the type.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

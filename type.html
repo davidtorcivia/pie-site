@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PIE Type Sets</title>
+<style>
+body{margin:0;background:#ffd21a;color:#0b0b0a;padding:24px}
+.set{border-top:3px solid #0b0b0a;padding:14px 0 26px}
+.name{font:12px/1 monospace;text-transform:uppercase;letter-spacing:.1em}
+.lar{font-size:.5em;vertical-align:-.12em;line-height:0;margin:0 .02em;font-feature-settings:normal}
+.mod{font-size:.56em;vertical-align:.72em;line-height:0;margin:0 .01em}
+.d{font-size:88px;line-height:.9;margin:8px 0}
+.p{font-size:46px;line-height:1.05}
+.s{font-size:30px;line-height:1.2;margin-top:6px}
+.t{font-size:15px;margin-top:6px}
+.a{font-size:40px;margin-top:6px}
+</style></head><body><div id="sets"></div>
+<script type="module">
+import { SETS, typeset } from './js/type.js';
+const box = document.getElementById('sets');
+const fams = new Set(); SETS.forEach(s => s.google.forEach(g => fams.add(g)));
+const l = document.createElement('link'); l.rel='stylesheet'; l.href='https://fonts.googleapis.com/css2?display=block&family='+[...fams].join('&family='); document.head.append(l);
+const LOCAL=[['Basteleur','Basteleur-Bold',700],['Basteleur','Basteleur-Moonlight',400],['Ouroboros','Ouroboros-Regular',400],['Gulax','Gulax-Regular',400],['Compagnon','Compagnon-Roman',400],['Compagnon','Compagnon-Bold',700],['Compagnon','Compagnon-Italic',400,'italic'],['Happy Times','happy-times-NG_regular_master_web',400],['Happy Times','happy-times-NG_italic_master_web',400,'italic']];
+const st=document.createElement('style'); st.textContent=LOCAL.map(([f,file,w,s])=>`@font-face{font-family:'${f}';src:url(fonts/${file}.woff2);font-weight:${w};font-style:${s||'normal'}}`).join(''); document.head.append(st);
+const css = ([f,w,v,s]) => `font-family:${f};font-weight:${w};font-variation-settings:${v||'normal'};font-style:${s||'normal'}`;
+box.innerHTML = SETS.map(s => `<div class="set"><div class="name">${s.name}</div>
+<div class="d" style="${css(s.display)}">Five thousand years</div>
+<div class="p" style="${css(s.pie)}">${typeset('h₂éwsos léwka déywi diwés dʰúgh₂ter · ḱléwos ń̥dʰgʷʰitom · wĺ̥kʷos ḱwṓ')}</div>
+<div class="s" style="${css(s.serif)}">Dawn, bright goddess, Daughter of Sky! You shone for us.</div>
+<div class="a" style="${css(s.accent)}">${typeset('*h₂ówis h₁éḱwōs-kʷe')}</div>
+<div class="t" style="${css(s.data)}">88.5 lenient · 86.2 strict · 14,023 / 14,197 cells · ${typeset('dʰéǵʰōm',{words:false})}</div></div>`).join('');
+</script></body></html>

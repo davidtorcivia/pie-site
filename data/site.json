@@ -1,0 +1,1019 @@
+{
+ "hymn": {
+  "id": "t3-t026-00015",
+  "pie": "h₂éwsos léwka déywi diwés dʰúgh₂ter. n̥sméy léwks sḱih₃wós-kʷe twéd bʰéwgt. nu wiHrṓs twé kʷḱént mudént-kʷe. túH h₂yuHénih₂ túH ń̥dʰgʷʰiteh₂. túH kʷspés swésōr téwe bʰéh₂os h₃kʷbʰós lewbʰóm. nu ḱéywa n̥sméy h₁wésu ḱléwos dh₃dʰí. nu-kʷe n̥sméy ń̥dʰgʷʰitom ḱléwos h₁áydʰi.",
+  "english": "Dawn, bright goddess, Daughter of Sky! You shone for us, and darkness fled from you. Men caught sight of you and became glad. You are young, you are imperishable. You are the sister of the night. Your radiance is dear to the eyes. Give us good fame, dear one! And give us imperishable fame!",
+  "words": [
+   {
+    "line": 1,
+    "word": "h₂éwsos",
+    "ipa": "χáw.sos",
+    "start": 0.0,
+    "end": 0.66
+   },
+   {
+    "line": 1,
+    "word": "léwka",
+    "ipa": "léw.ka",
+    "start": 0.71,
+    "end": 1.2051
+   },
+   {
+    "line": 1,
+    "word": "déywi",
+    "ipa": "déj.wi",
+    "start": 1.2551,
+    "end": 1.8094
+   },
+   {
+    "line": 1,
+    "word": "diwés",
+    "ipa": "di.wés",
+    "start": 2.0494,
+    "end": 2.5444
+   },
+   {
+    "line": 1,
+    "word": "dʰúgh₂ter",
+    "ipa": "dʱú.ɡə.ter",
+    "start": 2.5944,
+    "end": 3.2626
+   },
+   {
+    "line": 2,
+    "word": "n̥sméy",
+    "ipa": "n̩s.méj",
+    "start": 3.9626,
+    "end": 4.6226
+   },
+   {
+    "line": 2,
+    "word": "léwks",
+    "ipa": "léwks",
+    "start": 4.6726,
+    "end": 5.0026
+   },
+   {
+    "line": 2,
+    "word": "sḱih₃wós-kʷe",
+    "ipa": "sciɣʷ.wós.kʷe",
+    "start": 5.0526,
+    "end": 6.1615
+   },
+   {
+    "line": 2,
+    "word": "twéd",
+    "ipa": "twéd",
+    "start": 6.4015,
+    "end": 6.7315
+   },
+   {
+    "line": 2,
+    "word": "bʰéwgt",
+    "ipa": "bʱéwɡt",
+    "start": 6.7815,
+    "end": 7.227
+   },
+   {
+    "line": 3,
+    "word": "nu",
+    "ipa": "nu",
+    "start": 7.927,
+    "end": 8.092
+   },
+   {
+    "line": 3,
+    "word": "wiHrṓs",
+    "ipa": "wih.róːs",
+    "start": 8.142,
+    "end": 8.802
+   },
+   {
+    "line": 3,
+    "word": "twé",
+    "ipa": "twé",
+    "start": 8.852,
+    "end": 9.2216
+   },
+   {
+    "line": 3,
+    "word": "kʷḱént",
+    "ipa": "kʷcént",
+    "start": 9.4616,
+    "end": 9.8278
+   },
+   {
+    "line": 3,
+    "word": "mudént-kʷe",
+    "ipa": "mu.dén.tkʷe",
+    "start": 9.8778,
+    "end": 10.7688
+   },
+   {
+    "line": 4,
+    "word": "túH",
+    "ipa": "túh",
+    "start": 11.4688,
+    "end": 11.7988
+   },
+   {
+    "line": 4,
+    "word": "h₂yuHénih₂",
+    "ipa": "χju.hé.niχ",
+    "start": 11.8488,
+    "end": 12.588
+   },
+   {
+    "line": 4,
+    "word": "túH",
+    "ipa": "túh",
+    "start": 12.828,
+    "end": 13.0053
+   },
+   {
+    "line": 4,
+    "word": "ń̥dʰgʷʰiteh₂",
+    "ipa": "ń̩dʱ.ɡʷʱi.taχ",
+    "start": 13.0553,
+    "end": 13.9463
+   },
+   {
+    "line": 5,
+    "word": "túH",
+    "ipa": "túh",
+    "start": 14.6463,
+    "end": 14.9763
+   },
+   {
+    "line": 5,
+    "word": "kʷspés",
+    "ipa": "kʷspés",
+    "start": 15.0263,
+    "end": 15.3922
+   },
+   {
+    "line": 5,
+    "word": "swésōr",
+    "ipa": "swé.soːr",
+    "start": 15.4422,
+    "end": 15.9372
+   },
+   {
+    "line": 5,
+    "word": "téwe",
+    "ipa": "té.we",
+    "start": 15.9872,
+    "end": 16.3568
+   },
+   {
+    "line": 5,
+    "word": "bʰéh₂os",
+    "ipa": "bʱá.χos",
+    "start": 16.5968,
+    "end": 17.0918
+   },
+   {
+    "line": 5,
+    "word": "h₃kʷbʰós",
+    "ipa": "ɣʷkʷbʱós",
+    "start": 17.1418,
+    "end": 17.619
+   },
+   {
+    "line": 5,
+    "word": "lewbʰóm",
+    "ipa": "lew.bʱóm",
+    "start": 17.669,
+    "end": 18.3373
+   },
+   {
+    "line": 6,
+    "word": "nu",
+    "ipa": "nu",
+    "start": 19.0373,
+    "end": 19.2023
+   },
+   {
+    "line": 6,
+    "word": "ḱéywa",
+    "ipa": "céj.wa",
+    "start": 19.2523,
+    "end": 19.7473
+   },
+   {
+    "line": 6,
+    "word": "n̥sméy",
+    "ipa": "n̩s.méj",
+    "start": 19.7973,
+    "end": 20.5365
+   },
+   {
+    "line": 6,
+    "word": "h₁wésu",
+    "ipa": "hwé.su",
+    "start": 20.7765,
+    "end": 21.2715
+   },
+   {
+    "line": 6,
+    "word": "ḱléwos",
+    "ipa": "clé.wos",
+    "start": 21.3215,
+    "end": 21.8165
+   },
+   {
+    "line": 6,
+    "word": "dh₃dʰí",
+    "ipa": "də.dʱí",
+    "start": 21.8665,
+    "end": 22.312
+   },
+   {
+    "line": 7,
+    "word": "nu-kʷe",
+    "ipa": "nu.kʷe",
+    "start": 23.012,
+    "end": 23.342
+   },
+   {
+    "line": 7,
+    "word": "n̥sméy",
+    "ipa": "n̩s.méj",
+    "start": 23.392,
+    "end": 23.887
+   },
+   {
+    "line": 7,
+    "word": "ń̥dʰgʷʰitom",
+    "ipa": "ń̩dʱ.ɡʷʱi.tom",
+    "start": 23.937,
+    "end": 24.861
+   },
+   {
+    "line": 7,
+    "word": "ḱléwos",
+    "ipa": "clé.wos",
+    "start": 25.101,
+    "end": 25.596
+   },
+   {
+    "line": 7,
+    "word": "h₁áydʰi",
+    "ipa": "háj.dʱi",
+    "start": 25.646,
+    "end": 26.3142
+   }
+  ],
+  "audio": {
+   "female": "audio/dawn-female.mp3",
+   "male": "audio/dawn-male.mp3"
+  },
+  "english_lines": [
+   "Dawn, bright goddess, Daughter of Sky!",
+   "You shone for us, and darkness fled from you.",
+   "Men caught sight of you and became glad.",
+   "You are young, you are imperishable.",
+   "You are the sister of the night. Your radiance is dear to the eyes.",
+   "Give us good fame, dear one!",
+   "And give us imperishable fame!"
+  ]
+ },
+ "wheels": [
+  {
+   "form": "ph₂tḗr",
+   "meaning": "father",
+   "daughters": {
+    "Armenian": {
+     "lang": "Proto-Armenian",
+     "form": "*hatir",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*ɸatīr",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*fadēr",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*patḗr",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*pHtā́",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*patēr",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*pācer",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "h₁éḱwos",
+   "meaning": "stallion, horse",
+   "daughters": {
+    "Anatolian": {
+     "lang": "Proto-Anatolian",
+     "form": "*ʔéḱus",
+     "script": null
+    },
+    "Armenian": {
+     "lang": "Old Armenian",
+     "form": "ēš",
+     "script": "էշ"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*éśwāˀ",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*ekʷos",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*ehwaz",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*íkkʷos",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*Háćwas",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*ekwos",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*yäkwe",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "h₂ówis",
+   "meaning": "sheep",
+   "daughters": {
+    "Anatolian": {
+     "lang": "Proto-Anatolian",
+     "form": "*Hṓwis",
+     "script": null
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*áwis",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*owis",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*awiz",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*ówis",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*Háwiš",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*owis",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Tocharian B",
+     "form": "awi",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "méh₂tēr",
+   "meaning": "mother",
+   "daughters": {
+    "Albanian": {
+     "lang": "Proto-Albanian",
+     "form": "*māter",
+     "script": null
+    },
+    "Armenian": {
+     "lang": "Old Armenian",
+     "form": "mayr",
+     "script": "մայր"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*mā́ˀtē",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*mātīr",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*mōdēr",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*mā́tēr",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*máHtā",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*mātēr",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*mācer",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "dyḗws",
+   "meaning": "sky, heaven",
+   "daughters": {
+    "Albanian": {
+     "lang": "Albanian",
+     "form": "Zojz",
+     "script": null
+    },
+    "Anatolian": {
+     "lang": "Hittite",
+     "form": "ši-i-ú-uš",
+     "script": "𒅆𒄿𒌑𒍑"
+    },
+    "Armenian": {
+     "lang": "Proto-Armenian",
+     "form": "*tiw-",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*dyīus",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*Dzéus",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*dyā́wš",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*djous",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "wĺ̥kʷos",
+   "meaning": "wolf",
+   "daughters": {
+    "Albanian": {
+     "lang": "Proto-Albanian",
+     "form": "*ulka",
+     "script": null
+    },
+    "Anatolian": {
+     "lang": "Hittite",
+     "form": "wa-al-ku-wa-aš",
+     "script": "𒉿𒀠𒆪𒉿𒀸"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*wilkás",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*ulkos",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*wulfaz",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*lúkos",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*wŕ̥kas",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*lukʷos",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*wä́lkʷë",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "ḱwṓ",
+   "meaning": "dog",
+   "daughters": {
+    "Anatolian": {
+     "lang": "Hittite",
+     "form": "ku-wa-aš",
+     "script": "𒆪𒉿𒀸"
+    },
+    "Armenian": {
+     "lang": "Old Armenian",
+     "form": "šun",
+     "script": "շուն"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*kwṓ",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*kū",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*hundaz",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Ancient Greek",
+     "form": "kŭ́ōn",
+     "script": "κῠ́ων"
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*ćwā́",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Latin",
+     "form": "canēs",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*ku",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "h₂stḗr",
+   "meaning": "star",
+   "daughters": {
+    "Anatolian": {
+     "lang": "Proto-Anatolian",
+     "form": "*Hstḗrs",
+     "script": null
+    },
+    "Armenian": {
+     "lang": "Old Armenian",
+     "form": "astł",
+     "script": "աստղ"
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*sterā",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*sternǭ",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*astḗr",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*Hstā́",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*stērlā",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Proto-Tocharian",
+     "form": "*ścär-iye-",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "nókʷts",
+   "meaning": "night",
+   "daughters": {
+    "Albanian": {
+     "lang": "Proto-Albanian",
+     "form": "*naktā",
+     "script": null
+    },
+    "Anatolian": {
+     "lang": "Hittite",
+     "form": "ne-ku-uz",
+     "script": "𒉈𒆪𒊻"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*náktis",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*noxs",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*nahts",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*nuks",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*nákts",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*nok⁽ʷ⁾ts",
+     "script": null
+    }
+   }
+  },
+  {
+   "form": "dwóh₁",
+   "meaning": "two",
+   "daughters": {
+    "Albanian": {
+     "lang": "Proto-Albanian",
+     "form": "*duwō",
+     "script": null
+    },
+    "Anatolian": {
+     "lang": "Hittite",
+     "form": "ta-",
+     "script": "𒋫"
+    },
+    "Armenian": {
+     "lang": "Old Armenian",
+     "form": "erku",
+     "script": "երկու"
+    },
+    "Balto-Slavic": {
+     "lang": "Proto-Balto-Slavic",
+     "form": "*duwōˀ",
+     "script": null
+    },
+    "Celtic": {
+     "lang": "Proto-Celtic",
+     "form": "*duwo",
+     "script": null
+    },
+    "Germanic": {
+     "lang": "Proto-Germanic",
+     "form": "*twai",
+     "script": null
+    },
+    "Greek": {
+     "lang": "Proto-Hellenic",
+     "form": "*dúwo",
+     "script": null
+    },
+    "Indo-Iranian": {
+     "lang": "Proto-Indo-Iranian",
+     "form": "*dwáH",
+     "script": null
+    },
+    "Italic": {
+     "lang": "Proto-Italic",
+     "form": "*duō",
+     "script": null
+    },
+    "Tocharian": {
+     "lang": "Tocharian A",
+     "form": "wu",
+     "script": null
+    }
+   }
+  }
+ ],
+ "bench": [
+  {
+   "id": "claude-haiku-high",
+   "name": "Claude Haiku 5.5 · high",
+   "family": "frontier",
+   "lenient": 38.3,
+   "strict": 19.0
+  },
+  {
+   "id": "claude-haiku-low",
+   "name": "Claude Haiku 5.5 · low",
+   "family": "frontier",
+   "lenient": 32.4,
+   "strict": 17.1
+  },
+  {
+   "id": "claude-haiku-medium",
+   "name": "Claude Haiku 5.5 · medium",
+   "family": "frontier",
+   "lenient": 30.4,
+   "strict": 17.6
+  },
+  {
+   "id": "claude-haiku-xhigh",
+   "name": "Claude Haiku 5.5 · xhigh",
+   "family": "frontier",
+   "lenient": 55.9,
+   "strict": 30.4
+  },
+  {
+   "id": "claude-opus-high",
+   "name": "Claude Opus 5.5 · high",
+   "family": "frontier",
+   "lenient": 84.3,
+   "strict": 56.5
+  },
+  {
+   "id": "claude-opus-low",
+   "name": "Claude Opus 5.5 · low",
+   "family": "frontier",
+   "lenient": 61.9,
+   "strict": 42.2
+  },
+  {
+   "id": "claude-opus-medium",
+   "name": "Claude Opus 5.5 · medium",
+   "family": "frontier",
+   "lenient": 81.0,
+   "strict": 47.2
+  },
+  {
+   "id": "claude-opus-xhigh",
+   "name": "Claude Opus 5.5 · xhigh",
+   "family": "frontier",
+   "lenient": 86.0,
+   "strict": 50.0
+  },
+  {
+   "id": "claude-sonnet-high",
+   "name": "Claude Sonnet 5.5 · high",
+   "family": "frontier",
+   "lenient": 60.0,
+   "strict": 34.5
+  },
+  {
+   "id": "claude-sonnet-low",
+   "name": "Claude Sonnet 5.5 · low",
+   "family": "frontier",
+   "lenient": 38.4,
+   "strict": 29.0
+  },
+  {
+   "id": "claude-sonnet-medium",
+   "name": "Claude Sonnet 5.5 · medium",
+   "family": "frontier",
+   "lenient": 46.8,
+   "strict": 26.7
+  },
+  {
+   "id": "claude-sonnet-xhigh",
+   "name": "Claude Sonnet 5.5 · xhigh",
+   "family": "frontier",
+   "lenient": 75.3,
+   "strict": 44.1
+  },
+  {
+   "id": "codex-gpt-6.1-sol-high",
+   "name": "GPT-6.1 Sol · high",
+   "family": "frontier",
+   "lenient": 84.4,
+   "strict": 47.0
+  },
+  {
+   "id": "codex-gpt-6.1-sol-low",
+   "name": "GPT-6.1 Sol · low",
+   "family": "frontier",
+   "lenient": 78.8,
+   "strict": 42.3
+  },
+  {
+   "id": "codex-gpt-6.1-sol-medium",
+   "name": "GPT-6.1 Sol · medium",
+   "family": "frontier",
+   "lenient": 83.6,
+   "strict": 47.3
+  },
+  {
+   "id": "codex-gpt-6.1-terra-high",
+   "name": "GPT-6.1 Terra · high",
+   "family": "frontier",
+   "lenient": 57.7,
+   "strict": 32.2
+  },
+  {
+   "id": "codex-gpt-6.1-terra-low",
+   "name": "GPT-6.1 Terra · low",
+   "family": "frontier",
+   "lenient": 54.5,
+   "strict": 28.5
+  },
+  {
+   "id": "codex-gpt-6.1-terra-medium",
+   "name": "GPT-6.1 Terra · medium",
+   "family": "frontier",
+   "lenient": 57.6,
+   "strict": 32.0
+  },
+  {
+   "id": "ours-e3",
+   "name": "ours-e3",
+   "family": "ours",
+   "lenient": 81.1,
+   "strict": 79.6
+  },
+  {
+   "id": "ours-merge-half",
+   "name": "ours-merge-half",
+   "family": "ours",
+   "lenient": 84.5,
+   "strict": 82.4
+  },
+  {
+   "id": "ours-nemotron35-e1",
+   "name": "ours-nemotron35-e1",
+   "family": "ours",
+   "lenient": 87.6,
+   "strict": 84.6
+  },
+  {
+   "id": "ours-nemotron35-e1-bf16",
+   "name": "ours-nemotron35-e1-bf16",
+   "family": "ours",
+   "lenient": 87.1,
+   "strict": 84.2
+  },
+  {
+   "id": "ours-nemotron35-e2",
+   "name": "ours-nemotron35-e2",
+   "family": "ours",
+   "lenient": 86.1,
+   "strict": 83.9
+  },
+  {
+   "id": "ours-nemotron35-e3-bf16",
+   "name": "ours-nemotron35-e3-bf16",
+   "family": "ours",
+   "lenient": 88.5,
+   "strict": 86.2
+  },
+  {
+   "id": "ours-nemotron35-rl5",
+   "name": "ours-nemotron35-rl5",
+   "family": "ours",
+   "lenient": 87.7,
+   "strict": 86.2
+  },
+  {
+   "id": "ours-rl1-step500",
+   "name": "ours-rl1-step500",
+   "family": "ours",
+   "lenient": 83.9,
+   "strict": 81.1
+  },
+  {
+   "id": "ours-rl3-step275",
+   "name": "ours-rl3-step275",
+   "family": "ours",
+   "lenient": 83.9,
+   "strict": 81.0
+  }
+ ],
+ "stats": {
+  "lexicon_entries": 8368,
+  "records": 5230,
+  "pie_words": 133982,
+  "genres": 50,
+  "engine_cells": "14,023 / 14,197",
+  "engine_agreement": 98.8,
+  "usable_lexemes": 3468
+ },
+ "specimens": [
+  {
+   "id": "t3-t022-00023",
+   "genre": "oath",
+   "pie": "h₁óytom ph₂wénh₁ wédn̥h₁ ǵʰoysóh₁-kʷe h₁áyh₂e. bʰoydʰéh₂m ne Hrunépm̥. h₁yód dʰrugʰyṓh₂ péh₂wr̥ me h₁éwse. wódr̥ me gʷr̥h₃é. ǵʰóyse me h₃wth₂dʰí.",
+   "english": "I took the oath by fire, by water and by the spear. I did not break the pledge. If I deceive, burn me, Fire! Swallow me, Water! Wound me, Spear!"
+  },
+  {
+   "id": "t3-t043-00005",
+   "genre": "proverb",
+   "pie": "m̥rént gʷówes m̥rént bʰréh₂teres mért-kʷe mórtos. h₁wésu ḱléwos ne mért. ń̥dʰgʷʰitom h₂n̥rés ḱléwos gʷíh₃weti.",
+   "english": "Cattle die, brothers die, and the mortal dies. Good fame does not die. The imperishable fame of a man lives."
+  },
+  {
+   "id": "t3-t023-00019",
+   "genre": "lament",
+   "pie": "wíHre h₂epó h₁éys h₂ew ne gʷéms. wésmn̥ toy wésh₂er yugóm-kʷe toy spéḱyoh₂. nu-kʷe h₁regʷesyéti ḱóymoy. h₂isḱóh₂ te memónh₂e-kʷe te.",
+   "english": "Husband, you went away; you did not come back. I wear your garment, and I look at your yoke. And now it is getting dark in the household. I seek you, and I remember you."
+  },
+  {
+   "id": "t3-b001-00001",
+   "genre": "riddle",
+   "pie": "kʷíd wóǵʰosyo bʰórom bʰéreti? wéǵʰeti kʷékʷlos tóm.",
+   "english": "What carries the burden of the wagon? The wheel transports it."
+  },
+  {
+   "id": "t3-b003-00141",
+   "genre": "charm",
+   "pie": "litdʰí wĺ̥kʷe h₂éwibʰos mē-kʷe gʷm̥yés.",
+   "english": "Wolf, go away from the sheep, and do not come!"
+  },
+  {
+   "id": "t3-t023-00033",
+   "genre": "wisdom",
+   "pie": "wódr̥ ní h₁éyti péh₂wr̥ úd h₁éyti. péh₂wr̥ wódr̥-kʷe ne ḱéywoyh₁. sóh₂wl̥ h₁éyti nókʷts-kʷe gʷm̥yéti. ḱéleti nókʷts bʰórm̥. h₂éwsōs h₁íh₂m̥ sékʷetor.",
+   "english": "Water goes down; fire goes up. Fire and water are not friendly. The sun goes, and the night comes. Night covers the thief. Dawn follows it."
+  },
+  {
+   "id": "t3-b003-00001",
+   "genre": "hymn",
+   "pie": "dyḗws ph₂tḗr h₁ésti dʰéǵʰōm méh₂tēr h₁ésti.",
+   "english": "Sky is father, Earth is mother."
+  },
+  {
+   "id": "t3-t043-00013",
+   "genre": "proverb",
+   "pie": "wĺ̥kʷos h₂ówins gʷʰénti h₂egʰóm wékʷos h₂n̥rés h₁nómn̥ gʷʰénti. wĺ̥kʷom widéh₁yesi dʰrówgʰom ne widéh₁yesi. ḱwṓ h₂ówins h₂lékseti deywṓs h₁nómn̥ h₂léksonti.",
+   "english": "The wolf kills sheep; a bad word kills a man's name. You see the wolf; you do not see the lie. The dog protects the sheep; the gods protect the name."
+  },
+  {
+   "id": "t3-t023-00031",
+   "genre": "wisdom",
+   "pie": "súHnuh₁ h₁mé ḱlutóm. bʰréh₂tēr lewbʰós. téwe bʰréh₂term̥ mē linkʷtóm. dwóh₁ bʰréh₂terh₁e steh₂róh₁. ḱóm h₁édtom ḱóm píph₃etom. h₁yós h₁ím linékʷti só wĺ̥kʷos.",
+   "english": "Two sons, hear me. A brother is dear. Do not leave your brother. Two brothers are stout. Eat together, drink together. Whoever leaves him is a wolf."
+  }
+ ]
+}
