@@ -1,3 +1,4 @@
 node_modules/
 vendor/florilegium/
 .DS_Store
+tools/mapdata/

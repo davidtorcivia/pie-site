@@ -1,0 +1,17 @@
+<!doctype html><meta charset=utf-8><title>Steppe Initials</title>
+<body style="margin:0;background:#efe7d6;display:grid;grid-template-columns:repeat(3,300px);gap:24px;padding:24px">
+<script type=module>
+import { use, draw } from './vendor/initialis/lib/initialis.js';
+await use(new URL('js/kinds/steppe.js', location.href).href);
+const P = { paper: '#f1e8d8', inkA: '#8e2a17', inkB: '#1d1a16', inkC: '#2f5e8e', oFlower: 'tulip', oLeaf: 'willow' };
+const V = [
+  { text: 'H', frame: 'rect', fRules: 2, fW1: 6, fGap: 120, fW2: 3, fBand: 'horses', fField: 'A', fPattern: 'herringbone', fPatColor: 'paper', fCorner: 'sunwheel', fCornerSize: 60 },
+  { text: 'K', frame: 'rect', fRules: 2, fW1: 5, fGap: 70, fW2: 3, fBand: 'cord', fField: 'paper', fPattern: 'herd', fPatColor: 'B', fPatScale: 18 },
+  { text: 'W', frame: 'rect', fRules: 2, fW1: 6, fGap: 90, fW2: 2, fBand: 'cord', fField: 'C', fPattern: 'steps', fPatColor: 'paper', fPatScale: 14, fCorner: 'sunwheel' },
+  { text: 'M', frame: 'circle', fRules: 2, fW1: 6, fGap: 110, fW2: 3, fBand: 'horses', fField: 'B', fPattern: 'pitcomb', fPatColor: 'paper' },
+  { text: 'D', frame: 'rect', fRules: 2, fW1: 4, fGap: 60, fW2: 2, fBand: 'cord', fField: 'A', fPattern: 'herringbone', fPatColor: 'paper', fCorner: 'sunwheel', orn: 'none' },
+  { text: 'L', frame: 'octagon', fRules: 2, fW1: 5, fGap: 100, fW2: 3, fBand: 'horses', fField: 'paper', fPattern: 'steps', fPatColor: 'A' },
+];
+for (const v of V) { const c = document.createElement('canvas'); c.style.width = c.style.height = '300px'; document.body.append(c); await draw(c, { ...P, ...v }, { size: 600 }); }
+document.title = 'done';
+</script>

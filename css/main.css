@@ -66,18 +66,28 @@ button { font: inherit; color: inherit; }
 .open-pie { grid-column: 1; grid-row: 2; position: relative; font-size: clamp(22px, 2.6vw, 44px); }
 .vert { position: absolute; left: 6px; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: left top; font-size: 11px; white-space: nowrap; }
 
-/* 1 · migration */
+/* 1 · migration: an engraved plate */
 #s-mig { padding: 0; }
-.mig-pin { position: relative; height: 100svh; overflow: hidden; }
-.mig-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.mig-year { position: absolute; left: var(--gut); top: 64px; font-size: clamp(44px, 9vw, 160px); line-height: .85; color: var(--yellow); letter-spacing: -.03em; }
-.mig-copy { position: absolute; left: var(--gut); bottom: 8svh; width: min(34ch, 80vw); font-size: clamp(19px, 1.7vw, 27px); line-height: 1.2; }
-.mig-p { position: absolute; bottom: 0; margin: 0; opacity: 0; }
-.mig-labels { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
-.mig-labels li { position: absolute; transform: translate(-50%, -50%); opacity: 0; font-size: 11px; line-height: 1.25; text-align: center; white-space: nowrap; }
-.mig-labels.tree li span { display: none; }
-.mig-labels b { display: block; font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display);
-  font-size: clamp(15px, 1.6vw, 26px); letter-spacing: -.01em; color: var(--yellow); text-transform: none; }
+.mig-pin { position: relative; height: 100svh; overflow: hidden; background: var(--paper); }
+.plate { position: absolute; inset: 0; overflow: hidden; }
+.plate-inner { position: absolute; left: 0; top: 0; width: calc(var(--pw) * 1px); height: calc(var(--ph) * 1px); transform-origin: 0 0; will-change: transform; }
+.relief { position: absolute; inset: 0; background: #2a2219; -webkit-mask: url(../map/relief.webp) 0 0 / 100% 100% no-repeat; mask: url(../map/relief.webp) 0 0 / 100% 100% no-repeat; }
+.plate svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.plate .rg { font-family: var(--f-book); font-weight: 500; letter-spacing: .5em; fill: #2a2219; }
+.plate .wt { font-family: var(--f-book); font-style: italic; letter-spacing: .12em; fill: #3c4a5e; }
+.plate .home ellipse { fill: none; stroke: #8e2a17; stroke-width: 3; stroke-dasharray: 2 6; }
+.plate .home .in { stroke-width: 1.4; stroke-dasharray: none; }
+.plate .rt { fill: none; stroke: #8e2a17; stroke-width: 5; stroke-linecap: round; }
+.plate .rt2 { fill: none; stroke: #8e2a17; stroke-width: 2; transform: translate(0, 9px); }
+.plate .end { opacity: 0; }
+.plate .end circle { fill: var(--paper); stroke: #2a2219; stroke-width: 2.5; }
+.plate .end .dot { fill: #2a2219; }
+.plate .br { font-family: var(--f-book); font-weight: 600; letter-spacing: .3em; fill: #8e2a17; }
+.plate .wit { font-family: var(--f-book); font-style: italic; fill: #2a2219; }
+.mig-year { position: absolute; left: var(--gut); top: 54px; font-size: clamp(40px, 7vw, 120px); line-height: .85; color: #8e2a17; letter-spacing: -.03em; mix-blend-mode: multiply; }
+.mig-copy { position: absolute; left: var(--gut); bottom: 6svh; width: min(38ch, 80vw); font-size: clamp(18px, 1.5vw, 24px); line-height: 1.25; }
+.mig-p { position: absolute; bottom: 0; margin: 0; padding: .7em .9em; background: color-mix(in srgb, var(--paper) 88%, transparent); opacity: 0; transform: translateY(12px); transition: opacity .5s, transform .5s; }
+.mig-p.on { opacity: 1; transform: none; }
 
 /* 2 · wheel */
 #s-wheel { padding: 0; }

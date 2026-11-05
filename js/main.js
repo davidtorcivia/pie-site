@@ -1,6 +1,7 @@
 import { initType, typeset, typesetAll } from './type.js';
 import { noise2, rng, fit, field, draw, speckle, hatchRect } from './hatch.js';
 import { ramp, cord, wheel as sunWheel } from './illum.js';
+import { mapPlate } from './map.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -430,7 +431,7 @@ async function boot() {
   await document.fonts.ready;
 
   overture();
-  migration();
+  await mapPlate($('#s-mig'));      // first: its pin spacing must exist before later sections measure
   wheel(data.wheels);
   machine(data.stats);
   results(data.bench);
@@ -438,6 +439,7 @@ async function boot() {
   specimens(data.specimens);
   translator();
 
+  ScrollTrigger.refresh();
   addEventListener('typechange', () => { typesetAll(); ScrollTrigger.refresh(); });
   let rw; addEventListener('resize', () => { clearTimeout(rw); rw = setTimeout(() => dispatchEvent(new Event('repaint')), 250); });
 }
