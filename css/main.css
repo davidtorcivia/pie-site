@@ -367,3 +367,5 @@ footer .foot-pie { font-size: clamp(56px, 8.5vw, 170px); }
 .g-right .gf { }
 /* first paint: yellow, then the P and the title together */
 html.arriving body { background: var(--yellow); }
+
+.garden .gv { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }

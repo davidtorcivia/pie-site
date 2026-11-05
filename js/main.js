@@ -226,7 +226,7 @@ function wheel(words) {
     const paths = [...arms.querySelectorAll('path')], forms = [...arms.querySelectorAll('.w-form, .w-br')], dots = [...arms.querySelectorAll('circle')];
     paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
     const t = gsap.timeline();
-    t.to(paths, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', stagger: .07 }, 0)
+    t.to(paths, { strokeDashoffset: 0, duration: .9, ease: 'power2.out', stagger: .05 }, 0)
      .fromTo(forms, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .7, ease: 'power2.out', stagger: .05 }, .35)
      .fromTo(dots, { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: .5, ease: 'back.out(3)', stagger: .07 }, .8);
     forms.forEach(f => { const tp = f.querySelector('textPath'); if (!tp) return; const to = parseFloat(tp.getAttribute('startOffset')); t.fromTo(tp, { attr: { startOffset: (to - 8) + '%' } }, { attr: { startOffset: to + '%' }, duration: 1, ease: 'power3.out' }, .35); });
@@ -240,15 +240,15 @@ function wheel(words) {
     const paths = [...arms.querySelectorAll('path')];
     paths.forEach(p => { if (!p.style.strokeDasharray) { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = 0; } });
     tl = gsap.timeline()
-      .to(arms.querySelectorAll('.w-form, .w-br, circle'), { opacity: 0, duration: .3, ease: 'power1.in' }, 0)
-      .to(paths, { strokeDashoffset: (k, p) => p.getTotalLength(), duration: .45, ease: 'power2.in', stagger: .03 }, 0)
+      .to(arms.querySelectorAll('.w-form, .w-br, circle'), { opacity: 0, duration: .22, ease: 'power1.in' }, 0)
+      .to(paths, { strokeDashoffset: (k, p) => p.getTotalLength(), duration: .32, ease: 'power2.in', stagger: .02 }, 0)
       .to([center, mean], { opacity: 0, filter: 'blur(6px)', duration: .35 }, 0)
       .add(() => { show(i); armsIn(); })
       .to([center, mean], { opacity: 1, filter: 'blur(0px)', duration: .6, ease: 'power2.out' });
   };
   set(0);
   const steps = Math.min(words.length, 6);
-  ScrollTrigger.create({ trigger: '#s-wheel', start: 'top top', end: `+=${steps * 70}%`, pin: '.wheel-pin', scrub: true,
+  ScrollTrigger.create({ trigger: '#s-wheel', start: 'top top', end: `+=${steps * 150}%`, pin: '.wheel-pin', scrub: true,
     onUpdate: s => { set(Math.min(steps - 1, Math.floor(s.progress * steps))); gsap.set(svg.querySelector('.spin'), { rotate: s.progress * 140, svgOrigin: '0 0' }); } });
 }
 
@@ -487,23 +487,24 @@ async function footer() {
 // measures the page without them)
 function gardens() {
   if (location.search.includes('nogarden')) return;
-  const N = 6;                                   // growth frames (tools/build_section_gardens.mjs FRAMES)
+  // the growth is a video (tools/build_growth.mjs): florilegium's own growth, played once when the section is reached,
+  // resting on the finished garden. Browsers without VP9 alpha (Safari) show the finished garden as an image.
+  const probe = document.createElement('video');
+  const alphaVideo = !!probe.canPlayType && probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   for (const [name, sel] of [['open', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
-    const frames = Array.from({ length: N }, (_, i) => { const im = new Image(); im.decoding = 'async'; im.alt = ''; im.className = 'gf'; g.append(im); return im; });
-    const load = () => Promise.all(frames.map((im, i) => new Promise(r => { im.onload = im.onerror = r; im.src = `art/garden-${name}-f${i}.webp`; })));
-    // the garden grows: florilegium's own growth, frame after frame (stems rise, leaves open, flowers bloom)
-    const grow = async () => {
-      await load();
-      for (let i = 0; i < N; i++) {
-        frames[i].classList.add('on');
-        if (i) setTimeout(() => frames[i - 1].classList.remove('on'), 900);
-        await new Promise(r => setTimeout(r, reduce ? 0 : 650));
-      }
+    const start = () => {
+      if (alphaVideo && !reduce) {
+        const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
+        v.src = `art/growth-${name}.webm`; g.append(v);
+        v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true });
+        v.addEventListener('error', () => { v.remove(); still(); }, { once: true });
+      } else still();
     };
-    if (name === 'open') { grow(); continue; }     // the header grows as the page arrives
-    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { grow(); o.disconnect(); } }, { rootMargin: '0px 0px -20% 0px' }).observe(host);
+    const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}.webp`; g.append(im); };
+    if (name === 'open') { start(); continue; }
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -15% 0px' }).observe(host);
   }
 }
 
@@ -512,7 +513,7 @@ async function boot() {
   if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');   // watercolour by default; ?map=ink for the plain engraving
   // manuscript sections: the garden margin alternates sides down the page
   [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ].forEach(([s, c]) => $(s)?.classList.add(c));
-  const data = await fetch('data/site.json').then(r => r.json());
+  const data = await fetch('data/site.json', { cache: 'no-store' }).then(r => r.json());
   typesetAll();
   tooth();      // for the map plate only
   await document.fonts.ready; mark('fonts');

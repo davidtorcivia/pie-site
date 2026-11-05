@@ -265,8 +265,8 @@
    }
   ],
   "audio": {
-   "female": "audio/dawn-f.mp3",
-   "male": "audio/dawn-m.mp3"
+   "female": "audio/dawn-f.mp3?v=1793911391",
+   "male": "audio/dawn-m.mp3?v=1793911389"
   },
   "timing": {
    "m": [

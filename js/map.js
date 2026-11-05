@@ -127,16 +127,16 @@ export async function mapPlate(root) {
   if (buildArrows) {
     const g = painted.getContext('2d'); g.scale(SC, SC); g.lineCap = 'round';
     const rnd = (() => { let s = 99; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
-    const ramp = ['#5e1a0e', '#7a2414', '#8e2a17', '#9c2f19', '#a8361f', '#b8462a'], light = ['#c86a40', '#d9824e', '#e39a64'];
+    const ramp = ['#8a1208', '#a3170b', '#b81d0e', '#c92a12', '#d6361a', '#b01a0c'], light = ['#e2502a', '#ec6a3a', '#f08a52'];
     const tooth = (x, y) => (Math.sin(x * .9 + Math.sin(y * .37) * 3) + Math.sin(y * 1.13 + Math.sin(x * .23) * 2)) * .5;
     const hair = (pts, w) => { for (let i = 1; i < pts.length; i++) { const q = i / pts.length; if (tooth(pts[i][0], pts[i][1]) > .72) continue; g.lineWidth = w * Math.sin(Math.PI * Math.min(1, q * 1.1)) + .4; g.beginPath(); g.moveTo(...pts[i - 1]); g.lineTo(...pts[i]); g.stroke(); } };
     ROUTES.forEach((r, i) => {
       const f = curves[i], full = new Path2D(arrow(f, 1));
-      g.save(); g.globalAlpha = 1; g.fillStyle = '#7a2414'; g.fill(full); g.restore();     // the wash: under the strokes, so no gap shows paper
+      g.save(); g.globalAlpha = 1; g.fillStyle = '#a3170b'; g.fill(full); g.restore();     // the wash: under the strokes, so no gap shows paper
       const wOf = t => (W0 + (W1 - W0) * Math.pow(t, .8)) / 2, hwOf = t => Math.max(W1 * 1.9, wOf(t) * 2.3) + 6;
       // the head is wider than the shaft and travels with the drawing, so paint a band as wide as the head all along
       { const Lw = [], Rw = []; for (let i = 0; i <= 120; i++) { const t = i / 120, [x, y, a] = f(t), w = hwOf(t); Lw.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); Rw.push([x + Math.sin(a) * w, y - Math.cos(a) * w]); }
-        const band = new Path2D(`M${[...Lw, ...Rw.reverse()].map(p => p.join(',')).join('L')}Z`); g.fillStyle = '#7a2414'; g.fill(band);
+        const band = new Path2D(`M${[...Lw, ...Rw.reverse()].map(p => p.join(',')).join('L')}Z`); g.fillStyle = '#a3170b'; g.fill(band);
         for (let n = 0; n < 500; n++) { const t0 = rnd(), off = (rnd() * 2 - 1), len = .02 + rnd() * .04, pts = [];
           for (let k = 0; k <= 8; k++) { const t = Math.min(1, t0 + len * k / 8), [x, y, a] = f(t), w = hwOf(t) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
           g.strokeStyle = ramp[Math.floor(rnd() * ramp.length)]; g.globalAlpha = .7; hair(pts, 2.4 * (.6 + rnd())); } }

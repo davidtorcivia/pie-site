@@ -116,7 +116,8 @@ def main():
     data = {
         "hymn": {"id": HYMN_ID, "pie": h["pie"], "english": h["english"],
                  "words": [{k: w[k] for k in ("line", "word", "ipa", "start", "end")} for w in timeline],
-                 "audio": {"female": "audio/dawn-f.mp3", "male": "audio/dawn-m.mp3"},    # the project's Kokoro PIE voices
+                 # the project's Kokoro PIE voices; ?v= the file's own stamp, so a browser never plays an old render
+                 "audio": {v: f"audio/dawn-{k}.mp3?v={int((SITE / f'audio/dawn-{k}.mp3').stat().st_mtime)}" for v, k in (("female", "f"), ("male", "m"))},
                  "timing": json.loads((SITE / "data/hymn-timing.json").read_text()) if (SITE / "data/hymn-timing.json").exists() else None,
                  "english_lines": english_lines(h["english"], len({w["line"] for w in timeline}))},
         "wheels": wheels(),
