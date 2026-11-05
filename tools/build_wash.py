@@ -62,6 +62,17 @@ nA, nB, nC = noise(70, seed=1), noise(24, seed=2), noise(6, 2, seed=3)
 lat_w = lat + 2.2 * nA + 0.6 * nB                               # latitude, warped: belts with wandering edges
 lon_w = lon + 4.0 * noise(90, seed=4)
 
+def strokes(n, seed, length=(5, 13), field_scale=50):
+    """a field of short brush marks laid along a slowly turning direction: 0..1, 1 where the brush laid pigment"""
+    r = np.random.default_rng(seed); ang = noise(field_scale, 2, seed=seed + 50) * 1.2 + .5
+    im = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(im)
+    xs, ys = r.integers(0, W, n), r.integers(0, H, n)
+    for x, y in zip(xs, ys):
+        a, L = ang[y, x] + r.normal(0, .25), r.uniform(*length)
+        dr.line([(x, y), (x + np.cos(a) * L, y + np.sin(a) * L)], fill=int(r.uniform(90, 255)), width=int(r.integers(1, 4)))
+    return nd.gaussian_filter(np.asarray(im, np.float32) / 255, .7)
+
+
 paper = np.array([240, 232, 214], np.float32)
 img = np.ones((H, W, 3), np.float32) * paper
 
@@ -71,7 +82,7 @@ def wash(m, color, strength, rim=.3, soft=2.0):
     global img
     m = np.clip(nd.gaussian_filter(np.asarray(m, np.float32), soft), 0, 1)
     edge = np.clip(m - nd.gaussian_filter(m, 4), 0, 1) * rim * 3.5
-    a = np.clip(m * strength * (0.85 + 0.15 * np.tanh(nB)) + edge, 0, 1)[..., None]
+    a = np.clip(m * strength * (0.93 + 0.07 * np.tanh(nB)) + edge, 0, 1)[..., None]
     img = img * (1 - a + a * np.array(color, np.float32) / 255)
 
 
@@ -87,13 +98,16 @@ monsoon = land & (lat_w <= 31) & (lon_w >= 66) & ~desert & (Es < 1500)          
 
 wash(land & ~desert, (210, 206, 160), .22, rim=.1, soft=3)
 wash(mediterranean, (190, 186, 120), .45, soft=5)
-wash(forest, (110, 146, 84), .55, soft=6)                                               # temperate forest: sap green,
-wash(forest * (nB > .2), (70, 120, 96), .4, rim=.4, soft=5)                             # pooled with a cooler viridian
-wash(forest * (nC > 1.1), (60, 92, 58), .35, rim=0, soft=1)                             # and granulating
+T1, T2 = strokes(int(W * H / 14), 11), strokes(int(W * H / 30), 12, (4, 9), 30)
+fz = np.asarray(forest, np.float32)
+wash(forest, (122, 152, 92), .42, soft=6)                                               # temperate forest: a sap-green ground,
+wash(fz * T1, (82, 124, 78), .5, rim=0, soft=.6)                                        # laid in brush marks,
+wash(fz * T2, (60, 108, 98), .35, rim=0, soft=.5)                                       # a cooler viridian through them
 wash(monsoon, (150, 168, 96), .5, soft=6)
-wash(taiga, (72, 108, 84), .6, soft=6)
-wash(taiga * (nB < -.2), (50, 86, 78), .45, rim=.4, soft=5)
-wash(taiga * (nC > 1.1), (40, 70, 56), .35, rim=0, soft=1)
+tz = np.asarray(taiga, np.float32)
+wash(taiga, (88, 120, 90), .45, soft=6)
+wash(tz * T1, (52, 92, 72), .55, rim=0, soft=.6)
+wash(tz * T2, (40, 76, 70), .4, rim=0, soft=.5)
 wash(steppe, (214, 178, 98), .62, soft=7)
 wash(desert, (232, 196, 140), .62, rim=.45, soft=6)
 wash(desert & (nC > 1.2), (196, 150, 98), .25, rim=0, soft=1)
@@ -117,7 +131,9 @@ dist = nd.distance_transform_edt(water)
 wash(water * (.6 + .3 * smooth(dist, 0, 80) + .1 * np.tanh(nA)), (92, 136, 170), .62, rim=.7, soft=1.2)
 bloom = np.clip(nd.gaussian_filter((np.tanh(nB * 2) > .85).astype(np.float32), 5) * water, 0, 1)
 img = img * (1 - .14 * bloom[..., None]) + .14 * bloom[..., None] * paper
-img *= (0.975 + 0.025 * np.tanh(noise(1.5, 1, seed=9)))[..., None]
+# cold-press paper: a fine tooth that the washes settle into
+tooth = noise(1.2, 2, seed=9); tooth = tooth - nd.gaussian_filter(tooth, 3)
+img *= (0.965 + 0.035 * np.tanh(tooth * 1.5))[..., None]
 
 out = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).resize((bm.W, bm.H), Image.LANCZOS)
 out.save(ROOT / "map/wash.webp", quality=80, method=6)

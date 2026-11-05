@@ -144,5 +144,18 @@ if #OBS > 0 then
     return out, col, foot, spill, fx1
   end
 end
+-- PIE_FRAME="k/n": draw frame k of n of the garden's growth (florilegium's own animation: stems rise, leaves open,
+-- flowers bloom in the order they grew), for the page's grow-in
+do
+  local k, n = (os.getenv("PIE_FRAME") or ""):match("^(%d+)/(%d+)$")
+  if k then
+    local req = require
+    require = function(name)                -- florilegium needs the stubs florilegium-svg.lua sets first
+      local m = req(name)
+      if name == "florilegium" and type(m) == "table" and m.frame then m.frame(tonumber(k), tonumber(n)) end
+      return m
+    end
+  end
+end
 local SVG = dofile("florilegium-svg.lua")          -- returns its module when not run as the main script
 os.exit(SVG.main(arg))

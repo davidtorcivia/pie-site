@@ -219,8 +219,33 @@ function wheel(words) {
     }).join('');
     $('#wheelCap').textContent = `*${w.form}, “${w.meaning}”, and its descendants in ${ds.length} branches, from the project's lexicon.`;
   };
-  let cur = -1;
-  const set = i => { if (i === cur) return; cur = i; gsap.fromTo(arms, { opacity: 0 }, { opacity: 1, duration: .5 }); show(i); };
+  let cur = -1, tl = null;
+  // a change of word: the arms draw back into the hub, the centre word turns through a blur, then the new arms
+  // draw out along their spirals one after another, each form sliding along its arm into place, the dots blooming
+  const armsIn = () => {
+    const paths = [...arms.querySelectorAll('path')], forms = [...arms.querySelectorAll('.w-form, .w-br')], dots = [...arms.querySelectorAll('circle')];
+    paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+    const t = gsap.timeline();
+    t.to(paths, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', stagger: .07 }, 0)
+     .fromTo(forms, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .7, ease: 'power2.out', stagger: .05 }, .35)
+     .fromTo(dots, { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: .5, ease: 'back.out(3)', stagger: .07 }, .8);
+    forms.forEach(f => { const tp = f.querySelector('textPath'); if (!tp) return; const to = parseFloat(tp.getAttribute('startOffset')); t.fromTo(tp, { attr: { startOffset: (to - 8) + '%' } }, { attr: { startOffset: to + '%' }, duration: 1, ease: 'power3.out' }, .35); });
+    return t;
+  };
+  const set = i => {
+    if (i === cur) return;
+    const first = cur < 0; cur = i;
+    if (tl) tl.kill();
+    if (first || reduce) { show(i); if (!reduce) armsIn(); return; }
+    const paths = [...arms.querySelectorAll('path')];
+    paths.forEach(p => { if (!p.style.strokeDasharray) { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = 0; } });
+    tl = gsap.timeline()
+      .to(arms.querySelectorAll('.w-form, .w-br, circle'), { opacity: 0, duration: .3, ease: 'power1.in' }, 0)
+      .to(paths, { strokeDashoffset: (k, p) => p.getTotalLength(), duration: .45, ease: 'power2.in', stagger: .03 }, 0)
+      .to([center, mean], { opacity: 0, filter: 'blur(6px)', duration: .35 }, 0)
+      .add(() => { show(i); armsIn(); })
+      .to([center, mean], { opacity: 1, filter: 'blur(0px)', duration: .6, ease: 'power2.out' });
+  };
   set(0);
   const steps = Math.min(words.length, 6);
   ScrollTrigger.create({ trigger: '#s-wheel', start: 'top top', end: `+=${steps * 70}%`, pin: '.wheel-pin', scrub: true,
@@ -462,21 +487,28 @@ async function footer() {
 // measures the page without them)
 function gardens() {
   if (location.search.includes('nogarden')) return;
+  const N = 6;                                   // growth frames (tools/build_section_gardens.mjs FRAMES)
   for (const [name, sel] of [['open', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
-    const im = new Image(); im.decoding = 'async';
-    im.onload = () => { g.style.backgroundImage = `url(${im.src})`;
-      // grow in when it comes into view: a soft front rising from the roots
-      new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { g.classList.add('on'); o.disconnect(); } }, { threshold: .15 }).observe(host); };
-    // load when the section comes near, so the first screen is fast
-    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { im.src = `art/garden-${name}.webp`; o.disconnect(); } }, { rootMargin: '120% 0px' }).observe(host);
+    const frames = Array.from({ length: N }, (_, i) => { const im = new Image(); im.decoding = 'async'; im.alt = ''; im.className = 'gf'; g.append(im); return im; });
+    const load = () => Promise.all(frames.map((im, i) => new Promise(r => { im.onload = im.onerror = r; im.src = `art/garden-${name}-f${i}.webp`; })));
+    // the garden grows: florilegium's own growth, frame after frame (stems rise, leaves open, flowers bloom)
+    const grow = async () => {
+      await load();
+      for (let i = 0; i < N; i++) {
+        frames[i].classList.add('on');
+        if (i) setTimeout(() => frames[i - 1].classList.remove('on'), 900);
+        await new Promise(r => setTimeout(r, reduce ? 0 : 650));
+      }
+    };
+    if (name === 'open') { grow(); continue; }     // the header grows as the page arrives
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { grow(); o.disconnect(); } }, { rootMargin: '0px 0px -20% 0px' }).observe(host);
   }
 }
 
 const T0 = performance.now(), mark = n => { if (location.search.includes('perf')) console.log('PERF', n, Math.round(performance.now() - T0)); };
 async function boot() {
-  document.documentElement.classList.add('arriving');
   if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');   // watercolour by default; ?map=ink for the plain engraving
   // manuscript sections: the garden margin alternates sides down the page
   [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ].forEach(([s, c]) => $(s)?.classList.add(c));
@@ -488,9 +520,10 @@ async function boot() {
   overture(); mark('overture();');
   // the header's art first: the initial and the garden, then the page arrives (at most 2.5 s)
   const ready = src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; });
-  await Promise.race([Promise.all([ready('art/initials/hero.webp'), ready('art/garden-open.webp')]), new Promise(r => setTimeout(r, 2500))]);
+  await Promise.race([ready('art/initials/hero.webp'), new Promise(r => setTimeout(r, 1200))]);
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
+  gardens();
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
   await mapPlate($('#s-mig')); mark("await mapPlate($('#s-mig'));");      // first: its pin spacing must exist before later sections measure
   wheel(data.wheels); mark('wheel(data.wheels);');
@@ -499,7 +532,7 @@ async function boot() {
   voice(data.hymn); mark('voice(data.hymn);');
   specimens(data.specimens); mark('specimens(data.specimens);');
   translator(); mark('translator();');
-  gardens(); mark('gardens();');
+
 
   ScrollTrigger.refresh();
   addEventListener('typechange', () => { typesetAll(); ScrollTrigger.refresh(); });

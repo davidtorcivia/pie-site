@@ -10,6 +10,12 @@ import wave
 import numpy as np, torch
 sys.path.insert(0, "/Users/david/AI/PIE")
 from pie.tts_data import text_label
+# the fine-tune's own copy of Kokoro's model code (kikiri-tts/kokoro/kokoro, fetched to pie-runs/tts/kikiri): it builds
+# the network with torch's parametrizations.weight_norm, whose keys the checkpoint has. The pip package uses the old
+# weight_norm and loads non-strictly, silently dropping the decoder's weights (the result is static).
+import types
+_pkg = types.ModuleType("kokoro"); _pkg.__path__ = ["/Users/david/AI/pie-runs/tts/kikiri"]
+sys.modules["kokoro"] = _pkg
 from kokoro.model import KModel
 
 SITE = Path(__file__).resolve().parents[1]
@@ -29,7 +35,7 @@ for name in ("m", "f"):
         text = " ".join(lines[ln])
         label = text_label(text)
         ids = [model.vocab[c] for c in label if c in model.vocab]
-        ref = pack[len(ids) - 1]
+        ref = pack[min(len(label), 509) - 1]
         with torch.no_grad():
             wav, dur = model.forward_with_tokens(torch.LongTensor([[0, *ids, 0]]), ref, 1.0)
         dur = dur.cpu().numpy().ravel()[1:-1]           # per symbol, without the pads

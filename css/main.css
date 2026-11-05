@@ -359,3 +359,11 @@ footer .foot-cols { justify-content: center; text-align: left; }
 
 .leaf .txt { overflow: hidden; }
 footer .foot-pie { font-size: clamp(56px, 8.5vw, 170px); }
+
+/* growth: the frames stack; each fades in over the one before */
+.garden { -webkit-mask: none !important; mask: none !important; background: none !important; }
+.garden .gf { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: 0; transition: opacity .9s ease; }
+.garden .gf.on { opacity: 1; }
+.g-right .gf { }
+/* first paint: yellow, then the P and the title together */
+html.arriving body { background: var(--yellow); }

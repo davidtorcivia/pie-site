@@ -12,6 +12,8 @@ const ROOT = new URL('..', import.meta.url).pathname, FL = ROOT + 'vendor/floril
 // side: 'field' grows round the obstacles over the whole box; 'left' / 'right' is a manuscript margin, a full-height
 // garden in a column COL of the box's width (florilegium's own page composition; right is the left one mirrored)
 const COL = .27;
+// the growth, as florilegium records it: frames k of 8 (the page plays them in order as the section is discovered)
+const FRAMES = [2, 3, 4, 5, 6, 8];
 export const SECTIONS = {
   open: { box: '#s-open', side: 'field', avoid: ['.hero-cap', '.open-h .line', '.open-p'], ink: '2A1F12', accent: 'A8361F', seeds: [23, 58] },
   wheel: { box: '#s-wheel .wheel-pin', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [77, 141] },
@@ -39,7 +41,9 @@ for (const name of names) {
   // one continuous garden over the section, growing round the obstacles: the free region is the page cut at the
   // obstacles' edges (PIE_OBSTACLES, steppe-svg.lua), and no branch is grown across one. Two seeds, laid one over the
   // other, interleave their species.
-  const W = m.w * MM, H = m.h * MM, PAD = .5, layers = [];
+  const sizes = [];
+  for (let fi = 0; fi < FRAMES.length; fi++) {
+  const W = m.w * MM, H = m.h * MM, PAD = .5, layers = [], FR = FRAMES[fi];
   const obstacles = m.rects.map(([x0, y0, x1, y1]) => [x0 * MM / 10 - PAD, (m.h - y1) * MM / 10 - PAD, x1 * MM / 10 + PAD, (m.h - y0) * MM / 10 + PAD].map(v => v.toFixed(2)).join(',')).join(';');
   const field = S.side === 'field';
   S.seeds.forEach((seed, k) => {
@@ -49,7 +53,7 @@ for (const name of names) {
     for (let tr = 0; tr < 8; tr++) try {
       execFileSync('lua', ['../../tools/steppe-svg.lua', '--seed', String(seed + tr * 1000), '--paper', `${W.toFixed(1)}x${H.toFixed(1)}`, ...geo,
         '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(seed + k) % 3], '--nohead', ...(k ? ['--novisitors'] : []), '-o', out],
-        { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', ...(field ? { PIE_OBSTACLES: obstacles } : {}) }, stdio: 'pipe' });
+        { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', PIE_FRAME: `${FR}/8`, ...(field ? { PIE_OBSTACLES: obstacles } : {}) }, stdio: 'pipe' });
       layers.push({ side: 'page', mirror: S.side === 'right' || (S.side === 'both' && k === 1), c: 0, cw: m.w, ext: m.h, bp: 0, f: out }); break;
     } catch { /* a seed florilegium cannot grow on this page: the next */ }
   });
@@ -107,8 +111,11 @@ for (const name of names) {
     return c.toDataURL('image/webp', .84);
   }, layers.map(L => ({ ...L, src: 'data:image/svg+xml;base64,' + readFileSync(L.f).toString('base64') })), CW, CH, m.rects, SC, m.w, m.h);
   await p2.close();
-  const buf = Buffer.from(url.split(',')[1], 'base64'); writeFileSync(ROOT + `art/garden-${name}.webp`, buf);
+  const buf = Buffer.from(url.split(',')[1], 'base64'); writeFileSync(ROOT + `art/garden-${name}-f${fi}.webp`, buf);
+  if (fi === FRAMES.length - 1) writeFileSync(ROOT + `art/garden-${name}.webp`, buf);
   layers.forEach(L => rmSync(L.f));
-  console.log(name, `${Math.round(m.w)}×${Math.round(m.h)} px, ${m.rects.length} obstacles, ${layers.length} plants, ${(buf.length / 1024) | 0} KB`);
+  sizes.push((buf.length / 1024) | 0);
+  }
+  console.log(name, `${Math.round(m.w)}×${Math.round(m.h)} px, ${m.rects.length} obstacles, frames ${sizes.join(' / ')} KB`);
 }
 await b.close();
