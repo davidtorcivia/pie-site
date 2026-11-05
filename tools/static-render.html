@@ -1,0 +1,15 @@
+<!doctype html><meta charset=utf-8><body>
+<script type=module>
+// renders the page's static art for tools/build_static.mjs: the initials and the brush strokes
+import { use, draw, random } from '../vendor/initialis/lib/initialis.js';
+import { heroP, leafP, splitInitial } from '../js/initials.js';
+import { brushStroke, BRUSHES } from '../js/brush.js';
+await use(new URL('../js/kinds/steppe.js', location.href).href);
+const lib = { random }, out = {};
+const render = async (P, size) => { const c = document.createElement('canvas'); await draw(c, P, { size }); return c.toDataURL('image/webp', .92); };
+out['initials/hero.webp'] = await render(heroP(lib), 1100);
+const [data, pal] = await Promise.all([fetch('../data/site.json').then(r => r.json()), fetch('palette.json').then(r => r.json())]);
+for (const [i, s] of data.specimens.entries()) out[`initials/leaf-${i}.webp`] = await render(leafP(lib, i, pal[i % pal.length], splitInitial(s.pie).letter), 420);
+for (let i = 0; i < BRUSHES; i++) { const u = brushStroke('#ffd21a', 1000 + 7919 * (i + 1), { w: 720, h: 150 }), c = document.createElement('canvas'), im = new Image(); im.src = u; await im.decode(); c.width = im.width; c.height = im.height; c.getContext('2d').drawImage(im, 0, 0); out[`brush/${String(i).padStart(2, '0')}.webp`] = c.toDataURL('image/webp', .85); }
+window.OUT = out; document.title = 'done';
+</script>

@@ -9,13 +9,16 @@ import { readFileSync, writeFileSync, rmSync } from 'node:fs';
 import puppeteer from 'puppeteer-core';
 const ROOT = new URL('..', import.meta.url).pathname, FL = ROOT + 'vendor/florilegium';
 // name: section (the box the garden fills), what it must grow round, its inks
+// side: 'field' grows round the obstacles over the whole box; 'left' / 'right' is a manuscript margin, a full-height
+// garden in a column COL of the box's width (florilegium's own page composition; right is the left one mirrored)
+const COL = .27;
 export const SECTIONS = {
-  open: { box: '#s-open', stopAt: '.hero-herd', avoid: ['.hero-cap', '.open-h .line', '.open-p'], ink: '2A1F12', accent: 'A8361F', seeds: [23, 58] },
-  wheel: { box: '#s-wheel .wheel-pin', avoid: ['.wheel-copy h2', '.wheel-copy p', '#wheel'], ink: '2A1F12', accent: 'A8361F', seeds: [77, 141] },
-  machine: { box: '#s-machine', avoid: ['#s-machine h2', '.tier', '.note'], ink: '5A3B18', accent: '1F5A43', seeds: [91, 203] },
-  voice: { box: '#s-voice', avoid: ['.voice-top h2', '.voice-top p', '.disc', '.hymn', '.voice-bar', '.hymn-en'], ink: '2A1F12', accent: 'A8361F', seeds: [17, 99] },
-  apps: { box: '#s-apps', avoid: ['#s-apps h2', '.apps-p', '.tr', '.tr-out'], ink: 'D9CFB4', accent: 'FFD21A', seeds: [61, 113] },
-  foot: { box: 'footer', stopAt: '.foot-herd', avoid: ['.foot-pie', 'footer p'], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
+  open: { box: '#s-open', side: 'field', avoid: ['.hero-cap', '.open-h .line', '.open-p'], ink: '2A1F12', accent: 'A8361F', seeds: [23, 58] },
+  wheel: { box: '#s-wheel .wheel-pin', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [77, 141] },
+  machine: { box: '#s-machine', side: 'right', avoid: [], ink: '5A3B18', accent: '1F5A43', seeds: [91, 203] },
+  voice: { box: '#s-voice', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [17, 99] },
+  apps: { box: '#s-apps', side: 'right', avoid: [], ink: 'D9CFB4', accent: 'FFD21A', seeds: [61, 113] },
+  foot: { box: 'footer', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
 };
 const MM = 420 / 1440;                    // mm per CSS px: one scale for every garden on the page
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SECTIONS);
@@ -36,17 +39,18 @@ for (const name of names) {
   // one continuous garden over the section, growing round the obstacles: the free region is the page cut at the
   // obstacles' edges (PIE_OBSTACLES, steppe-svg.lua), and no branch is grown across one. Two seeds, laid one over the
   // other, interleave their species.
-  const W = m.w * MM, H = m.h * MM, PAD = .5;
+  const W = m.w * MM, H = m.h * MM, PAD = .5, layers = [];
   const obstacles = m.rects.map(([x0, y0, x1, y1]) => [x0 * MM / 10 - PAD, (m.h - y1) * MM / 10 - PAD, x1 * MM / 10 + PAD, (m.h - y0) * MM / 10 + PAD].map(v => v.toFixed(2)).join(',')).join(';');
-  const layers = [];
+  const field = S.side === 'field';
   S.seeds.forEach((seed, k) => {
     const out = ROOT + `art/garden-${name}-${k}.svg`;
+    const geo = field ? ['--left', `${(W - 4).toFixed(1)}mm`, '--right', '2mm', '--top', '5mm', '--bottom', '4mm', '--density', '.8']
+      : ['--left', `${(W * COL).toFixed(1)}mm`, '--right', '15mm', '--top', '10mm', '--bottom', '8mm', '--density', k ? '.55' : '1'];
     for (let tr = 0; tr < 8; tr++) try {
-      execFileSync('lua', ['../../tools/steppe-svg.lua', '--seed', String(seed + tr * 1000), '--paper', `${W.toFixed(1)}x${H.toFixed(1)}`,
-        '--left', `${(W - 4).toFixed(1)}mm`, '--right', '2mm', '--top', '5mm', '--bottom', '4mm', '--density', '.8',
-        '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(seed + k) % 3], '--nohead', '-o', out],
-        { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', PIE_OBSTACLES: obstacles }, stdio: 'pipe' });
-      layers.push({ side: 'page', c: 0, cw: m.w, ext: m.h, bp: 0, f: out }); break;
+      execFileSync('lua', ['../../tools/steppe-svg.lua', '--seed', String(seed + tr * 1000), '--paper', `${W.toFixed(1)}x${H.toFixed(1)}`, ...geo,
+        '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(seed + k) % 3], '--nohead', ...(k ? ['--novisitors'] : []), '-o', out],
+        { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', ...(field ? { PIE_OBSTACLES: obstacles } : {}) }, stdio: 'pipe' });
+      layers.push({ side: 'page', mirror: S.side === 'right', c: 0, cw: m.w, ext: m.h, bp: 0, f: out }); break;
     } catch { /* a seed florilegium cannot grow on this page: the next */ }
   });
   const SC = 1.6, CW = Math.round(m.w * SC), CH = Math.round(m.h * SC);
@@ -58,7 +62,7 @@ for (const name of names) {
     for (const L of srcs) {
       const im = new Image(); im.src = L.src; await im.decode();
       g.save();
-      if (L.side === 'page') { g.drawImage(im, 0, 0, W0, H0); g.restore(); continue; }
+      if (L.side === 'page') { if (L.mirror) { g.translate(W0, 0); g.scale(-1, 1); } g.drawImage(im, 0, 0, W0, H0); g.restore(); continue; }
       if (L.side === 'bottom') g.translate(L.c, H0);
       else if (L.side === 'left') { g.translate(0, L.c); g.rotate(Math.PI / 2); }
       else { g.translate(W0, L.c); g.rotate(-Math.PI / 2); }
@@ -92,12 +96,14 @@ for (const name of names) {
         o.beginPath(); o.moveTo(px - dx, py - dy); o.quadraticCurveTo(px + Math.sin(a) * len * .08, py - Math.cos(a) * len * .08, px + dx, py + dy); o.stroke();
       }
     }
+    // thin parts (stars, sparkles, tendrils, hairline stems) keep the crisp drawing: where the alpha does not survive
+    // an erosion of two pixels, the original is put back over the paint
+    const R2 = 2, er = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let mn = 1; for (let dy = -R2; dy <= R2 && mn > 0; dy++) for (let dx = -R2; dx <= R2; dx++) { const yy = y + dy, xx = x + dx; const a = yy < 0 || xx < 0 || yy >= H || xx >= W ? 0 : A[yy * W + xx]; if (a < mn) mn = a; } er[y * W + x] = mn; }
+    const po = o.getImageData(0, 0, W, H), pd = po.data;
+    for (let i = 0; i < W * H; i++) if (A[i] > .2 && er[i] < .2) { const k = i * 4; pd[k] = d[k]; pd[k + 1] = d[k + 1]; pd[k + 2] = d[k + 2]; pd[k + 3] = Math.max(pd[k + 3], d[k + 3]); }
+    o.putImageData(po, 0, 0);
     g.clearRect(0, 0, CW, CH); g.drawImage(out, 0, 0);
-    // nothing under the text: clear every measured box, with a short feather so an edge never looks cut
-    g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000';
-    g.filter = `blur(${5 * SC}px)`; for (const [x0, y0, x1, y1] of rects) g.fillRect((x0 - 6) * SC, (y0 - 6) * SC, (x1 - x0 + 12) * SC, (y1 - y0 + 12) * SC);
-    g.filter = 'none'; for (const [x0, y0, x1, y1] of rects) g.fillRect((x0 - 2) * SC, (y0 - 2) * SC, (x1 - x0 + 4) * SC, (y1 - y0 + 4) * SC);
-    g.globalCompositeOperation = 'source-over';
     return c.toDataURL('image/webp', .84);
   }, layers.map(L => ({ ...L, src: 'data:image/svg+xml;base64,' + readFileSync(L.f).toString('base64') })), CW, CH, m.rects, SC, m.w, m.h);
   await p2.close();

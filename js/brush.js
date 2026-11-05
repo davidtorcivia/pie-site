@@ -36,8 +36,12 @@ export function brushStroke(color = '#ffd21a', seed = 1, { w = 900, h = 180 } = 
 let counter = 0;
 export const uniqueSeed = () => 1000 + 7919 * ++counter;
 // ground an HTML element with a brush stroke (as its background)
+// the page uses pre-rendered strokes (art/brush/NN.webp, tools/build_static.mjs): one per element, none repeated
+export const BRUSHES = 64;
+let nextBrush = 0;
+export const brushUrl = () => `art/brush/${String(nextBrush++ % BRUSHES).padStart(2, '0')}.webp`;
 export function brushGround(el, _seed, color) {
-  if (!el._brush) el._brush = uniqueSeed();
-  el.style.backgroundImage = `url(${brushStroke(color, el._brush)})`;
+  if (!el._brush) el._brush = brushUrl();
+  el.style.backgroundImage = `url(${el._brush})`;
   el.style.backgroundSize = '100% 100%'; el.style.backgroundRepeat = 'no-repeat'; el.style.backgroundColor = 'transparent';
 }

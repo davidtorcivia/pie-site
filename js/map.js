@@ -2,7 +2,7 @@
 // tools/build_map.py) printed as ink on paper, lettered in spaced capitals and italics, with each branch's route
 // engraved in red ochre as the reader scrolls, ending at its first written witness. A painted horse gallops along
 // the route being drawn.
-import { brushStroke, uniqueSeed } from './brush.js';
+import { brushUrl } from './brush.js';
 
 // routes: lon/lat waypoints from the steppe to the place of each branch's earliest substantial texts
 // routes: lon/lat waypoints along each branch's usual archaeological path (steppe hypothesis, simplified),
@@ -94,7 +94,7 @@ export async function mapPlate(root) {
     <g class="routes">${ROUTES.map((r, i) => `<path class="arw" data-i="${i}" d=""/>`).join('')}</g>
 
     <g class="ends">${ROUTES.map((r, i) => { const [x, y] = xy(...r.pts[r.pts.length - 1]); return `<g class="end" data-i="${i}"><circle cx="${x}" cy="${y}" r="9"/>
-      <g class="tag"><image class="lab" preserveAspectRatio="none" href="${brushStroke('#ffd21a', uniqueSeed())}"/><text class="br" x="0" y="0" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="0" y="32" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g></g>`; }).join('')}</g>
+      <g class="tag"><image class="lab" preserveAspectRatio="none" href="${brushUrl()}"/><text class="br" x="0" y="0" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="0" y="32" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g></g>`; }).join('')}</g>
     <g class="horses">${ROUTES.map(() => `<image class="horse" width="200" height="118" href=""/>`).join('')}</g>`;
   const arrows = [...svg.querySelectorAll('.arw')], ends = [...svg.querySelectorAll('.end')];
   // place every label so none overlaps another, or the lettering, or the plate's edge
@@ -123,7 +123,8 @@ export async function mapPlate(root) {
   }
   // the arrows, hand-painted once: a wash, then tapered strokes laid along each route, broken on the tooth
   const painted = document.createElement('canvas'); painted.width = paintCv.width; painted.height = paintCv.height;
-  {
+  const buildArrows = location.search.includes('buildarrows');
+  if (buildArrows) {
     const g = painted.getContext('2d'); g.scale(SC, SC); g.lineCap = 'round';
     const rnd = (() => { let s = 99; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
     const ramp = ['#5e1a0e', '#7a2414', '#8e2a17', '#9c2f19', '#a8361f', '#b8462a'], light = ['#c86a40', '#d9824e', '#e39a64'];
@@ -157,6 +158,12 @@ export async function mapPlate(root) {
         g.strokeStyle = ramp[Math.floor(rnd() * ramp.length)]; g.globalAlpha = .7; hair(pts, 2.4);
       }
     });
+    window.__ARROWS = painted.toDataURL('image/webp', .9);
+  } else {
+    // pre-painted (tools/build_static.mjs)
+    const im = new Image(); im.src = 'map/arrows.webp';
+    await im.decode().catch(() => {});
+    painted.getContext('2d').drawImage(im, 0, 0, painted.width, painted.height);
   }
   const pc = paintCv.getContext('2d');
   const paintArrows = ks => {
@@ -189,7 +196,10 @@ export async function mapPlate(root) {
     ROUTES.forEach((r, i) => {
       const k = Math.min(1, Math.max(0, (p - .08 - i * span) / (span * 1.6)));
       ks[i] = k;
-      ends[i].style.opacity = Math.min(1, Math.max(0, (k - .85) / .15));
+      const q = Math.min(1, Math.max(0, (k - .85) / .15));
+      ends[i].style.opacity = q > 0 ? 1 : 0;
+      ends[i].querySelector('.tag').style.clipPath = `inset(-20px ${(100 - q * 100).toFixed(1)}% -20px -20px)`;
+      ends[i].querySelector('circle').style.transform = `scale(${q})`;
       if (k > 0 && k < 1) active = i;
     });
     paintArrows(ks);
@@ -200,9 +210,9 @@ export async function mapPlate(root) {
     ROUTES.forEach((r, i) => {
       const k = ks[i], h = horses[i];
       if (k <= 0) { h.style.opacity = 0; return; }
-      const [bx, by, ba] = curves[i](k), flip = Math.cos(ba) < 0;
-      h.setAttribute('x', bx - 100); h.setAttribute('y', by - 124);
-      h.setAttribute('transform', flip ? `translate(${2 * bx},0) scale(-1,1)` : '');
+      const [bx, by, ba] = curves[i](k), flip = Math.cos(ba) < 0, deg = (flip ? ba - Math.PI : ba) * 180 / Math.PI;
+      h.setAttribute('x', bx - 100); h.setAttribute('y', by - 112);
+      h.setAttribute('transform', `rotate(${deg.toFixed(1)} ${bx} ${by})` + (flip ? ` translate(${2 * bx},0) scale(-1,1)` : ''));
       h.style.opacity = k < 1 ? 1 : Math.max(0, 1 - (p - (.08 + i * span + span * 1.6)) / .03);
     });
   };

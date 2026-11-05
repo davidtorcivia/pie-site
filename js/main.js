@@ -41,39 +41,12 @@ function tooth() {
 // our own kinds (a horse frieze, the herd, sun wheels, tulips), the title on brush-stroke grounds, and a herd of
 // painted horses galloping across the foot.
 async function overture() {
-  document.querySelectorAll('.open-h .line, .open-p, .foot-pie, .foot-en').forEach((el, i) => brushGround(el, 11 + i, '#ffd21a'));
-  try {
-    const lib = await import('../vendor/initialis/lib/initialis.js');
-    await lib.use(new URL('kinds/steppe.js', import.meta.url).href);
-    const P = { ...lib.random(4242), text: 'P', paper: '#ffd21a', inkA: '#1d1a16', inkB: '#a8361f', inkC: '#1d1a16',
-      frame: 'rect', fMargin: 6, fRules: 2, fW1: 5, fGap: 96, fW2: 3, fBand: 'horses', fField: 'A', fPattern: 'herd', fPatColor: 'B', fPatScale: 10,
-      fCorner: 'sunwheel', fCornerSize: 70, oFlower: 'tulip', oLeaf: 'willow', lFill: 'paper' };
-    // the P spans the whole title: its top on the first line's top, its foot on the last line's foot
-    const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
-    $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
-    // the paragraph sits under the title, never across it
-    const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(); const pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
-    place(); addEventListener('repaint', place);
-    $('.hero-cap').innerHTML = `<initialis-cap settings='${JSON.stringify(P)}' size="${size}" grow></initialis-cap>`;
-  } catch (e) { console.info('initialis unavailable', e.message); }
-  // the herd: painted Muybridge frames, a few horses out of step with each other
-  const cv = $('.hero-herd'), frames = [];
-  await Promise.all(Array.from({ length: 11 }, (_, k) => new Promise(res => { const im = new Image(); im.onload = res; im.onerror = res; im.src = `art/horse/paint-dark-${String(k + 1).padStart(2, '0')}.webp`; frames[k] = im; })));
-  const herd = [{ x: 0, ph: 0, s: 1 }, { x: .27, ph: 4, s: .86 }, { x: .53, ph: 7, s: .94 }, { x: .79, ph: 2, s: .8 }];   // the lead horse at the left edge
-  let t0 = 0;
-  const run = t => {
-    const { ctx, w, h } = cv._fit || (cv._fit = fit(cv));
-    ctx.clearRect(0, 0, w, h);
-    const f = Math.floor(t / 90);
-    herd.forEach(o => {
-      const im = frames[(f + o.ph) % 11], hh = h * .98 * o.s, ww = hh * (im.naturalWidth || 2) / (im.naturalHeight || 1);
-      const x = ((o.x + t * .00002) % 1.1) * w - ww * .08;
-      ctx.drawImage(im, x, h - hh, ww, hh);
-    });
-    if (!reduce) requestAnimationFrame(run);
-  };
-  requestAnimationFrame(run);
-  addEventListener('repaint', () => { cv._fit = null; });
+  // the P spans the whole title: its top on the first line's top, its foot on the last line's foot (pre-rendered)
+  const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
+  $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
+  $('.hero-cap').innerHTML = '<img src="art/initials/hero.webp" alt="" width="100%" height="100%" decoding="async">';
+  const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
+  place(); addEventListener('repaint', place);
   if (!reduce) gsap.from('.open-h .line', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: .1, delay: .2 });
 }
 
@@ -379,13 +352,13 @@ async function specimens(list) {
   track.innerHTML = list.map((s, i) => {
     const k = pal[i % pal.length];
     return `<article class="leaf" style="--lf-ink:${k.ink};--lf-paper:${k.paper};--lf-accent:${k.accent}">
-      <img class="garden" src="gardens/leaf-${i}.webp" alt="" loading="lazy" decoding="async">
+      <img class="leaf-garden" src="gardens/leaf-${i}.webp" alt="" loading="lazy" decoding="async">
       <div class="rh"><span>${s.genre}</span><span class="fo">${s.id}</span></div>
       <div class="txt"><p class="p"><span class="ini"></span><span class="pt"></span></p><p class="e">${s.english}</p></div></article>`;
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
   let lib = null;
-  try { lib = await import('../vendor/initialis/lib/initialis.js'); await lib.use(new URL('kinds/steppe.js', import.meta.url).href); } catch (e) { console.info('initialis unavailable', e.message); }
+  lib = true;
   const build = (el, i) => {
     const s = list[i], k = pal[i % pal.length];
     const src = s.pie.normalize('NFD'), at = src.search(/[a-z]/i);
@@ -402,11 +375,7 @@ async function specimens(list) {
     const fs = parseFloat(getComputedStyle(el.querySelector('.p')).fontSize), size = Math.round(fs * 1.28 * 3.4);
     // our own illumination: a cord or a frieze of horses round the frame, an incised ground, sun-wheel corners,
     // tulips for the growing ornament, all in the leaf's inks on its paper
-    const P = { ...lib.random(7000 + i * 131), text: (base.toUpperCase() + marks).normalize('NFC'), paper: k.paper, inkA: k.ink, inkB: k.accent, inkC: k.ink,
-      frame: 'rect', fRules: 2, fW1: 5, fGap: i % 2 ? 120 : 80, fW2: 2.5, fBand: i % 2 ? 'horses' : 'cord', fField: ['A', 'paper', 'A', 'B'][i % 4],
-      fPattern: ['herringbone', 'steps', 'pitcomb', 'herd'][i % 4], fPatColor: ['paper', 'A', 'paper', 'paper'][i % 4], fPatScale: 12,
-      fCorner: 'sunwheel', fCornerSize: 46, oFlower: 'tulip', oLeaf: 'willow', lFill: ['paper', 'A', 'paper', 'paper'][i % 4] };
-    ini.innerHTML = `<initialis-cap settings='${JSON.stringify(P).replace(/'/g, '&#39;')}' size="${size}" grow></initialis-cap>`;
+    ini.innerHTML = `<img src="art/initials/leaf-${i}.webp" alt="" decoding="async" loading="lazy" style="width:100%;height:100%">`;
     ini.style.width = ini.style.height = size + 'px';
   };
   leaves.forEach(build);
@@ -493,23 +462,26 @@ function gardens() {
   }
 }
 
+const T0 = performance.now(), mark = n => { if (location.search.includes('perf')) console.log('PERF', n, Math.round(performance.now() - T0)); };
 async function boot() {
+  if (new URLSearchParams(location.search).get('map') === 'wc') document.documentElement.classList.add('map-wc');
+  // manuscript sections: the garden margin alternates sides down the page
+  [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ['footer', 'ms-left']].forEach(([s, c]) => $(s)?.classList.add(c));
   const data = await fetch('data/site.json').then(r => r.json());
   typesetAll();
   tooth();      // for the map plate only
-  await document.fonts.ready;
+  await document.fonts.ready; mark('fonts');
 
-  overture();
+  overture(); mark('overture();');
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
-  await mapPlate($('#s-mig'));      // first: its pin spacing must exist before later sections measure
-  wheel(data.wheels);
-  machine(data.stats);
-  results(data.bench);
-  voice(data.hymn);
-  specimens(data.specimens);
-  translator();
-  footer();
-  gardens();
+  await mapPlate($('#s-mig')); mark("await mapPlate($('#s-mig'));");      // first: its pin spacing must exist before later sections measure
+  wheel(data.wheels); mark('wheel(data.wheels);');
+  machine(data.stats); mark('machine(data.stats);');
+  results(data.bench); mark('results(data.bench);');
+  voice(data.hymn); mark('voice(data.hymn);');
+  specimens(data.specimens); mark('specimens(data.specimens);');
+  translator(); mark('translator();');
+  gardens(); mark('gardens();');
 
   ScrollTrigger.refresh();
   addEventListener('typechange', () => { typesetAll(); ScrollTrigger.refresh(); });

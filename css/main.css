@@ -69,7 +69,7 @@ button { font: inherit; color: inherit; }
 .mig-pin { position: relative; height: 100svh; overflow: hidden; background: var(--paper); }
 .plate { position: absolute; inset: 0; overflow: hidden; }
 .plate-inner { position: absolute; left: 0; top: 0; width: calc(var(--pw) * 1px); height: calc(var(--ph) * 1px); transform-origin: 0 0; will-change: transform; }
-.relief { position: absolute; inset: 0; background: #2a2219; -webkit-mask: url(../map/relief.webp) 0 0 / 100% 100% no-repeat; mask: url(../map/relief.webp) 0 0 / 100% 100% no-repeat; }
+.relief { position: absolute; inset: 0; background: #2a2219; -webkit-mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; mask-mode: luminance; }
 .plate svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .plate .rg { font-family: var(--f-book); font-weight: 500; letter-spacing: .5em; fill: #2a2219; }
 .plate .wt { font-family: var(--f-book); font-style: italic; letter-spacing: .12em; fill: #3c4a5e; }
@@ -159,7 +159,7 @@ button { font: inherit; color: inherit; }
 .spec-track { display: flex; gap: clamp(18px, 2.4vw, 36px); padding: 0 var(--gut); width: max-content; }
 .leaf { position: relative; flex: 0 0 auto; height: min(76svh, 820px); aspect-ratio: 1 / 1.3; color: var(--lf-ink); background: var(--lf-paper);
   box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 24px 40px -28px rgba(30,20,10,.45); }
-.leaf .garden { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.leaf .leaf-garden { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .leaf .rh { position: absolute; left: 31.25%; right: 7.5%; top: 6.4%; padding-bottom: 6px; border: 0; display: flex; justify-content: space-between; align-items: baseline;
   font-family: var(--f-data); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--lf-ink); }
 .leaf .txt { position: absolute; left: 31.25%; right: 7.5%; top: 11.5%; bottom: 10.6%; display: flex; flex-direction: column; }
@@ -292,3 +292,30 @@ footer.foot { padding: 14vh var(--gut) 0; min-height: 92svh; overflow: hidden; }
 .tw.st-inferred .gl::after { content: " · inferred"; opacity: .6; }
 .tw.st-coined .gl::after { content: " · coined"; opacity: .6; }
 .tr-notes { margin-top: 1.1em; max-width: 60ch; font-size: clamp(16px, 1.2vw, 19px); font-style: italic; color: color-mix(in srgb, var(--chalk) 80%, transparent); }
+
+/* manuscript sections: a garden margin of 27% on one side, the content in the rest */
+:root { --col: 27vw; }
+.ms-left { padding-left: calc(var(--col) + 2vw) !important; padding-right: var(--gut) !important; }
+.ms-right { padding-right: calc(var(--col) + 2vw) !important; padding-left: var(--gut) !important; }
+.garden { background-size: 100% 100% !important; }
+#s-wheel .wheel-pin.ms-left { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); padding-top: 6vh !important; padding-bottom: 6vh !important; }
+#s-machine.ms-right .frame-inset { padding: 0; margin: 0; }
+#s-machine .h2.center, #s-machine .note.center { text-align: left; margin-left: 0; }
+#s-machine .cascade { margin: 1.5em 0; max-width: none; }
+#s-voice.ms-left > * { max-width: none !important; margin-left: 0 !important; }
+footer.ms-left .foot-herd { display: none; }
+
+.foot-by { font-size: clamp(20px, 1.7vw, 28px); margin: 6vh 0 0; }
+.foot-by a, .foot-cols a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.foot-cols { margin-top: 3vh !important; }
+footer.foot { min-height: 80svh; padding-bottom: 10vh; }
+
+.plate .end circle { transform-box: fill-box; transform-origin: center; }
+/* captions and the year brush in from the left */
+.mig-p { clip-path: inset(0 100% 0 0); opacity: 1 !important; transform: none !important; transition: clip-path .7s cubic-bezier(.6, 0, .2, 1) !important; }
+.mig-p.on { clip-path: inset(0 0 0 0); }
+
+/* the watercolour variant (?map=wc): a wash under the engraving */
+.wash { position: absolute; inset: 0; background: url(../map/wash.webp) 0 0 / 100% 100% no-repeat; display: none; }
+.map-wc .wash { display: block; }
+.map-wc .relief { background: #241c14; opacity: .85; }

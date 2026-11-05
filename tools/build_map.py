@@ -178,6 +178,7 @@ def main():
     ink = ink.filter(ImageFilter.GaussianBlur(0.6)).resize((W, H), Image.LANCZOS)
     rgba = Image.merge("RGBA", [Image.new("L", (W, H), 0)] * 3 + [ink])
     rgba.save(OUT / "relief.webp", quality=88, method=6)
+    ink.convert("RGB").save(OUT / "relief-l.webp", quality=72, method=6)   # the page uses this: a luminance mask, lossy
     (OUT / "projection.json").write_text(json.dumps({"lon0": LON0, "lon1": LON1, "lat0": LAT0, "lat1": LAT1, "k": K, "px": PX, "w": W, "h": H}))
     print("wrote", OUT / "relief.webp", (OUT / "relief.webp").stat().st_size // 1024, "KB")
 
