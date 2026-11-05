@@ -31,7 +31,8 @@ const NS = 'http://www.w3.org/2000/svg';
 
 export async function mapPlate(root) {
   const P = await fetch('map/projection.json').then(r => r.json());
-  const xy = (lon, lat) => [(lon - P.lon0) * P.k * P.px, (P.lat1 - lat) * P.px];
+  // Miller cylindrical (tools/build_map.py)
+  const xy = (lon, lat) => [(lon - P.lon0) * P.pxd, (P.y1 - 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * lat * Math.PI / 180))) * P.r];
   const stage = root.querySelector('.plate'), svg = root.querySelector('.plate svg');
   const paintCv = document.createElement('canvas'), SC = .75;
   paintCv.className = 'paint'; paintCv.width = Math.round(P.w * SC); paintCv.height = Math.round(P.h * SC);
@@ -203,11 +204,12 @@ export async function mapPlate(root) {
   const EXT = (() => { const ps = ROUTES.flatMap(r => r.pts.map(([a, b]) => xy(a, b))), xs = ps.map(p => p[0]), ys = ps.map(p => p[1]);
     const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys); return { w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 }; })();
   const place = () => {
-    const vw = stage.clientWidth, vh = stage.clientHeight, cover = Math.max(vw / P.w, vh / P.h), contain = Math.min(vw / (EXT.w * 1.12), vh / (EXT.h * 1.6));
-    // a tall screen ends on the whole plate (every branch's witness in view): the scale eases from cover to contain
-    const tall = vh > vw * .9, out = Math.min(1, Math.max(0, (2.6 - cam.s) / 1.6));
-    const base = tall ? cover + (contain - cover) * out : cover, s = base * (tall ? 1 + (cam.s - 1) * (1 - out) : cam.s);
-    const cx = tall ? cam.x + (EXT.cx - cam.x) * out : cam.x, cy = tall ? cam.y + (EXT.cy - cam.y) * out : cam.y;
+    const vw = stage.clientWidth, vh = stage.clientHeight, cover = Math.max(vw / P.w, vh / P.h);
+    // pulling back reveals more of the plate: the scale falls from close on the steppe to as wide as the plate allows
+    // while still filling the screen's height (a tall screen shows the full height, the routes centred)
+    // a tall screen pulls back past cover, to the plate's full width (more of the land on both sides)
+    const contain = vw / P.w, tall = vh > vw * .9, out = Math.min(1, Math.max(0, (2.6 - cam.s) / 1.6));
+    const s = tall ? Math.exp(Math.log(cover * 2.6) + (Math.log(Math.max(vh / P.h, vw / (EXT.w * 1.08))) - Math.log(cover * 2.6)) * out) : cover * cam.s, cx = cam.x, cy = cam.y;
     const tx = vw / 2 - cx * s, ty = vh / 2 - cy * s;
     const lim = (v, lo, hi) => lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v));
     root.querySelector('.plate-inner').style.transform = `translate(${lim(tx, vw - P.w * s, 0)}px, ${lim(ty, vh - P.h * s, 0)}px) scale(${s})`;
@@ -217,7 +219,8 @@ export async function mapPlate(root) {
     window.__migP = p;
     // 0–.08 the homeland; .08–.92 the branches, in order of their first texts; the camera eases out to the whole plate
     const n = ROUTES.length, span = .84 / n;
-    cam.s = 2.6 - 1.6 * Math.min(1, p / .7); cam.x = hx + (P.w * .52 - hx) * Math.min(1, p / .7); cam.y = hy + (P.h * .5 - hy) * Math.min(1, p / .7);
+    const z = Math.min(1, p / .32), ez = 1 - Math.pow(1 - z, 3);            // eased, done by a third of the way
+    cam.s = 2.6 - 1.6 * ez; cam.x = hx + (EXT.cx - hx) * ez; cam.y = hy + (EXT.cy - hy) * ez;
     place();
     let active = -1;
     const ks = [];

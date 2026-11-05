@@ -1,5 +1,5 @@
 """Engrave the map of the dispersal: hachured relief, water-lined seas, rivers, in the manner of a nineteenth-century
-atlas plate. Output: map/relief.webp (black ink on transparent, tinted on the page) and map/projection.json (how
+atlas plate. Output: map/relief-l.webp (the ink as a luminance mask, tinted on the page) and map/projection.json (how
 the page places routes and lettering).
 
     <python with numpy, pillow, scipy> tools/build_map.py
@@ -20,16 +20,36 @@ from scipy import ndimage as nd
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "tools/mapdata"
 OUT = ROOT / "map"
-LON0, LON1, LAT0, LAT1 = -12.0, 96.0, 17.0, 62.0
-K = math.cos(math.radians(42))
+LON0, LON1, LAT0, LAT1 = -12.0, 96.0, -46.0, 82.0          # tall enough to fill a phone screen with land
+# Miller cylindrical: shapes stay close to true from Africa to the Arctic (an equirectangular plate squeezed by
+# cos 42° stretched the tropics). x = longitude; y = 1.25 ln tan(π/4 + 0.4 φ)
 W = 4400
-PX = W / ((LON1 - LON0) * K)                 # px per degree of latitude
-H = int(round((LAT1 - LAT0) * PX))
+PXD = W / (LON1 - LON0)                      # px per degree of longitude
+R = PXD * 180 / math.pi                      # px per radian of Miller y
+K = 1.0                                      # (kept for older readers of projection.json)
+PX = PXD                                     # px per degree at the equator
 SS = 2                                       # supersampling for the ink
 
 
+def miller(lat):
+    return 1.25 * np.log(np.tan(np.pi / 4 + 0.4 * np.radians(lat)))
+
+
+def miller_inv(y):
+    return np.degrees(2.5 * np.arctan(np.exp(0.8 * y)) - 0.625 * np.pi)
+
+
+Y1 = float(miller(LAT1))
+H = int(round((Y1 - float(miller(LAT0))) * R))
+
+
 def proj(lon, lat, s=1):
-    return ((lon - LON0) * K * PX * s, (LAT1 - lat) * PX * s)
+    return ((lon - LON0) * PXD * s, (Y1 - float(miller(lat))) * R * s)
+
+
+def inv(jj, ii):
+    """pixel (x, y) arrays -> (lon, lat)"""
+    return LON0 + jj / PXD, miller_inv(Y1 - ii / R)
 
 
 def elevation():
@@ -43,7 +63,7 @@ def elevation():
         mos[(y - ys[0]) * T:(y - ys[0] + 1) * T, (x - xs[0]) * T:(x - xs[0] + 1) * T] = a[..., 0] * 256 + a[..., 1] + a[..., 2] / 256 - 32768
     # sample the mosaic (Web Mercator) at each output pixel
     jj, ii = np.meshgrid(np.arange(W), np.arange(H))
-    lon = LON0 + jj / (K * PX); lat = LAT1 - ii / PX
+    lon, lat = inv(jj, ii)
     world = T * 2 ** z
     mx = (lon + 180) / 360 * world - xs[0] * T
     lr = np.radians(lat)
@@ -85,7 +105,8 @@ def main():
     # --- hachures: short strokes down the slope, heavier where steep and on the shadow side (light from the north-west)
     Es = nd.gaussian_filter(E, 4.6)          # generalized: an engraver draws landforms, not every bump
     gy, gx = np.gradient(Es)                                 # metres per px
-    mpp = 111_000 / PX                                       # metres per px
+    lat_px = inv(np.zeros(H), np.arange(H))[1][:, None]
+    mpp = 111_000 / PXD * np.cos(np.radians(lat_px)) * 1.0             # metres per px (Miller: about true scale along a parallel)
     slope = np.hypot(gx, gy) / mpp
     s_norm = np.clip(np.sqrt(slope / 0.035), 0, 1)           # 3.5% grade (generalized) and steeper: full weight
     nx, ny = -gx / (np.hypot(gx, gy) + 1e-9), -gy / (np.hypot(gx, gy) + 1e-9)   # downhill
@@ -177,10 +198,10 @@ def main():
 
     ink = ink.filter(ImageFilter.GaussianBlur(0.6)).resize((W, H), Image.LANCZOS)
     rgba = Image.merge("RGBA", [Image.new("L", (W, H), 0)] * 3 + [ink])
-    rgba.save(OUT / "relief.webp", quality=88, method=6)
-    ink.convert("RGB").save(OUT / "relief-l.webp", quality=72, method=6)   # the page uses this: a luminance mask, lossy
-    (OUT / "projection.json").write_text(json.dumps({"lon0": LON0, "lon1": LON1, "lat0": LAT0, "lat1": LAT1, "k": K, "px": PX, "w": W, "h": H}))
-    print("wrote", OUT / "relief.webp", (OUT / "relief.webp").stat().st_size // 1024, "KB")
+    pass                                                                     # (the lossless relief is not used)
+    ink.convert("RGB").save(OUT / "relief-l.webp", quality=62, method=6)   # the page uses this: a luminance mask, lossy
+    (OUT / "projection.json").write_text(json.dumps({"proj": "miller", "lon0": LON0, "lon1": LON1, "lat0": LAT0, "lat1": LAT1, "pxd": PXD, "r": R, "y1": Y1, "w": W, "h": H}))
+    print("wrote", OUT / "relief-l.webp", (OUT / "relief-l.webp").stat().st_size // 1024, "KB")
 
 
 if __name__ == "__main__":

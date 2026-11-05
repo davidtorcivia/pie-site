@@ -513,3 +513,23 @@ html, body { overflow-x: clip; }
   .plate .br { font-size: 64px; } .plate .wit { font-size: 40px; }
   .plate .rg { font-size: 1.6em; }
 }
+
+.g-sentinel { position: absolute; left: 0; right: 0; bottom: 18vh; height: 1px; pointer-events: none; }
+/* leaf listen bar on a brush stroke */
+.leaf .lis { display: inline-block; padding: .35em 1.2em .45em .8em; background-size: 100% 100%; background-repeat: no-repeat; color: var(--ink); }
+.leaf .lis button { color: var(--ink) !important; }
+/* translator words: a tidy grid */
+.tr-words { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(150px, max-content)); gap: 10px 26px !important; justify-content: start; }
+.tr-words .tw { display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 700px) {
+  .tr-words { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px !important; }
+  .tr-words .tw .f { font-size: 20px !important; }
+  /* hymn: voice and pronunciation right under the play disc */
+  #s-voice .voice-stage { display: flex; flex-direction: column; align-items: center; }
+  #s-voice .voice-bar { order: 0; justify-content: center; margin-top: 14px; }
+  #s-voice .disc { order: -2; } #s-voice .voice-bar { order: -1; } #s-voice .hymn { order: 1; margin-top: 18px; }
+  /* leaf: text clear of the plants (a paper wash under it) */
+  .leaf .txt, .leaf .rh { background: linear-gradient(to right, transparent, color-mix(in srgb, var(--lf-paper) 92%, transparent) 9%); }
+}
+
+@media (max-width: 700px) { #s-voice { padding-bottom: 50vh !important; } .garden { z-index: 0; } #s-voice .hymn { position: relative; z-index: 2; } }

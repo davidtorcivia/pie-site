@@ -308,6 +308,7 @@ function results(bench) {
 
 // ---------------------------------------------------------------------------------------------------- voice
 function voice(h) {
+  if (innerWidth < 700) { const bar = $('.voice-bar'), stage = $('.voice-stage'); if (bar && stage) stage.insertBefore(bar, $('#hymn')); }
   const audio = $('#audio'), hymn = $('#hymn'), disc = $('#disc'), ipa = $('#ipa'), en = $('#hymnEn');
   let voiceName = 'male';
   audio.src = h.audio[voiceName];
@@ -427,6 +428,7 @@ async function specimens(list) {
     playing.ws.forEach((w, i) => w.classList.toggle('now', i === k)); raf = requestAnimationFrame(tickLeaf); };
   leaves.forEach((el, i) => {
     const s = list[i]; if (!s.audio) return;
+    const lb = el.querySelector('.lis'); if (lb) brushGround(lb, 0, '#ffd21a');
     let voice = 'male';
     el.querySelectorAll('.lis [data-v]').forEach(b => b.onclick = () => { voice = b.dataset.v; el.querySelectorAll('.lis [data-v]').forEach(x => x.classList.toggle('on', x === b)); if (playing?.el === el) { stopLeaf(); el.querySelector('.play').click(); } });
     el.querySelector('.play').onclick = () => {
@@ -535,7 +537,9 @@ function gardens() {
     };
     const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`; g.append(im); };
     if (name.startsWith('open')) { start(); continue; }
-    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -15% 0px' }).observe(host);
+    // start when the garden's part of the section comes into view: on a phone that is the foot of the section
+    const target = phone ? (() => { const s = document.createElement('div'); s.className = 'g-sentinel'; host.append(s); return s; })() : host;
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -10% 0px' }).observe(target);
   }
 }
 

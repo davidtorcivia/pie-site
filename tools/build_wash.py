@@ -56,8 +56,8 @@ E = E_full[::S, ::S]
 land = bm.mask_of("ne_50m_land")[::S, ::S] & ~bm.mask_of("ne_50m_lakes", lambda p: (p.get("scalerank") or 9) <= 4)[::S, ::S]
 E = np.where(land, np.maximum(E, 0), 0)
 Es = nd.gaussian_filter(E, 3)
-lat = (bm.LAT1 - np.arange(H)[:, None] * S / bm.PX) * np.ones((1, W))
-lon = (bm.LON0 + np.arange(W)[None, :] * S / (bm.K * bm.PX)) * np.ones((H, 1))
+_jj, _ii = np.meshgrid(np.arange(W) * S, np.arange(H) * S)
+lon, lat = bm.inv(_jj.astype(np.float64), _ii.astype(np.float64))
 nA, nB, nC = noise(70, seed=1), noise(24, seed=2), noise(6, 2, seed=3)
 lat_w = lat + 2.2 * nA + 0.6 * nB                               # latitude, warped: belts with wandering edges
 lon_w = lon + 4.0 * noise(90, seed=4)
@@ -114,7 +114,7 @@ wash(desert & (nC > 1.2), (196, 150, 98), .25, rim=0, soft=1)
 
 # --- elevation: continuous, shaded ---------------------------------------------------------------------------------
 gy, gx = np.gradient(nd.gaussian_filter(E, 5))
-mpp = 111_000 / bm.PX * S
+mpp = 111_000 / bm.PXD * S * np.cos(np.radians(lat))
 nx, ny = -gx / mpp, -gy / mpp
 shade = np.clip(.5 + (nx * -.7 + ny * -.7) * 6, 0, 1)
 hi = smooth(Es, 400, 2400)
