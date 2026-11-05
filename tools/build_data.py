@@ -22,8 +22,8 @@ HYMN_ID = "t3-t026-00015"
 V10 = PIE / "tts/cadence/eleven/v10"
 WHEELS = ["pie-lex-ph2texr", "pie-lex-h1ekjwos", "pie-lex-h2owis", "pie-lex-meh2texr", "pie-lex-dyexws",
           "pie-lex-wlkwos", "pie-lex-kjwox", "pie-lex-h2stexr", "pie-lex-nokwts", "pie-lex-dwoh1"]
-SPECIMENS = ["t3-t022-00023", "t3-t043-00005", "t3-t023-00019", "t3-b001-00001", "t3-b003-00141",
-             "t3-t023-00033", "t3-b003-00001", "t3-t043-00013", "t3-t023-00031"]
+SPECIMENS = ["t3-t026-00039", "t3-t002-00006", "t3-t023-00019", "t3-t027-00011", "t3-t088-00029",
+             "t3-t026-00010", "t3-t085-00018", "t3-t028-00002", "t3-rl6-005-00008"]   # chosen as writing
 BRANCH = {  # reflex keys -> the branch they stand for
     "Proto-Anatolian": "Anatolian", "Hittite": "Anatolian", "Luwian": "Anatolian",
     "Proto-Indo-Iranian": "Indo-Iranian", "Sanskrit": "Indo-Iranian", "Avestan": "Indo-Iranian",
@@ -116,7 +116,8 @@ def main():
     data = {
         "hymn": {"id": HYMN_ID, "pie": h["pie"], "english": h["english"],
                  "words": [{k: w[k] for k in ("line", "word", "ipa", "start", "end")} for w in timeline],
-                 "audio": {"female": "audio/dawn-female.mp3", "male": "audio/dawn-male.mp3"},
+                 "audio": {"female": "audio/dawn-f.mp3", "male": "audio/dawn-m.mp3"},    # the project's Kokoro PIE voices
+                 "timing": json.loads((SITE / "data/hymn-timing.json").read_text()) if (SITE / "data/hymn-timing.json").exists() else None,
                  "english_lines": english_lines(h["english"], len({w["line"] for w in timeline}))},
         "wheels": wheels(),
         "bench": bench(),
@@ -125,7 +126,6 @@ def main():
                       for i in SPECIMENS if i in recs],
     }
     (SITE / "data/site.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), "utf-8")
-    audio()
     print(f"wheels {len(data['wheels'])}, bench {len(data['bench'])}, specimens {len(data['specimens'])}, stats {data['stats']}")
 
 

@@ -85,11 +85,15 @@ steppe = land & (lat_w > 41) & (lat_w <= 54) & (lon_w >= 26 + 6 * nA) & ~forest 
 mediterranean = land & (lat_w > 31) & (lat_w <= 46) & ~steppe & ~desert & (Es < 1200)
 monsoon = land & (lat_w <= 31) & (lon_w >= 66) & ~desert & (Es < 1500)            # the Indus and Ganges plains
 
-wash(land & ~desert, (205, 200, 150), .35, rim=.1, soft=3)
+wash(land & ~desert, (210, 206, 160), .22, rim=.1, soft=3)
 wash(mediterranean, (190, 186, 120), .45, soft=5)
-wash(forest, (112, 140, 92), .62, soft=6)
+wash(forest, (110, 146, 84), .55, soft=6)                                               # temperate forest: sap green,
+wash(forest * (nB > .2), (70, 120, 96), .4, rim=.4, soft=5)                             # pooled with a cooler viridian
+wash(forest * (nC > 1.1), (60, 92, 58), .35, rim=0, soft=1)                             # and granulating
 wash(monsoon, (150, 168, 96), .5, soft=6)
-wash(taiga, (84, 112, 88), .65, soft=6)
+wash(taiga, (72, 108, 84), .6, soft=6)
+wash(taiga * (nB < -.2), (50, 86, 78), .45, rim=.4, soft=5)
+wash(taiga * (nC > 1.1), (40, 70, 56), .35, rim=0, soft=1)
 wash(steppe, (214, 178, 98), .62, soft=7)
 wash(desert, (232, 196, 140), .62, rim=.45, soft=6)
 wash(desert & (nC > 1.2), (196, 150, 98), .25, rim=0, soft=1)

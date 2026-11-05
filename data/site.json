@@ -265,8 +265,458 @@
    }
   ],
   "audio": {
-   "female": "audio/dawn-female.mp3",
-   "male": "audio/dawn-male.mp3"
+   "female": "audio/dawn-f.mp3",
+   "male": "audio/dawn-m.mp3"
+  },
+  "timing": {
+   "m": [
+    {
+     "line": 1,
+     "word": "h₂éwsos",
+     "start": 0.0,
+     "end": 0.55
+    },
+    {
+     "line": 1,
+     "word": "léwka",
+     "start": 0.6,
+     "end": 1.0
+    },
+    {
+     "line": 1,
+     "word": "déywi",
+     "start": 1.05,
+     "end": 1.45
+    },
+    {
+     "line": 1,
+     "word": "diwés",
+     "start": 1.5,
+     "end": 1.95
+    },
+    {
+     "line": 1,
+     "word": "dʰúgh₂ter",
+     "start": 2.0,
+     "end": 2.675
+    },
+    {
+     "line": 2,
+     "word": "n̥sméy",
+     "start": 3.97,
+     "end": 4.395
+    },
+    {
+     "line": 2,
+     "word": "léwks",
+     "start": 4.445,
+     "end": 4.845
+    },
+    {
+     "line": 2,
+     "word": "sḱih₃wós-kʷe",
+     "start": 4.92,
+     "end": 5.695
+    },
+    {
+     "line": 2,
+     "word": "twéd",
+     "start": 5.745,
+     "end": 6.045
+    },
+    {
+     "line": 2,
+     "word": "bʰéwgt",
+     "start": 6.095,
+     "end": 6.82
+    },
+    {
+     "line": 3,
+     "word": "nu",
+     "start": 7.99,
+     "end": 8.14
+    },
+    {
+     "line": 3,
+     "word": "wiHrṓs",
+     "start": 8.215,
+     "end": 8.815
+    },
+    {
+     "line": 3,
+     "word": "twé",
+     "start": 8.865,
+     "end": 9.115
+    },
+    {
+     "line": 3,
+     "word": "kʷḱént",
+     "start": 9.165,
+     "end": 9.49
+    },
+    {
+     "line": 3,
+     "word": "mudént-kʷe",
+     "start": 9.565,
+     "end": 10.415
+    },
+    {
+     "line": 4,
+     "word": "túH",
+     "start": 11.685,
+     "end": 11.96
+    },
+    {
+     "line": 4,
+     "word": "h₂yuHénih₂",
+     "start": 12.035,
+     "end": 12.81
+    },
+    {
+     "line": 4,
+     "word": "túH",
+     "start": 12.86,
+     "end": 13.11
+    },
+    {
+     "line": 4,
+     "word": "ń̥dʰgʷʰiteh₂",
+     "start": 13.16,
+     "end": 14.285
+    },
+    {
+     "line": 5,
+     "word": "túH",
+     "start": 15.43,
+     "end": 15.73
+    },
+    {
+     "line": 5,
+     "word": "kʷspés",
+     "start": 15.78,
+     "end": 16.18
+    },
+    {
+     "line": 5,
+     "word": "swésōr",
+     "start": 16.23,
+     "end": 16.83
+    },
+    {
+     "line": 5,
+     "word": "téwe",
+     "start": 16.88,
+     "end": 17.18
+    },
+    {
+     "line": 5,
+     "word": "bʰéh₂os",
+     "start": 17.23,
+     "end": 17.705
+    },
+    {
+     "line": 5,
+     "word": "h₃kʷbʰós",
+     "start": 17.755,
+     "end": 18.155
+    },
+    {
+     "line": 5,
+     "word": "lewbʰóm",
+     "start": 18.205,
+     "end": 18.83
+    },
+    {
+     "line": 6,
+     "word": "nu",
+     "start": 20.15,
+     "end": 20.3
+    },
+    {
+     "line": 6,
+     "word": "ḱéywa",
+     "start": 20.375,
+     "end": 20.775
+    },
+    {
+     "line": 6,
+     "word": "n̥sméy",
+     "start": 20.825,
+     "end": 21.275
+    },
+    {
+     "line": 6,
+     "word": "h₁wésu",
+     "start": 21.325,
+     "end": 21.775
+    },
+    {
+     "line": 6,
+     "word": "ḱléwos",
+     "start": 21.825,
+     "end": 22.35
+    },
+    {
+     "line": 6,
+     "word": "dh₃dʰí",
+     "start": 22.4,
+     "end": 23.0
+    },
+    {
+     "line": 7,
+     "word": "nu-kʷe",
+     "start": 24.095,
+     "end": 24.42
+    },
+    {
+     "line": 7,
+     "word": "n̥sméy",
+     "start": 24.47,
+     "end": 24.895
+    },
+    {
+     "line": 7,
+     "word": "ń̥dʰgʷʰitom",
+     "start": 24.945,
+     "end": 25.545
+    },
+    {
+     "line": 7,
+     "word": "ḱléwos",
+     "start": 25.595,
+     "end": 26.12
+    },
+    {
+     "line": 7,
+     "word": "h₁áydʰi",
+     "start": 26.17,
+     "end": 26.745
+    }
+   ],
+   "f": [
+    {
+     "line": 1,
+     "word": "h₂éwsos",
+     "start": 0.0,
+     "end": 0.55
+    },
+    {
+     "line": 1,
+     "word": "léwka",
+     "start": 0.6,
+     "end": 1.0
+    },
+    {
+     "line": 1,
+     "word": "déywi",
+     "start": 1.05,
+     "end": 1.45
+    },
+    {
+     "line": 1,
+     "word": "diwés",
+     "start": 1.5,
+     "end": 1.95
+    },
+    {
+     "line": 1,
+     "word": "dʰúgh₂ter",
+     "start": 2.0,
+     "end": 2.65
+    },
+    {
+     "line": 2,
+     "word": "n̥sméy",
+     "start": 3.92,
+     "end": 4.37
+    },
+    {
+     "line": 2,
+     "word": "léwks",
+     "start": 4.42,
+     "end": 4.82
+    },
+    {
+     "line": 2,
+     "word": "sḱih₃wós-kʷe",
+     "start": 4.895,
+     "end": 5.695
+    },
+    {
+     "line": 2,
+     "word": "twéd",
+     "start": 5.745,
+     "end": 6.07
+    },
+    {
+     "line": 2,
+     "word": "bʰéwgt",
+     "start": 6.12,
+     "end": 6.895
+    },
+    {
+     "line": 3,
+     "word": "nu",
+     "start": 8.09,
+     "end": 8.24
+    },
+    {
+     "line": 3,
+     "word": "wiHrṓs",
+     "start": 8.315,
+     "end": 8.915
+    },
+    {
+     "line": 3,
+     "word": "twé",
+     "start": 8.965,
+     "end": 9.215
+    },
+    {
+     "line": 3,
+     "word": "kʷḱént",
+     "start": 9.265,
+     "end": 9.615
+    },
+    {
+     "line": 3,
+     "word": "mudént-kʷe",
+     "start": 9.69,
+     "end": 10.49
+    },
+    {
+     "line": 4,
+     "word": "túH",
+     "start": 11.735,
+     "end": 12.01
+    },
+    {
+     "line": 4,
+     "word": "h₂yuHénih₂",
+     "start": 12.085,
+     "end": 12.835
+    },
+    {
+     "line": 4,
+     "word": "túH",
+     "start": 12.885,
+     "end": 13.135
+    },
+    {
+     "line": 4,
+     "word": "ń̥dʰgʷʰiteh₂",
+     "start": 13.185,
+     "end": 14.285
+    },
+    {
+     "line": 5,
+     "word": "túH",
+     "start": 15.455,
+     "end": 15.73
+    },
+    {
+     "line": 5,
+     "word": "kʷspés",
+     "start": 15.78,
+     "end": 16.23
+    },
+    {
+     "line": 5,
+     "word": "swésōr",
+     "start": 16.28,
+     "end": 16.88
+    },
+    {
+     "line": 5,
+     "word": "téwe",
+     "start": 16.93,
+     "end": 17.23
+    },
+    {
+     "line": 5,
+     "word": "bʰéh₂os",
+     "start": 17.28,
+     "end": 17.755
+    },
+    {
+     "line": 5,
+     "word": "h₃kʷbʰós",
+     "start": 17.805,
+     "end": 18.255
+    },
+    {
+     "line": 5,
+     "word": "lewbʰóm",
+     "start": 18.305,
+     "end": 19.005
+    },
+    {
+     "line": 6,
+     "word": "nu",
+     "start": 20.3,
+     "end": 20.45
+    },
+    {
+     "line": 6,
+     "word": "ḱéywa",
+     "start": 20.525,
+     "end": 20.95
+    },
+    {
+     "line": 6,
+     "word": "n̥sméy",
+     "start": 21.0,
+     "end": 21.475
+    },
+    {
+     "line": 6,
+     "word": "h₁wésu",
+     "start": 21.525,
+     "end": 21.975
+    },
+    {
+     "line": 6,
+     "word": "ḱléwos",
+     "start": 22.025,
+     "end": 22.55
+    },
+    {
+     "line": 6,
+     "word": "dh₃dʰí",
+     "start": 22.6,
+     "end": 23.2
+    },
+    {
+     "line": 7,
+     "word": "nu-kʷe",
+     "start": 24.32,
+     "end": 24.645
+    },
+    {
+     "line": 7,
+     "word": "n̥sméy",
+     "start": 24.695,
+     "end": 25.145
+    },
+    {
+     "line": 7,
+     "word": "ń̥dʰgʷʰitom",
+     "start": 25.195,
+     "end": 25.845
+    },
+    {
+     "line": 7,
+     "word": "ḱléwos",
+     "start": 25.895,
+     "end": 26.42
+    },
+    {
+     "line": 7,
+     "word": "h₁áydʰi",
+     "start": 26.47,
+     "end": 26.995
+    }
+   ]
   },
   "english_lines": [
    "Dawn, bright goddess, Daughter of Sky!",
@@ -962,16 +1412,16 @@
  },
  "specimens": [
   {
-   "id": "t3-t022-00023",
-   "genre": "oath",
-   "pie": "h₁óytom ph₂wénh₁ wédn̥h₁ ǵʰoysóh₁-kʷe h₁áyh₂e. bʰoydʰéh₂m ne Hrunépm̥. h₁yód dʰrugʰyṓh₂ péh₂wr̥ me h₁éwse. wódr̥ me gʷr̥h₃é. ǵʰóyse me h₃wth₂dʰí.",
-   "english": "I took the oath by fire, by water and by the spear. I did not break the pledge. If I deceive, burn me, Fire! Swallow me, Water! Wound me, Spear!"
+   "id": "t3-t026-00039",
+   "genre": "prayer",
+   "pie": "h₁regʷesyéti kʷséps gʷm̥yéti. nu sóh₂wl̥ wódr̥ Hn̥dʰí séngʷs. ph₂ter n̥smé nékʷti h₂lékse. l̥gʰih₁mé swépnos n̥smé h₁pyéh₁t. ḱwṓ nos ḱléytreh₂m h₂léksoyh₁t pérkʷus n̥smé ḱéloyh₁t. bʰudʰih₁mé léwkm̥-kʷe h₂ew dedr̥ḱih₁mé.",
+   "english": "It is getting dark, night is coming. Sun, you sank into the water below. Father, guard us in the night! May we lie down, may sleep seize us. May the dog guard our shelter. May the oak cover us. May we wake, and may we see the light again."
   },
   {
-   "id": "t3-t043-00005",
-   "genre": "proverb",
-   "pie": "m̥rént gʷówes m̥rént bʰréh₂teres mért-kʷe mórtos. h₁wésu ḱléwos ne mért. ń̥dʰgʷʰitom h₂n̥rés ḱléwos gʷíh₃weti.",
-   "english": "Cattle die, brothers die, and the mortal dies. Good fame does not die. The imperishable fame of a man lives."
+   "id": "t3-t002-00006",
+   "genre": "hymn",
+   "pie": "nu kʷís kʷékʷlom ń̥dʰgʷʰitosyo sh₂wéns dʰéh₁t? ish₁rós-kʷe-ge dyḗws tóm dʰéh₁t. wéǵʰetes HeHḱúh₁ h₁éḱwoh₁ tóm. nu-kʷe deywṓs tóm dedr̥ḱḗr. só ish₁rós h₁ésti só HeHḱús h₁ésti. nu kʷékʷlom sh₂wéns gʷéHyōmes. só nos wewórte só néḱus ne h₁ésti. nu-kʷe h₂lékse n̥smé tóh₁.",
+   "english": "Who set the wheel of the imperishable sun? And strong Sky indeed set it. The two swift horses carry it. And the gods see it. It is strong; it is swift. Now let us sing the wheel of the sun. It is turned toward us; it is not mortal. And now protect us with it."
   },
   {
    "id": "t3-t023-00019",
@@ -980,40 +1430,40 @@
    "english": "Husband, you went away; you did not come back. I wear your garment, and I look at your yoke. And now it is getting dark in the household. I seek you, and I remember you."
   },
   {
-   "id": "t3-b001-00001",
+   "id": "t3-t027-00011",
+   "genre": "epic",
+   "pie": "tréyes h₂néres móri gʷmént. nu h₁íd h₁wr̥Hú h₁regʷesyét-kʷe. nu pr̥h₂wós h₂éǵt. ḱéywōs mē tr̥mté. móri upér h₁éyomes ḱléwos-kʷe h₂isḱṓmes. nu litént. nu h₁íd h₁íns gʷr̥h₃ét nu h₁éysōm ḱléwos ń̥dʰgʷʰitom.",
+   "english": "Three men came to the sea. It was broad, and it was getting dark. Then the first said, \"Dear ones, do not tremble. We shall go over the sea and seek fame.\" They went away. It swallowed them, but their fame is imperishable."
+  },
+  {
+   "id": "t3-t088-00029",
+   "genre": "myth",
+   "pie": "h₁stā́m dwóh₁ bʰréh₂terh₁e yemHóh₁. dyḗws ne h₁ést sóh₂wl̥-kʷe ne h₁ést. nu sḿ̥teros h₁éterom gʷʰént. dʰéǵʰōm h₁ésyo mémsos kʷért. h₂éḱmonn̥s h₁ésyo h₃sth₁bʰós kʷért. dyḗm h₁ésyo ḱr̥h₂snés kʷért. wédōr h₁ésyo h₁sh₂éns kʷért. tód pr̥h₂wóm némos h₁ést. nu mórtōs deywóybʰos uksénn̥s gʷʰnénti.",
+   "english": "There were two brothers, twins. There was no sky, and there was no sun. Then the one killed the other. From his flesh he made the earth. From his bones he made the stones. From his skull he made the sky. From his blood he made the waters. That was the first sacrifice. Now mortals kill bulls for the gods."
+  },
+  {
+   "id": "t3-t026-00010",
+   "genre": "myth",
+   "pie": "h₃érō úd yéh₂t. sóh₂wl̥ swṓys h₃kʷbʰís spéḱyet. nu h₁íd h₃r̥néy sékʷt. kʷís h₁mé spéḱyeti? wérh₁t. h₁eǵóh₂ twé spéḱyoh₂. méne h₃ókʷih₁ ne trésetes h₁eǵóh₂-kʷe ne bʰebʰóyh₂h₂e. nu sóh₂wl̥ h₃éronm̥ ǵnéh₃t h₁ésmey-kʷe ḱlutóm h₁nómn̥ dʰéh₁t. h₁éy h₂wéyōm h₃rḗǵs.",
+   "english": "The eagle was going upwards. He kept looking at the sun with his own eyes. Then it spoke to the eagle: \"Who looks at me?\" He spoke: \"I look at you. My eyes do not tremble, and I am not afraid.\" Then the sun knew the eagle, and set a famous name for him. The eagle is the king of birds."
+  },
+  {
+   "id": "t3-t085-00018",
+   "genre": "dialogue",
+   "pie": "kúdʰe gʰóstey h₂éyeri h₁éysi? h₂ewsér h₁éymi. méh₂tēr moy méǵh₂i déh₂newi h₁épi tḱéyti. h₁ésyeh₂ey ḱód wéwke. dʰugh₂tḗr toy gʷíh₃weti. kʷíd h₁ésyeh₂s h₁nómn̥? h₁íh₂ h₁suḱléwēs wiḱpóteys h₁widʰéwh₂. h₁íh₂m̥ winédoh₂ h₁ésyeh₂ey-kʷe wérh₁oh₂. príHe moy túH ḱéywos.",
+   "english": "Stranger, where are you going in the morning? I am going toward the dawn. My mother dwells by the great river. Tell her this: Your daughter lives. What is her name? She is Of-Good-Fame, the widow of a chief. I will find her and tell her. You are dear to me, friend."
+  },
+  {
+   "id": "t3-t028-00002",
+   "genre": "fable",
+   "pie": "wl̥kʷíh₂s ḱwónm̥ widét mléwHt wl̥kʷíh₂s. ḱwón túH pleh₁tós h₁eǵóh₂-kʷe tr̥syóh₂. ḱwṓ sékʷt. wĺ̥kʷih₂ méne ḱóymom gʷm̥yé. méne moy pótnih₂ péyh₂tu dédeh₃ti. h₁eǵóh₂ yugtós. séh₂ wérh₁yet. túH yugtós. h₁eǵóh₂ h₁léwdʰereh₂. h₁eǵóh₂ tr̥syóh₂ h₁eǵóh₂-kʷe h₁léwdʰereh₂. nu wl̥kʷíh₂s léytt.",
+   "english": "A she-wolf saw a dog. The she-wolf said: \"Dog, you are full, and I thirst.\" The dog said: \"Come to my home, she-wolf. My mistress gives me nourishment. I am yoked.\" She said: \"You are yoked. I am free. I thirst, and I am free.\" Then the she-wolf went away."
+  },
+  {
+   "id": "t3-rl6-005-00008",
    "genre": "riddle",
-   "pie": "kʷíd wóǵʰosyo bʰórom bʰéreti? wéǵʰeti kʷékʷlos tóm.",
-   "english": "What carries the burden of the wagon? The wheel transports it."
-  },
-  {
-   "id": "t3-b003-00141",
-   "genre": "charm",
-   "pie": "litdʰí wĺ̥kʷe h₂éwibʰos mē-kʷe gʷm̥yés.",
-   "english": "Wolf, go away from the sheep, and do not come!"
-  },
-  {
-   "id": "t3-t023-00033",
-   "genre": "wisdom",
-   "pie": "wódr̥ ní h₁éyti péh₂wr̥ úd h₁éyti. péh₂wr̥ wódr̥-kʷe ne ḱéywoyh₁. sóh₂wl̥ h₁éyti nókʷts-kʷe gʷm̥yéti. ḱéleti nókʷts bʰórm̥. h₂éwsōs h₁íh₂m̥ sékʷetor.",
-   "english": "Water goes down; fire goes up. Fire and water are not friendly. The sun goes, and the night comes. Night covers the thief. Dawn follows it."
-  },
-  {
-   "id": "t3-b003-00001",
-   "genre": "hymn",
-   "pie": "dyḗws ph₂tḗr h₁ésti dʰéǵʰōm méh₂tēr h₁ésti.",
-   "english": "Sky is father, Earth is mother."
-  },
-  {
-   "id": "t3-t043-00013",
-   "genre": "proverb",
-   "pie": "wĺ̥kʷos h₂ówins gʷʰénti h₂egʰóm wékʷos h₂n̥rés h₁nómn̥ gʷʰénti. wĺ̥kʷom widéh₁yesi dʰrówgʰom ne widéh₁yesi. ḱwṓ h₂ówins h₂lékseti deywṓs h₁nómn̥ h₂léksonti.",
-   "english": "The wolf kills sheep; a bad word kills a man's name. You see the wolf; you do not see the lie. The dog protects the sheep; the gods protect the name."
-  },
-  {
-   "id": "t3-t023-00031",
-   "genre": "wisdom",
-   "pie": "súHnuh₁ h₁mé ḱlutóm. bʰréh₂tēr lewbʰós. téwe bʰréh₂term̥ mē linkʷtóm. dwóh₁ bʰréh₂terh₁e steh₂róh₁. ḱóm h₁édtom ḱóm píph₃etom. h₁yós h₁ím linékʷti só wĺ̥kʷos.",
-   "english": "Two sons, hear me. A brother is dear. Do not leave your brother. Two brothers are stout. Eat together, drink together. Whoever leaves him is a wolf."
+   "pie": "stestóh₂h₂e ne-kʷe stéygʰoh₂. méne pódes wódr̥ dʰǵʰémi Hn̥dʰí píph₃onti. h₂éweyes swóns nisdóns méne ǵʰóstoysu démonti. péth₂leh₂ sémeh₂i wésh₂er snóygʷʰos-kʷe me ǵʰyémi stégeti. méne h₁nómn̥ wr̥h₁dʰí. dóru.",
+   "english": "I stand, and I do not walk. My feet drink water under the earth. Birds build their nests in my hands. In summer I wear leaves, and in winter the snow covers me. Say my name. A tree."
   }
  ]
 }

@@ -70,14 +70,14 @@
 <section id="s-voice" class="s yellow">
   <div class="voice-top">
     <h2 class="display h2">A hymn to Dawn</h2>
-    <p class="serif">This hymn to the dawn goddess *h₂éwsōs comes from the corpus. Her name survives as Vedic Uṣás, Greek Ēṓs and Latin Aurōra. The voice is VocalTractLab, an articulatory synthesizer that models the tongue, lips, velum and larynx. Each PIE sound is compiled into movements of that model, including the uvular fricative of h₂, the palatal stops, the breathy-voiced stops and the pitch accent. A voice-conversion pass gives the result a human timbre.</p>
+    <p class="serif">This hymn to the dawn goddess *h₂éwsōs comes from the corpus. Her name survives as Vedic Uṣás, Greek Ēṓs and Latin Aurōra. It is read by the project's own PIE voices, Kokoro text-to-speech models we trained for the language. Their training speech began in a simulated vocal tract (VocalTractLab, an articulatory synthesizer), where each sound is a movement of tongue, lips and larynx: the uvular fricative of h₂, the palatal stops, the breathy-voiced stops, the pitch accent. Speech-to-speech conversion then carried it into natural human voices.</p>
   </div>
   <div class="voice-stage">
     <button class="disc" id="disc" aria-label="Play the hymn"><canvas id="ring"></canvas><span class="disc-label display" id="discLabel">Play</span></button>
     <div class="hymn" id="hymn"></div>
   </div>
   <div class="voice-bar">
-    <div class="voices serif" role="group" aria-label="Voice"><button data-v="female" class="on">female voice</button> · <button data-v="male">male voice</button></div>
+    <div class="voices serif" role="group" aria-label="Voice"><button data-v="male" class="on">male voice</button> · <button data-v="female">female voice</button></div>
     <div class="ipa data" id="ipa">&nbsp;</div>
   </div>
   <p class="serif hymn-en" id="hymnEn"></p>
@@ -98,7 +98,7 @@
   <p class="serif apps-p">The translator below runs on the project's grammar engine. It parses English, picks the PIE words, inflects them, and gives a gloss and pronunciation for each. A chat interface to the model and a reader for the corpus are in progress.</p>
   <div class="tr">
     <div class="tr-dir serif"><button data-d="en2pie" class="on">English to PIE</button> · <button data-d="pie2en">PIE to English</button></div>
-    <textarea id="trIn" class="serif" rows="2" aria-label="Text to translate">The wolf sees the sheep, and the dog guards them.</textarea>
+    <div class="tr-box"><textarea id="trIn" class="serif" rows="2" aria-label="Text to translate" placeholder="Type a sentence…">The wolf sees the sheep, and the dog guards them.</textarea><button class="tr-go display" id="trGo">Translate</button></div>
     <div class="tr-ex serif" id="trEx"></div>
     <div class="tr-out" id="trOut"></div>
   </div>
@@ -107,7 +107,7 @@
 <footer class="s yellow foot">
   <div class="foot-pie pie" data-pie>h₂ówis h₁éḱwōs-kʷe</div>
   <p class="serif foot-en">“The sheep and the horses.” In 1868 August Schleicher wrote a short fable in the language he had reconstructed, the first text ever composed in it. Every reconstruction since has been tested by rewriting it.</p>
-  <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by David Torcivia.</p>
+  <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by <a href="https://davidtorcivia.com">David Torcivia</a>.</p>
   <div class="foot-cols serif">
     <p>The lexicon draws on Wiktionary (CC BY-SA 4.0), LIV² and the Nomina im Indogermanischen Lexikon. Elevation: AWS Terrain Tiles; coasts and rivers: Natural Earth.</p>
     <p>Margins grown with florilegium (Kevin Raymond), initials printed with initialis (azlen), horses after Eadweard Muybridge, <i>The Horse in Motion</i>, 1878. Type by Velvetyne and Google Fonts.</p>

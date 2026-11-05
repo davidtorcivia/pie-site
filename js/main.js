@@ -277,7 +277,7 @@ function results(bench) {
 // ---------------------------------------------------------------------------------------------------- voice
 function voice(h) {
   const audio = $('#audio'), hymn = $('#hymn'), disc = $('#disc'), ipa = $('#ipa'), en = $('#hymnEn');
-  let voiceName = 'female';
+  let voiceName = 'male';
   audio.src = h.audio[voiceName];
   // lines from the timeline
   const lines = [];
@@ -313,7 +313,8 @@ function voice(h) {
     // the current word
     const tt = audio.currentTime;
     let k = -1;
-    for (let i = 0; i < h.words.length; i++) if (tt + .12 >= h.words[i].start) k = i;
+    const T = h.timing ? h.timing[voiceName === 'male' ? 'm' : 'f'] : h.words;
+    for (let i = 0; i < T.length; i++) if (tt + .06 >= T[i].start) k = i;
     if (audio.paused && tt === 0) k = -1;
     if (k !== cur) {
       cur = k;
@@ -339,7 +340,7 @@ function voice(h) {
     audio.src = h.audio[voiceName]; audio.currentTime = t; if (playing) audio.play();
   }));
   // click a word to hear from there
-  spans.forEach((s, i) => s.addEventListener('click', async () => { setupAudio(); await actx.resume(); audio.currentTime = h.words[i].start; audio.play(); }));
+  spans.forEach((s, i) => s.addEventListener('click', async () => { setupAudio(); await actx.resume(); const T = h.timing ? h.timing[voiceName === 'male' ? 'm' : 'f'] : h.words; audio.currentTime = T[i].start; audio.play(); }));
   spans.forEach(s => s.style.cursor = 'pointer');
 }
 
@@ -357,6 +358,8 @@ async function specimens(list) {
       <div class="txt"><p class="p"><span class="ini"></span><span class="pt"></span></p><p class="e">${s.english}</p></div></article>`;
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('grown'); io.unobserve(e.target); } }), { threshold: .35 });
+  leaves.forEach(l => io.observe(l));
   let lib = null;
   lib = true;
   const build = (el, i) => {
@@ -379,6 +382,11 @@ async function specimens(list) {
     ini.style.width = ini.style.height = size + 'px';
   };
   leaves.forEach(build);
+  // each leaf's text fits its page: the type steps down until nothing runs past the foot
+  const fitLeaf = el => { const t = el.querySelector('.txt'), p = el.querySelector('.p'); let fs = parseFloat(getComputedStyle(p).fontSize);
+    p.style.fontSize = ''; fs = parseFloat(getComputedStyle(p).fontSize);
+    for (let n = 0; n < 24 && t.scrollHeight > t.clientHeight + 2; n++) { fs *= .95; p.style.fontSize = fs + 'px'; } };
+  leaves.forEach(fitLeaf); addEventListener('repaint', () => leaves.forEach(fitLeaf));
   const dist = () => track.scrollWidth - innerWidth;
   gsap.to(track, { x: () => -dist(), ease: 'none',
     scrollTrigger: { trigger: '#s-spec', start: 'top top', end: () => '+=' + dist(), pin: '.spec-pin', scrub: true, invalidateOnRefresh: true } });
@@ -429,7 +437,9 @@ function translator() {
     inp.value = EXAMPLES[dir][0]; examples(); run();
   });
   examples();
-  inp.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(run, 450); });
+  inp.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(run, 700); });
+  $('#trGo').onclick = run;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } });
   ScrollTrigger.create({ trigger: '#s-apps', start: 'top 70%', once: true, onEnter: run });
 }
 
@@ -454,9 +464,11 @@ function gardens() {
   if (location.search.includes('nogarden')) return;
   for (const [name, sel] of [['open', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
-    const g = document.createElement('div'); g.className = 'garden'; host.prepend(g);
+    const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
     const im = new Image(); im.decoding = 'async';
-    im.onload = () => { g.style.backgroundImage = `url(${im.src})`; g.style.backgroundSize = `100% ${im.naturalHeight / 1.6}px`; g.classList.add('on'); };
+    im.onload = () => { g.style.backgroundImage = `url(${im.src})`;
+      // grow in when it comes into view: a soft front rising from the roots
+      new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { g.classList.add('on'); o.disconnect(); } }, { threshold: .15 }).observe(host); };
     // load when the section comes near, so the first screen is fast
     new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { im.src = `art/garden-${name}.webp`; o.disconnect(); } }, { rootMargin: '120% 0px' }).observe(host);
   }
@@ -464,15 +476,21 @@ function gardens() {
 
 const T0 = performance.now(), mark = n => { if (location.search.includes('perf')) console.log('PERF', n, Math.round(performance.now() - T0)); };
 async function boot() {
-  if (new URLSearchParams(location.search).get('map') === 'wc') document.documentElement.classList.add('map-wc');
+  document.documentElement.classList.add('arriving');
+  if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');   // watercolour by default; ?map=ink for the plain engraving
   // manuscript sections: the garden margin alternates sides down the page
-  [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ['footer', 'ms-left']].forEach(([s, c]) => $(s)?.classList.add(c));
+  [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ].forEach(([s, c]) => $(s)?.classList.add(c));
   const data = await fetch('data/site.json').then(r => r.json());
   typesetAll();
   tooth();      // for the map plate only
   await document.fonts.ready; mark('fonts');
 
   overture(); mark('overture();');
+  // the header's art first: the initial and the garden, then the page arrives (at most 2.5 s)
+  const ready = src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; });
+  await Promise.race([Promise.all([ready('art/initials/hero.webp'), ready('art/garden-open.webp')]), new Promise(r => setTimeout(r, 2500))]);
+  document.documentElement.classList.remove('arriving');
+  document.documentElement.classList.add('arrived');
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
   await mapPlate($('#s-mig')); mark("await mapPlate($('#s-mig'));");      // first: its pin spacing must exist before later sections measure
   wheel(data.wheels); mark('wheel(data.wheels);');

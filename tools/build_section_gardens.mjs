@@ -18,7 +18,7 @@ export const SECTIONS = {
   machine: { box: '#s-machine', side: 'right', avoid: [], ink: '5A3B18', accent: '1F5A43', seeds: [91, 203] },
   voice: { box: '#s-voice', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [17, 99] },
   apps: { box: '#s-apps', side: 'right', avoid: [], ink: 'D9CFB4', accent: 'FFD21A', seeds: [61, 113] },
-  foot: { box: 'footer', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
+  foot: { box: 'footer', side: 'both', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
 };
 const MM = 420 / 1440;                    // mm per CSS px: one scale for every garden on the page
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SECTIONS);
@@ -45,12 +45,12 @@ for (const name of names) {
   S.seeds.forEach((seed, k) => {
     const out = ROOT + `art/garden-${name}-${k}.svg`;
     const geo = field ? ['--left', `${(W - 4).toFixed(1)}mm`, '--right', '2mm', '--top', '5mm', '--bottom', '4mm', '--density', '.8']
-      : ['--left', `${(W * COL).toFixed(1)}mm`, '--right', '15mm', '--top', '10mm', '--bottom', '8mm', '--density', k ? '.55' : '1'];
+      : ['--left', `${(W * (S.side === 'both' ? .24 : COL)).toFixed(1)}mm`, '--right', '15mm', '--top', '10mm', '--bottom', '8mm', '--density', S.side === 'both' ? '1' : k ? '.55' : '1'];
     for (let tr = 0; tr < 8; tr++) try {
       execFileSync('lua', ['../../tools/steppe-svg.lua', '--seed', String(seed + tr * 1000), '--paper', `${W.toFixed(1)}x${H.toFixed(1)}`, ...geo,
         '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(seed + k) % 3], '--nohead', ...(k ? ['--novisitors'] : []), '-o', out],
         { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', ...(field ? { PIE_OBSTACLES: obstacles } : {}) }, stdio: 'pipe' });
-      layers.push({ side: 'page', mirror: S.side === 'right', c: 0, cw: m.w, ext: m.h, bp: 0, f: out }); break;
+      layers.push({ side: 'page', mirror: S.side === 'right' || (S.side === 'both' && k === 1), c: 0, cw: m.w, ext: m.h, bp: 0, f: out }); break;
     } catch { /* a seed florilegium cannot grow on this page: the next */ }
   });
   const SC = 1.6, CW = Math.round(m.w * SC), CH = Math.round(m.h * SC);
