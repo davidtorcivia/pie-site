@@ -79,7 +79,7 @@ async function overture() {
   };
   requestAnimationFrame(run);
   addEventListener('repaint', () => { cv._fit = null; });
-  gsap.to('.hero-field', { scale: 1.08, ease: 'none', scrollTrigger: { trigger: '#s-open', start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to('.hero-field', { scale: 1.03, ease: 'none', scrollTrigger: { trigger: '#s-open', start: 'top top', end: 'bottom top', scrub: true } });
   if (!reduce) gsap.from('.open-h .line', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: .1, delay: .2 });
 }
 
