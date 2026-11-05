@@ -1,7 +1,9 @@
 import { initType, typeset, typesetAll } from './type.js';
 import { noise2, rng, fit, field, draw, speckle, hatchRect } from './hatch.js';
+import { loadMask, paintSilhouette } from './painter.js';
 import { ramp, cord, wheel as sunWheel } from './illum.js';
 import { mapPlate } from './map.js';
+import { brushGround } from './brush.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -35,40 +37,50 @@ function tooth() {
 }
 
 // ---------------------------------------------------------------------------------------------------- overture
-function overture() {
-  const cv = $('#star');
-  let strokes = [], W = 0, H = 0, ctx;
-  const build = () => {
-    ({ ctx, w: W, h: H } = fit(cv));
-    const cx = W / 2, cy = H / 2, R = Math.min(W, H) * .47, n = noise2(5), arms = 6;
-    // the asterisk: six arms, each a flame of threads streaming outward, the arm waisted at the centre
-    const armOf = (x, y) => {
-      const dx = x - cx, dy = y - cy, r = Math.hypot(dx, dy);
-      if (r > R) return null;
-      const a = Math.atan2(dy, dx), k = Math.round(a / (Math.PI * 2 / arms)), ax = k * Math.PI * 2 / arms;
-      let d = a - ax; d = Math.atan2(Math.sin(d), Math.cos(d));
-      const half = (.13 + .1 * Math.sin(Math.min(1, r / R) * Math.PI)) * (r < R * .12 ? 3 : 1);
-      return Math.abs(d) * Math.max(r, 30) < half * R * .62 ? { ax, r } : null;
-    };
-    strokes = field({ w: W, h: H, spacing: 4.4, len: 46, step: 2, seed: 9,
-      inside: (x, y) => armOf(x, y) !== null,
-      angle: (x, y) => { const o = armOf(x, y); return (o ? o.ax : Math.atan2(y - cy, x - cx)) + n(x * .012, y * .012) * .55; },
-      colors: [C.ink, C.ink, C.ink, C.ink, C.ink, C.ink, C.red], width: [1, 2.3] });
-  };
-  const paint = t => { ctx.clearRect(0, 0, W, H); draw(ctx, strokes, t); };
-  build();
-  const st = { t: reduce ? 1 : 0 };
-  paint(st.t);
-  if (!reduce) gsap.to(st, { t: 1, duration: 3.2, ease: 'power2.out', delay: .2, onUpdate: () => paint(st.t) });
-  addEventListener('repaint', () => { build(); paint(1); });
-  gsap.to(cv, { rotate: 60, ease: 'none', scrollTrigger: { trigger: '#s-open', start: 'top top', end: 'bottom top', scrub: true } });
-
-  // headline lines rise from their masks; the width axis breathes on scroll when the face has one
-  document.querySelectorAll('.open-h .line').forEach(l => { l.innerHTML = `<span>${l.innerHTML}</span>`; });
-  if (!reduce) {
-    gsap.from('.open-h .line > span', { yPercent: 110, duration: 1.1, ease: 'power4.out', stagger: .09, delay: .1 });
-    gsap.from(['.open-p', '.open-pie'], { opacity: 0, y: 20, duration: 1, delay: .8, stagger: .15 });
+// The header is an illuminated page: a steppe garden over the whole field (art/hero.webp), a great initial P from
+// our own kinds (a horse frieze, the herd, sun wheels, tulips), the title on brush-stroke grounds, and a herd of
+// painted horses galloping across the foot.
+async function overture() {
+  document.querySelectorAll('.open-h .line, .open-p').forEach((el, i) => brushGround(el, 11 + i, '#ffd21a'));
+  try {
+    const lib = await import('../vendor/initialis/lib/initialis.js');
+    await lib.use(new URL('kinds/steppe.js', import.meta.url).href);
+    const P = { ...lib.random(4242), text: 'P', paper: '#ffd21a', inkA: '#1d1a16', inkB: '#a8361f', inkC: '#1d1a16',
+      frame: 'rect', fMargin: 6, fRules: 2, fW1: 5, fGap: 96, fW2: 3, fBand: 'horses', fField: 'A', fPattern: 'herd', fPatColor: 'B', fPatScale: 10,
+      fCorner: 'sunwheel', fCornerSize: 70, oFlower: 'tulip', oLeaf: 'willow', lFill: 'paper' };
+    // the P spans the whole title: its top on the first line's top, its foot on the last line's foot
+    const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
+    $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
+    // the paragraph sits under the title, never across it
+    const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(); $('.open-p').style.top = (tb.bottom - sb.top + 26) + 'px'; };
+    place(); addEventListener('repaint', place);
+    $('.hero-cap').innerHTML = `<initialis-cap settings='${JSON.stringify(P)}' size="${size}" grow></initialis-cap>`;
+  } catch (e) { console.info('initialis unavailable', e.message); }
+  // the herd: painted Muybridge frames, a few horses out of step with each other
+  const cv = $('.hero-herd'), pal = { ground: '#1d1a16', mids: ['#1d1a16', '#2a2620', '#3a352c', '#5a5246'], lights: ['#8e2a17', '#a8361f', '#c86a40'], paper: '#ffd21a', accent: '#a8361f' };
+  const frames = [];
+  for (let k = 1; k <= 11; k++) {
+    const m = await loadMask(`art/horse/frame-${String(k).padStart(2, '0')}.png`), ar = m.naturalHeight / m.naturalWidth;
+    const c = document.createElement('canvas'), w = 260, h = w * ar; c.width = w * 2.4; c.height = h * 2.4; const g = c.getContext('2d'); g.scale(2, 2);
+    paintSilhouette(g, m, w * .1, h * .1, w, h, { ...pal, seed: 9, density: 1.3, mane: [.6, .84] }); frames.push(c);
   }
+  const herd = [{ x: .08, ph: 0, s: 1 }, { x: .32, ph: 4, s: .86 }, { x: .55, ph: 7, s: .94 }, { x: .8, ph: 2, s: .8 }];
+  let t0 = 0;
+  const run = t => {
+    const { ctx, w, h } = cv._fit || (cv._fit = fit(cv));
+    ctx.clearRect(0, 0, w, h);
+    const f = Math.floor(t / 90);
+    herd.forEach(o => {
+      const im = frames[(f + o.ph) % 11], hh = h * .92 * o.s, ww = hh * im.width / im.height;
+      const x = ((o.x + t * .00002) % 1.2 - .1) * w;
+      ctx.drawImage(im, x, h - hh, ww, hh);
+    });
+    if (!reduce) requestAnimationFrame(run);
+  };
+  requestAnimationFrame(run);
+  addEventListener('repaint', () => { cv._fit = null; });
+  gsap.to('.hero-field', { scale: 1.08, ease: 'none', scrollTrigger: { trigger: '#s-open', start: 'top top', end: 'bottom top', scrub: true } });
+  if (!reduce) gsap.from('.open-h .line', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: .1, delay: .2 });
 }
 
 // ---------------------------------------------------------------------------------------------------- migration
@@ -438,6 +450,7 @@ async function boot() {
   await document.fonts.ready;
 
   overture();
+  document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
   await mapPlate($('#s-mig'));      // first: its pin spacing must exist before later sections measure
   wheel(data.wheels);
   machine(data.stats);

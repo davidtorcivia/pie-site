@@ -3,6 +3,7 @@
 // engraved in red ochre as the reader scrolls, ending at its first written witness. A painted horse gallops along
 // the route being drawn.
 import { loadMask, paintSilhouette } from './painter.js';
+import { brushStroke, uniqueSeed } from './brush.js';
 
 // routes: lon/lat waypoints from the steppe to the place of each branch's earliest substantial texts
 // routes: lon/lat waypoints along each branch's usual archaeological path (steppe hypothesis, simplified),
@@ -58,6 +59,7 @@ export async function mapPlate(root) {
     const acc = [0]; for (let i = 1; i < Q.length; i++) acc.push(acc[i - 1] + Math.hypot(Q[i][0] - Q[i - 1][0], Q[i][1] - Q[i - 1][1]));
     const total = acc[acc.length - 1];
     return t => {
+      if (t < 0) { const a = Math.atan2(Q[3][1] - Q[0][1], Q[3][0] - Q[0][0]), back = -t * total; return [Q[0][0] - Math.cos(a) * back, Q[0][1] - Math.sin(a) * back, a]; }
       const s = Math.min(total, Math.max(0, t * total)); let i = 1; while (i < acc.length - 1 && acc[i] < s) i++;
       const u = (s - acc[i - 1]) / ((acc[i] - acc[i - 1]) || 1), x = Q[i - 1][0] + (Q[i][0] - Q[i - 1][0]) * u, y = Q[i - 1][1] + (Q[i][1] - Q[i - 1][1]) * u;
       const j = Math.min(Q.length - 1, i + 2), h = Math.max(0, i - 3);
@@ -69,12 +71,15 @@ export async function mapPlate(root) {
   const W0 = 44, W1 = 9, HEAD = 62;
   const arrow = (f, k) => {
     if (k <= 0.002) return '';
-    const N = 120, L = [], R = [];
+    // one continuous outline: it begins a little behind the route (the brush touching down), its width rising on a
+    // round profile to full, swelling slightly where the paint is loaded, then narrowing to the head
+    const CAP = .02, N = 140, L = [], R = [];
+    const wOf = t => t < 0 ? W0 / 2 * 1.1 * Math.sqrt(Math.max(0, 1 - (t / CAP) ** 2)) : (W0 * (1 + .1 * Math.exp(-t * 40)) + (W1 - W0) * Math.pow(t, .8)) / 2;
     for (let i = 0; i <= N; i++) {
-      const t = i / N * k, [x, y, a] = f(t), w = (W0 + (W1 - W0) * Math.pow(t, .8)) / 2;   // full width at the base: it leaves the core whole
+      const t = -CAP + (k + CAP) * i / N, [x, y, a] = f(t), w = wOf(t);
       L.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); R.push([x + Math.sin(a) * w, y - Math.cos(a) * w]);
     }
-    const [tx, ty, ta] = f(k), hw = Math.max(W1 * 1.9, (W0 + (W1 - W0) * Math.pow(k, .8)) * 1.15);
+    const [tx, ty, ta] = f(k), hw = Math.max(W1 * 1.9, wOf(k) * 2.3);
     const hx = tx + Math.cos(ta) * HEAD * .9, hy = ty + Math.sin(ta) * HEAD * .9;
     const pt = ([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`;
     return `M${L.map(pt).join('L')}L${pt([tx - Math.sin(ta) * hw, ty + Math.cos(ta) * hw])}L${pt([hx, hy])}L${pt([tx + Math.sin(ta) * hw, ty - Math.cos(ta) * hw])}L${R.reverse().map(pt).join('L')}Z`;
@@ -90,9 +95,33 @@ export async function mapPlate(root) {
     <g class="routes">${ROUTES.map((r, i) => `<path class="arw" data-i="${i}" d=""/>`).join('')}</g>
 
     <g class="ends">${ROUTES.map((r, i) => { const [x, y] = xy(...r.pts[r.pts.length - 1]); return `<g class="end" data-i="${i}"><circle cx="${x}" cy="${y}" r="9"/>
-      <rect class="lab" x="${x + 14}" y="${y + 12}" width="${Math.max(r.b.length * 40, (r.w.length + r.at.length + 12) * 13.5) + 24}" height="88"/><text class="br" x="${x + 26}" y="${y + 52}" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="${x + 26}" y="${y + 84}" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g>`; }).join('')}</g>
+      <g class="tag"><image class="lab" preserveAspectRatio="none" href="${brushStroke('#ffd21a', uniqueSeed())}"/><text class="br" x="0" y="0" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="0" y="32" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g></g>`; }).join('')}</g>
     <image class="horse" width="190" height="110" href=""/>`;
   const arrows = [...svg.querySelectorAll('.arw')], ends = [...svg.querySelectorAll('.end')];
+  // place every label so none overlaps another, or the lettering, or the plate's edge
+  {
+    const placed = [], hit = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    const letters = [...svg.querySelectorAll('.letters text')].map(el => ({ el, b: el.getBBox() }));
+    ends.forEach((g, i) => {
+      const [x, y] = xy(...ROUTES[i].pts[ROUTES[i].pts.length - 1]), tag = g.querySelector('.tag'), txt = [...tag.querySelectorAll('text')];
+      const bw = Math.max(...txt.map(e => e.getComputedTextLength())) + 44, bh = 96;
+      const C = [[22, 18], [22, -bh - 14], [-bw - 22, 18], [-bw - 22, -bh - 14], [-bw / 2, 26], [-bw / 2, -bh - 26], [22, 60], [-bw - 22, 60], [22, -bh - 60], [-bw - 22, -bh - 60]];
+      let best = null;
+      for (const [dx, dy] of C) {
+        const b = { x: x + dx, y: y + dy, w: bw, h: bh };
+        if (b.x < 0 || b.y < 0 || b.x + bw > P.w || b.y + bh > P.h) continue;
+        if (placed.some(p => hit(p, b))) continue;
+        best = b; if (!letters.some(l => hit(l.b, b))) break;
+      }
+      best ||= { x: x + 22, y: y + 18, w: bw, h: bh };
+      placed.push(best);
+      tag.setAttribute('transform', `translate(${best.x},${best.y})`);
+      txt[0].setAttribute('x', 22); txt[0].setAttribute('y', 50); txt[1].setAttribute('x', 22); txt[1].setAttribute('y', 82);
+      const im = tag.querySelector('image'); im.setAttribute('width', bw); im.setAttribute('height', bh);
+    });
+    // lettering that would sit under a label gives way
+    letters.forEach(l => { if (placed.some(p => hit(p, l.b))) l.el.style.display = 'none'; });
+  }
   // the arrows, hand-painted once: a wash, then tapered strokes laid along each route, broken on the tooth
   const painted = document.createElement('canvas'); painted.width = paintCv.width; painted.height = paintCv.height;
   {
@@ -103,13 +132,18 @@ export async function mapPlate(root) {
     const hair = (pts, w) => { for (let i = 1; i < pts.length; i++) { const q = i / pts.length; if (tooth(pts[i][0], pts[i][1]) > .72) continue; g.lineWidth = w * Math.sin(Math.PI * Math.min(1, q * 1.1)) + .4; g.beginPath(); g.moveTo(...pts[i - 1]); g.lineTo(...pts[i]); g.stroke(); } };
     ROUTES.forEach((r, i) => {
       const f = curves[i], full = new Path2D(arrow(f, 1));
-      g.save(); g.globalAlpha = .9; g.fillStyle = '#7a2414'; g.fill(full); g.restore();     // the wash
+      g.save(); g.globalAlpha = 1; g.fillStyle = '#7a2414'; g.fill(full); g.restore();     // the wash: under the strokes, so no gap shows paper
       const wOf = t => (W0 + (W1 - W0) * Math.pow(t, .8)) / 2;
       for (let n = 0; n < 900; n++) {                                                   // strokes along the route
-        const t0 = rnd(), off = (rnd() * 2 - 1) * 1.08, len = .03 + rnd() * .07, pts = [];
+        const t0 = rnd() * 1.02 - .02, off = (rnd() * 2 - 1) * 1.08, len = .03 + rnd() * .07, pts = [];
         for (let k = 0; k <= 10; k++) { const t = Math.min(1, t0 + len * k / 10), [x, y, a] = f(t), w = wOf(t) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
         const lt = rnd() < .22; g.strokeStyle = (lt ? light : ramp)[Math.floor(rnd() * (lt ? light : ramp).length)]; g.globalAlpha = .55 + rnd() * .45;
         hair(pts, (lt ? 1.6 : 2.6) * (.6 + rnd()));
+      }
+      for (let n = 0; n < 260; n++) {                                                   // the touch-down: bristles leaving a loaded brush
+        const off = (rnd() * 2 - 1) * 1.1, t0 = -.02 + rnd() * .014, len = .05 + rnd() * .1, pts = [];
+        for (let k = 0; k <= 10; k++) { const t = t0 + len * k / 10, [x, y, a] = f(t), w = Math.max(wOf(Math.max(0, t)), W0 / 2) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
+        g.strokeStyle = ramp[Math.floor(rnd() * 3)]; g.globalAlpha = .8; hair(pts, 3.2 * (.6 + rnd()));
       }
       const [tx, ty, ta] = f(1), hw = Math.max(W1 * 1.9, (W0 + (W1 - W0)) * 1.15), hx = tx + Math.cos(ta) * HEAD * .9, hy = ty + Math.sin(ta) * HEAD * .9;
       for (let n = 0; n < 120; n++) {                                                  // the head: strokes running into the point

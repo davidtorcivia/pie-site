@@ -47,17 +47,22 @@ button { font: inherit; color: inherit; }
 .h2 em { font-weight: 400; font-size: 1.05em; }
 
 
-/* 0 · overture */
-#s-open { min-height: 100svh; display: grid; grid-template-columns: 1fr minmax(0, .9fr); align-items: end; gap: var(--gut); padding-top: 90px; overflow: hidden; }
-.star { position: absolute; right: -16vw; top: 22vh; width: min(64vw, 860px); height: min(64vw, 860px); pointer-events: none; }
-.open-h { z-index: 2; }
-.open-h { grid-column: 1 / -1; position: relative; margin: 0; font-family: var(--f-display); font-weight: var(--w-display);
-  font-variation-settings: var(--v-display); font-style: var(--s-display); font-size: clamp(56px, 15vw, 300px); line-height: .82; letter-spacing: -.04em; }
-.open-h .line { display: block; overflow: hidden; }
-.open-h .line > span { display: inline-block; }
-.open-p { grid-column: 2; z-index: 2; max-width: 40ch !important; font-size: clamp(19px, 1.7vw, 27px) !important; line-height: 1.3 !important; position: relative; background: var(--yellow); padding: .5em .6em .6em 0; box-shadow: -.6em 0 0 var(--yellow); font-size: clamp(20px, 1.9vw, 30px); line-height: 1.15; margin: 0; max-width: 30ch; }
-.open-pie { grid-column: 1; grid-row: 2; position: relative; font-size: clamp(22px, 2.6vw, 44px); }
-.vert { position: absolute; left: 6px; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: left top; font-size: 11px; white-space: nowrap; }
+/* 0 · overture: an illuminated page */
+#s-open { min-height: 100svh; position: relative; overflow: hidden; padding: 0; display: block; }
+.hero-field { position: absolute; inset: -2%; background: var(--yellow) url(../art/hero.webp) center / cover no-repeat; transform-origin: 50% 60%; }
+.hero-title { position: absolute; left: var(--gut); top: clamp(40px, 7vh, 90px); display: flex; align-items: stretch; gap: .8vw; z-index: 2; }
+.hero-cap { flex: none; aspect-ratio: 1; }
+.hero-cap initialis-cap, .hero-cap canvas { display: block; width: 100%; height: 100%; }
+.open-h { margin: 0; font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display); font-size: clamp(46px, 8.6vw, 170px); line-height: .86; letter-spacing: -.035em; }
+.open-h .line { display: block; width: fit-content; padding: .02em .32em .08em .22em; margin-bottom: 0; background-size: 100% 100%; background-repeat: no-repeat; }
+.open-h .line:first-child { padding-left: .1em; }
+.open-p { position: absolute; left: calc(var(--gut) + 1vw); z-index: 2; max-width: 58ch; margin: 0; padding: 1.2em 1.7em 1.3em 1.5em;
+  font-size: clamp(16px, 1.3vw, 21px); line-height: 1.3; background-size: 100% 100%; background-repeat: no-repeat; }
+.hero-herd { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: clamp(110px, 17vh, 190px); z-index: 1; pointer-events: none; }
+@media (max-width: 820px) {
+  .hero-title { flex-direction: column; } .hero-cap { width: 42vw; }
+  .open-p { left: var(--gut); right: var(--gut); bottom: 120px; }
+}
 
 /* 1 · migration: an engraved plate */
 #s-mig { padding: 0; }
@@ -162,7 +167,7 @@ button { font: inherit; color: inherit; }
 .leaf .ini initialis-cap { display: block; width: 100%; height: 100%; }
 .leaf .p { font-family: var(--f-book); font-weight: var(--w-book); font-variation-settings: var(--v-book); font-size: clamp(17px, 2.9svh, 28px); line-height: 1.28;
   margin: 0; text-align: left; text-wrap: pretty; color: var(--lf-ink); }
-.leaf .e { font-family: var(--f-serif); font-style: italic; font-size: clamp(13px, 1.75svh, 18px); line-height: 1.3; margin: auto 0 0; padding-top: 1em;
+.leaf .e { font-family: var(--f-serif); font-style: italic; font-size: clamp(13px, 1.75svh, 18px); line-height: 1.3; margin: .8em 0 0;
   border: 0; color: color-mix(in srgb, var(--lf-ink) 85%, #000); }
 .leaf .fo { font-family: var(--f-data); }
 
@@ -223,10 +228,9 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 40; pointer-event
 .leaf .pe { display: block; font-family: var(--f-serif); font-style: italic; font-size: .62em; line-height: 1.25; color: color-mix(in srgb, var(--lf-ink) 80%, #000); margin: .15em 0 .55em; }
 
 /* labels over imagery sit on solid yellow */
-.plate .lab { fill: var(--yellow); }
-.mig-p { background: var(--yellow) !important; }
-.wheel-copy .h2, .mig-year { background: var(--yellow); box-decoration-break: clone; -webkit-box-decoration-break: clone; padding: .04em .14em; display: inline; line-height: 1.02; }
-.mig-year { display: inline-block; mix-blend-mode: normal; }
+.mig-p { background-color: transparent !important; padding: 1.1em 1.6em 1.2em 1.4em !important; }
+.mig-year { left: auto !important; right: var(--gut); padding: .12em .5em .16em .4em; mix-blend-mode: normal; }
+.brushed { padding: .1em .45em .14em .35em; }
 
 /* no rules or outlines anywhere */
 .tier, .tier:last-child, .apps, .app, .leaf .rh, .leaf .e, .voices, .tr textarea { border: 0 !important; }
