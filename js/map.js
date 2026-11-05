@@ -5,17 +5,19 @@
 import { loadMask, paintSilhouette } from './painter.js';
 
 // routes: lon/lat waypoints from the steppe to the place of each branch's earliest substantial texts
+// routes: lon/lat waypoints along each branch's usual archaeological path (steppe hypothesis, simplified),
+// from the steppe to the place of its earliest substantial texts
 export const ROUTES = [
-  { b: 'Anatolian', w: 'Hittite tablets', at: 'Hattusa', y: -1650, pts: [[40, 48], [32, 47.2], [28, 44.5], [28.6, 41.4], [31.5, 40.4], [34.6, 40.0]] },
-  { b: 'Indo-Iranian', w: 'the Rigveda', at: 'Punjab', y: -1400, pts: [[40, 48], [50, 51], [59.5, 52.6], [66, 47.5], [64, 40.5], [66.5, 35.5], [71.5, 32.5], [75.5, 30.8]] },
-  { b: 'Greek', w: 'Linear B', at: 'Mycenae', y: -1400, pts: [[40, 48], [32, 47.2], [28, 45], [25.5, 42.5], [22.9, 40.4], [22.75, 37.73]] },
-  { b: 'Italic', w: 'Latin inscriptions', at: 'Rome', y: -600, pts: [[40, 48], [30, 47.2], [22, 46.6], [15.5, 46.0], [12.2, 44.2], [12.5, 41.9]] },
-  { b: 'Celtic', w: 'Lepontic inscriptions', at: 'Lake Como', y: -550, pts: [[40, 48], [30, 48.4], [21, 48.5], [14, 47.9], [10.5, 47], [9.1, 46.0]] },
-  { b: 'Germanic', w: 'the first runes', at: 'Vimose', y: 200, pts: [[40, 48], [31, 51.2], [22, 52.6], [15, 54], [10.2, 55.3]] },
-  { b: 'Armenian', w: 'the Armenian Bible', at: 'Vagharshapat', y: 410, pts: [[40, 48], [43, 45.6], [44.6, 42.9], [44.3, 40.16]] },
-  { b: 'Tocharian', w: 'Tarim Basin manuscripts', at: 'Kucha', y: 600, pts: [[40, 48], [52, 51], [66, 51.8], [80, 51.6], [86.5, 49.8], [86.5, 45.5], [83.2, 41.7]] },
-  { b: 'Balto-Slavic', w: 'Old Church Slavonic', at: 'Great Moravia', y: 870, pts: [[40, 48], [34, 51.5], [28, 53.6], [23.5, 54.4], [19.5, 51.2], [17.4, 49.1]] },
-  { b: 'Albanian', w: 'a baptismal formula', at: 'Mat', y: 1462, pts: [[40, 48], [30, 47.2], [24.5, 44.6], [21, 42.6], [19.9, 41.6]] },
+  { b: 'Anatolian', w: 'Hittite tablets', at: 'Hattusa', y: -1650, pts: [[37, 47.4], [33, 46.8], [28.6, 45.2], [26.6, 42.8], [28.9, 41.1], [31.8, 40.3], [34.6, 40.0]] },
+  { b: 'Indo-Iranian', w: 'the Rigveda', at: 'Punjab', y: -1400, pts: [[44.5, 49.2], [46, 50.6], [53, 52.4], [59.5, 52.6], [65.5, 50.6], [68.5, 46.5], [66.8, 41.5], [66, 37.6], [69.5, 35.2], [72.3, 34.1], [75.5, 30.8]] },
+  { b: 'Greek', w: 'Linear B', at: 'Mycenae', y: -1400, pts: [[36.6, 47.2], [33, 46.8], [29.2, 45.3], [26.2, 43.4], [23.6, 41.4], [22.4, 39.6], [22.75, 37.73]] },
+  { b: 'Italic', w: 'Latin inscriptions', at: 'Rome', y: -600, pts: [[36.4, 47.6], [32, 47.6], [26, 46.6], [20.6, 47.1], [16.6, 46.4], [13.6, 45.9], [11.4, 44.7], [11.9, 43.2], [12.5, 41.9]] },
+  { b: 'Celtic', w: 'Lepontic inscriptions', at: 'Lake Como', y: -550, pts: [[36.6, 48.1], [32, 47.9], [25.5, 47.6], [20.2, 47.8], [16.4, 48.2], [13.6, 47.8], [10.4, 47.9], [8.6, 47.4], [9.1, 46.0]] },
+  { b: 'Germanic', w: 'the first runes', at: 'Vimose', y: 200, pts: [[37.4, 48.6], [33, 49.4], [26.5, 49.6], [21.5, 51.1], [17.5, 52.4], [13.8, 53.5], [10.8, 54.8], [10.2, 55.3]] },
+  { b: 'Armenian', w: 'the Armenian Bible', at: 'Vagharshapat', y: 410, pts: [[40.6, 47.2], [40.4, 45.8], [42.4, 44.3], [44.6, 42.7], [44.6, 41.4], [44.3, 40.16]] },
+  { b: 'Tocharian', w: 'Tarim Basin manuscripts', at: 'Kucha', y: 600, pts: [[45, 49.8], [47, 50.6], [54.5, 51.7], [63.5, 52.6], [72.5, 52.7], [80.5, 52.1], [85.6, 50.6], [86.2, 47.4], [85.2, 44.8], [83.2, 41.7]] },
+  { b: 'Balto-Slavic', w: 'Old Church Slavonic', at: 'Great Moravia', y: 870, pts: [[38, 48.9], [34.5, 49.6], [30.5, 50.8], [26.5, 51.6], [22.5, 51.2], [19.6, 50.2], [17.4, 49.1]] },
+  { b: 'Albanian', w: 'a baptismal formula', at: 'Mat', y: 1462, pts: [[36.8, 46.9], [33, 46.8], [28.9, 45.2], [24.6, 44.2], [21.6, 43.4], [20.4, 42.4], [19.9, 41.6]] },
 ];
 // lettering: regions in spaced roman capitals, waters in italic
 const REGIONS = [
@@ -31,29 +33,99 @@ export async function mapPlate(root) {
   const P = await fetch('map/projection.json').then(r => r.json());
   const xy = (lon, lat) => [(lon - P.lon0) * P.k * P.px, (P.lat1 - lat) * P.px];
   const stage = root.querySelector('.plate'), svg = root.querySelector('.plate svg');
+  const paintCv = document.createElement('canvas'), SC = .75;
+  paintCv.className = 'paint'; paintCv.width = Math.round(P.w * SC); paintCv.height = Math.round(P.h * SC);
+  svg.before(paintCv);
   svg.setAttribute('viewBox', `0 0 ${P.w} ${P.h}`);
   stage.style.setProperty('--pw', P.w); stage.style.setProperty('--ph', P.h);
-  // Catmull–Rom through the waypoints
-  const smooth = pts => {
-    const p = pts.map(([a, b]) => xy(a, b)); let d = `M${p[0][0]},${p[0][1]}`;
-    for (let i = 0; i < p.length - 1; i++) {
-      const p0 = p[Math.max(0, i - 1)], p1 = p[i], p2 = p[i + 1], p3 = p[Math.min(p.length - 1, i + 2)];
-      d += `C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+  // a route: a centripetal Catmull–Rom through the waypoints, corner-cut twice (Chaikin) for grace,
+  // resampled by arc length; f(t) gives the point and heading at fraction t of its length
+  const route = r => {
+    const P = r.pts.map(([a, b]) => xy(a, b)), out = [];
+    for (let i = 0; i < P.length - 1; i++) {
+      const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+      const tj = (a, b) => Math.pow(Math.hypot(b[0] - a[0], b[1] - a[1]), .5) || 1e-3;
+      const t0 = 0, t1 = t0 + tj(p0, p1), t2 = t1 + tj(p1, p2), t3 = t2 + tj(p2, p3);
+      for (let k = 0; k < 16; k++) {
+        const t = t1 + (t2 - t1) * k / 16, L = (a, b, ta, tb) => [0, 1].map(d => ((tb - t) * a[d] + (t - ta) * b[d]) / (tb - ta));
+        const A1 = L(p0, p1, t0, t1), A2 = L(p1, p2, t1, t2), A3 = L(p2, p3, t2, t3), B1 = L(A1, A2, t0, t2), B2 = L(A2, A3, t1, t3);
+        out.push(L(B1, B2, t1, t2));
+      }
     }
-    return d;
+    out.push(P[P.length - 1]);
+    let Q = out;
+    for (let pass = 0; pass < 2; pass++) { const R = [Q[0]]; for (let i = 0; i < Q.length - 1; i++) { const [a, b] = [Q[i], Q[i + 1]]; R.push([a[0] * .75 + b[0] * .25, a[1] * .75 + b[1] * .25], [a[0] * .25 + b[0] * .75, a[1] * .25 + b[1] * .75]); } R.push(Q[Q.length - 1]); Q = R; }
+    const acc = [0]; for (let i = 1; i < Q.length; i++) acc.push(acc[i - 1] + Math.hypot(Q[i][0] - Q[i - 1][0], Q[i][1] - Q[i - 1][1]));
+    const total = acc[acc.length - 1];
+    return t => {
+      const s = Math.min(total, Math.max(0, t * total)); let i = 1; while (i < acc.length - 1 && acc[i] < s) i++;
+      const u = (s - acc[i - 1]) / ((acc[i] - acc[i - 1]) || 1), x = Q[i - 1][0] + (Q[i][0] - Q[i - 1][0]) * u, y = Q[i - 1][1] + (Q[i][1] - Q[i - 1][1]) * u;
+      const j = Math.min(Q.length - 1, i + 2), h = Math.max(0, i - 3);
+      return [x, y, Math.atan2(Q[j][1] - Q[h][1], Q[j][0] - Q[h][0])];
+    };
+  };
+  const curves = ROUTES.map(route);
+  // the arrow drawn to t = k: broad at the steppe, narrowing as it goes, with a head at its tip
+  const W0 = 44, W1 = 9, HEAD = 62;
+  const arrow = (f, k) => {
+    if (k <= 0.002) return '';
+    const N = 120, L = [], R = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N * k, [x, y, a] = f(t), w = (W0 + (W1 - W0) * Math.pow(t, .8)) / 2;   // full width at the base: it leaves the core whole
+      L.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); R.push([x + Math.sin(a) * w, y - Math.cos(a) * w]);
+    }
+    const [tx, ty, ta] = f(k), hw = Math.max(W1 * 1.9, (W0 + (W1 - W0) * Math.pow(k, .8)) * 1.15);
+    const hx = tx + Math.cos(ta) * HEAD * .9, hy = ty + Math.sin(ta) * HEAD * .9;
+    const pt = ([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`;
+    return `M${L.map(pt).join('L')}L${pt([tx - Math.sin(ta) * hw, ty + Math.cos(ta) * hw])}L${pt([hx, hy])}L${pt([tx + Math.sin(ta) * hw, ty - Math.cos(ta) * hw])}L${R.reverse().map(pt).join('L')}Z`;
   };
   const [hx, hy] = xy(40, 48);
+  // the core the branches leave from: a solid, slightly irregular mass on the steppe
+  const core = (cx, cy) => { let d = ''; for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, r = 1 + .07 * Math.sin(a * 3 + 1) + .04 * Math.sin(a * 7);
+    d += `${i ? 'L' : 'M'}${(cx + Math.cos(a) * 118 * r).toFixed(1)},${(cy + Math.sin(a) * 62 * r).toFixed(1)}`; } return d + 'Z'; };
   svg.innerHTML = `
     <g class="letters">${REGIONS.map(([t, lo, la, s]) => { const [x, y] = xy(lo, la); return `<text class="rg" x="${x}" y="${y}" font-size="${s}" text-anchor="middle">${t}</text>`; }).join('')}
       ${WATERS.map(([t, lo, la, s]) => { const [x, y] = xy(lo, la); return `<text class="wt" x="${x}" y="${y}" font-size="${s}" text-anchor="middle">${t}</text>`; }).join('')}</g>
-    <g class="home"><ellipse cx="${hx}" cy="${hy}" rx="150" ry="70" /><ellipse cx="${hx}" cy="${hy}" rx="128" ry="56" class="in"/></g>
-    <g class="routes">${ROUTES.map((r, i) => `<path id="rt${i}" class="rt" d="${smooth(r.pts)}"/><path class="rt2" d="${smooth(r.pts)}"/>`).join('')}</g>
-    <g class="ends">${ROUTES.map((r, i) => { const [x, y] = xy(...r.pts[r.pts.length - 1]); return `<g class="end" data-i="${i}"><circle cx="${x}" cy="${y}" r="13"/><circle cx="${x}" cy="${y}" r="5" class="dot"/>
-      <text class="br" x="${x + 22}" y="${y - 10}" font-size="34">${r.b.toUpperCase()}</text><text class="wit" x="${x + 22}" y="${y + 26}" font-size="22">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g>`; }).join('')}</g>
+    <defs><pattern id="engr" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><rect width="7" height="7" fill="#9c2f19"/><line x1="0" y1="0" x2="0" y2="7" stroke="#6e1d0f" stroke-width="2.4"/></pattern></defs>
+    <g class="routes">${ROUTES.map((r, i) => `<path class="arw" data-i="${i}" d=""/>`).join('')}</g>
+
+    <g class="ends">${ROUTES.map((r, i) => { const [x, y] = xy(...r.pts[r.pts.length - 1]); return `<g class="end" data-i="${i}"><circle cx="${x}" cy="${y}" r="9"/>
+      <rect class="lab" x="${x + 14}" y="${y + 12}" width="${Math.max(r.b.length * 40, (r.w.length + r.at.length + 12) * 13.5) + 24}" height="88"/><text class="br" x="${x + 26}" y="${y + 52}" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="${x + 26}" y="${y + 84}" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g>`; }).join('')}</g>
     <image class="horse" width="190" height="110" href=""/>`;
-  const paths = [...svg.querySelectorAll('.rt')], under = [...svg.querySelectorAll('.rt2')], ends = [...svg.querySelectorAll('.end')];
-  const lens = paths.map(p => p.getTotalLength());
-  paths.forEach((p, i) => { p.style.strokeDasharray = `${lens[i]}`; p.style.strokeDashoffset = `${lens[i]}`; under[i].style.strokeDasharray = `2 9`; under[i].style.opacity = 0; });
+  const arrows = [...svg.querySelectorAll('.arw')], ends = [...svg.querySelectorAll('.end')];
+  // the arrows, hand-painted once: a wash, then tapered strokes laid along each route, broken on the tooth
+  const painted = document.createElement('canvas'); painted.width = paintCv.width; painted.height = paintCv.height;
+  {
+    const g = painted.getContext('2d'); g.scale(SC, SC); g.lineCap = 'round';
+    const rnd = (() => { let s = 99; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; })();
+    const ramp = ['#5e1a0e', '#7a2414', '#8e2a17', '#9c2f19', '#a8361f', '#b8462a'], light = ['#c86a40', '#d9824e', '#e39a64'];
+    const tooth = (x, y) => (Math.sin(x * .9 + Math.sin(y * .37) * 3) + Math.sin(y * 1.13 + Math.sin(x * .23) * 2)) * .5;
+    const hair = (pts, w) => { for (let i = 1; i < pts.length; i++) { const q = i / pts.length; if (tooth(pts[i][0], pts[i][1]) > .72) continue; g.lineWidth = w * Math.sin(Math.PI * Math.min(1, q * 1.1)) + .4; g.beginPath(); g.moveTo(...pts[i - 1]); g.lineTo(...pts[i]); g.stroke(); } };
+    ROUTES.forEach((r, i) => {
+      const f = curves[i], full = new Path2D(arrow(f, 1));
+      g.save(); g.globalAlpha = .9; g.fillStyle = '#7a2414'; g.fill(full); g.restore();     // the wash
+      const wOf = t => (W0 + (W1 - W0) * Math.pow(t, .8)) / 2;
+      for (let n = 0; n < 900; n++) {                                                   // strokes along the route
+        const t0 = rnd(), off = (rnd() * 2 - 1) * 1.08, len = .03 + rnd() * .07, pts = [];
+        for (let k = 0; k <= 10; k++) { const t = Math.min(1, t0 + len * k / 10), [x, y, a] = f(t), w = wOf(t) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
+        const lt = rnd() < .22; g.strokeStyle = (lt ? light : ramp)[Math.floor(rnd() * (lt ? light : ramp).length)]; g.globalAlpha = .55 + rnd() * .45;
+        hair(pts, (lt ? 1.6 : 2.6) * (.6 + rnd()));
+      }
+      const [tx, ty, ta] = f(1), hw = Math.max(W1 * 1.9, (W0 + (W1 - W0)) * 1.15), hx = tx + Math.cos(ta) * HEAD * .9, hy = ty + Math.sin(ta) * HEAD * .9;
+      for (let n = 0; n < 120; n++) {                                                  // the head: strokes running into the point
+        const s = rnd() * 2 - 1, bx = tx - Math.sin(ta) * hw * s, by = ty + Math.cos(ta) * hw * s, pts = [];
+        for (let k = 0; k <= 8; k++) { const q = k / 8; pts.push([bx + (hx - bx) * q * (.85 + rnd() * .15), by + (hy - by) * q * (.85 + rnd() * .15)]); }
+        g.strokeStyle = ramp[Math.floor(rnd() * ramp.length)]; g.globalAlpha = .7; hair(pts, 2.4);
+      }
+    });
+  }
+  const pc = paintCv.getContext('2d');
+  const paintArrows = ks => {
+    pc.setTransform(1, 0, 0, 1, 0, 0); pc.clearRect(0, 0, paintCv.width, paintCv.height); pc.setTransform(SC, 0, 0, SC, 0, 0);
+    const clip = new Path2D();
+    ks.forEach((k, i) => { if (k > .002) clip.addPath(new Path2D(arrow(curves[i], k))); });
+    pc.save(); pc.clip(clip); pc.setTransform(1, 0, 0, 1, 0, 0); pc.drawImage(painted, 0, 0); pc.restore();
+  };
   // the painted gallop: 11 Muybridge frames, painted once
   const horseImg = svg.querySelector('.horse'), frames = [];
   (async () => {
@@ -81,23 +153,23 @@ export async function mapPlate(root) {
     cam.s = 2.6 - 1.6 * Math.min(1, p / .7); cam.x = hx + (P.w * .52 - hx) * Math.min(1, p / .7); cam.y = hy + (P.h * .5 - hy) * Math.min(1, p / .7);
     place();
     let active = -1;
+    const ks = [];
     ROUTES.forEach((r, i) => {
       const k = Math.min(1, Math.max(0, (p - .08 - i * span) / (span * 1.6)));
-      paths[i].style.strokeDashoffset = `${lens[i] * (1 - k)}`;
-      under[i].style.opacity = k > 0 ? .55 : 0;
+      ks[i] = k;
       ends[i].style.opacity = Math.min(1, Math.max(0, (k - .85) / .15));
       if (k > 0 && k < 1) active = i;
     });
+    paintArrows(ks);
     const k0 = p < .08 ? -1 : Math.min(n - 1, Math.floor((p - .08) / span));
     yearEl.textContent = p < .08 ? 'c. 4000 BCE' : fmtYear(ROUTES[Math.max(0, k0)].y);
     root.querySelectorAll('.mig-p').forEach(el => { const on = +el.dataset.step === Math.min(3, Math.floor(p * 4.2)); el.classList.toggle('on', on); });
     // the horse rides the route being drawn
     if (active >= 0 && frames.length === 11) {
-      const i = active, k = Math.min(1, Math.max(0, (p - .08 - i * span) / (span * 1.6))), L = lens[i] * k;
-      const a = paths[i].getPointAtLength(Math.max(0, L - 1)), b = paths[i].getPointAtLength(L);
-      const flip = b.x < a.x;
-      horseImg.setAttribute('x', b.x - 95); horseImg.setAttribute('y', b.y - 100);
-      horseImg.setAttribute('transform', flip ? `translate(${2 * b.x},0) scale(-1,1)` : '');
+      const i = active, k = Math.min(1, Math.max(0, (p - .08 - i * span) / (span * 1.6)));
+      const [bx, by, ba] = curves[i](k), flip = Math.cos(ba) < 0;
+      horseImg.setAttribute('x', bx - 95); horseImg.setAttribute('y', by - 118);
+      horseImg.setAttribute('transform', flip ? `translate(${2 * bx},0) scale(-1,1)` : '');
       horseImg.style.opacity = 1;
     } else horseImg.style.opacity = 0;
   };

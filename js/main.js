@@ -21,14 +21,17 @@ if (!reduce && window.Lenis) {
 }
 
 
-// ---------------------------------------------------------------------------------------------------- ticker
-function ticker() {
-  const items = [['h₂ówis h₁éḱwōs-kʷe', 'the sheep and the horses'], ['ḱléwos ń̥dʰgʷʰitom', 'imperishable fame'],
-    ['dyḗws ph₂tḗr', 'father sky'], ['h₂éwsōs', 'dawn'], ['wĺ̥kʷos', 'wolf'], ['h₁éḱwos', 'horse'], ['méh₂tēr', 'mother'],
-    ['dʰéǵʰōm', 'earth'], ['ḱwṓ', 'dog'], ['h₂stḗr', 'star'], ['nókʷts', 'night'], ['wódr̥', 'water'], ['péh₂wr̥', 'fire']];
-  const one = items.map(([p, e]) => `<span class="pie">*${typeset(p, { words: false })}</span><span class="serif">${e}</span>`).join('');
-  $('#ticker').innerHTML = one + one;
-  ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => $('.ticker').classList.toggle('away', s.direction > 0 && s.scroll() > 200) });
+// ---------------------------------------------------------------------------------------------------- paper tooth
+// one fine texture over the whole page (body::after): noise and a faint weave, multiplied
+function tooth() {
+  const c = document.createElement('canvas'); c.width = c.height = 384; const g = c.getContext('2d'), im = g.createImageData(384, 384), r = rng(11), n = noise2(12);
+  for (let y = 0; y < 384; y++) for (let x = 0; x < 384; x++) {
+    const i = (y * 384 + x) * 4, weave = (x % 4 === 0 ? 7 : 0) + (y % 4 === 1 ? 5 : 0), mott = n(x / 60, y / 60) * 9;
+    const v = 255 - r() * 20 - weave - Math.max(0, mott);
+    im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255;
+  }
+  g.putImageData(im, 0, 0);
+  document.documentElement.style.setProperty('--tooth', `url(${c.toDataURL()})`);
 }
 
 // ---------------------------------------------------------------------------------------------------- overture
@@ -202,15 +205,15 @@ function svgPie(text) {
 function wheel(words) {
   const svg = $('#wheel');
   const R0 = 150, R1 = 470;
-  // the rim: Russell's chalk ring of short radial strokes, and the concentric rings
-  const r = rng(3);
+  // the rim: an engraved scale, graduated like Russell's charts (every degree, longer every five and fifteen)
   let rim = '';
-  for (let i = 0; i < 520; i++) {
-    const a = i / 520 * Math.PI * 2 + r() * .01, l = 12 + r() * 22, rr = R1 + 6 + r() * 6;
-    rim += `<line x1="${Math.cos(a) * rr}" y1="${Math.sin(a) * rr}" x2="${Math.cos(a) * (rr + l)}" y2="${Math.sin(a) * (rr + l)}" stroke-width="${.8 + r() * 1.4}"/>`;
+  for (let i = 0; i < 360; i++) {
+    const a = i / 360 * Math.PI * 2, l = i % 15 === 0 ? 30 : i % 5 === 0 ? 18 : 9, rr = R1 + 8;
+    rim += `<line x1="${(Math.cos(a) * rr).toFixed(1)}" y1="${(Math.sin(a) * rr).toFixed(1)}" x2="${(Math.cos(a) * (rr + l)).toFixed(1)}" y2="${(Math.sin(a) * (rr + l)).toFixed(1)}" stroke-width="${i % 15 === 0 ? 2.2 : 1}"/>`;
   }
+  
   svg.innerHTML = `<g class="spin"><g stroke="${C.ink}" stroke-linecap="round">${rim}</g>
-    ${[R0, 230, 310, 390, R1].map((rr, i) => `<circle r="${rr}" fill="none" stroke="${C.ink}" stroke-width="${i === 0 || i === 4 ? 2.2 : .8}" ${i % 2 ? 'stroke-dasharray="2 7"' : ''}/>`).join('')}
+    
     <g class="arms"></g></g>
     <circle r="${R0 - 8}" fill="${C.ink}"/>
     <text class="w-center" text-anchor="middle" dy=".3em" fill="${C.yellow}" style="fill:${C.yellow}"></text>
@@ -224,12 +227,16 @@ function wheel(words) {
     // each daughter rides a spiral arm from the hub to the rim (Russell's vortex)
     arms.innerHTML = ds.map(([br, d], k) => {
       const a0 = k / ds.length * Math.PI * 2, pts = [];
-      for (let s = 0; s <= 40; s++) { const u = s / 40, rr = R0 + 12 + (R1 - R0 - 12) * u, a = a0 + u * 1.15; pts.push(`${(Math.cos(a) * rr).toFixed(1)},${(Math.sin(a) * rr).toFixed(1)}`); }
+      for (let s = 0; s <= 40; s++) { const u = s / 40, rr = R0 + 12 + (R1 - R0 - 12) * u, a = a0 + u * 1.15; pts.push([Math.cos(a) * rr, Math.sin(a) * rr]); }
+      // a word on the lower half would read upside down: run its path the other way
+      const mid = pts[20], down = mid[1] > 0, run = down ? [...pts].reverse() : [...pts];
+      pts.length = 0; run.forEach(([x, y]) => pts.push(`${x.toFixed(1)},${y.toFixed(1)}`));
+      const off = down ? ['62%', '20%'] : ['3%', '30%'];
       return `<path id="arm${k}" d="M${pts.join('L')}" fill="none" stroke="${C.ink}" stroke-width="1.4"/>
-        <text font-size="15" class="w-br"><textPath href="#arm${k}" startOffset="3%">${br}</textPath></text>
-        <text font-size="34" class="w-form" dy="-10"><textPath href="#arm${k}" startOffset="30%">${svgPie(d.form)}</textPath></text>`;
+        <text font-size="15" class="w-br"><textPath href="#arm${k}" startOffset="${off[0]}">${br}</textPath></text>
+        <text font-size="34" class="w-form" dy="-10"><textPath href="#arm${k}" startOffset="${off[1]}">${svgPie(d.form)}</textPath></text>`;
     }).join('');
-    $('#wheelCap').textContent = `*${w.form} “${w.meaning}” in ${ds.length} branches · project lexicon`;
+    $('#wheelCap').textContent = `*${w.form}, “${w.meaning}”, and its descendants in ${ds.length} branches, from the project's lexicon.`;
   };
   let cur = -1;
   const set = i => { if (i === cur) return; cur = i; gsap.fromTo(arms, { opacity: 0 }, { opacity: 1, duration: .5 }); show(i); };
@@ -254,17 +261,6 @@ function machine(s) {
     ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () =>
       gsap.to(o, { v: n, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
   });
-  const cv = $('#s-machine .frame-canvas');
-  const paint = () => {
-    const { ctx, w, h } = fit(cv), tone = ramp('#1f5a43', '#e9e4d2'), b = Math.max(30, Math.min(90, innerWidth * .055));
-    ctx.fillStyle = '#2b6650'; ctx.fillRect(0, 0, w, h);
-    speckle(ctx, w, h, { colors: ['#1f5a43', '#3b7a60', '#234f3d', '#6f9a7c', '#c9d6bf'], density: .09, size: [.5, 1.6], seed: 31 });
-    // corded bands: rows of cord impressions, as on a beaker's shoulder
-    for (const y0 of [b * .25, h - b * .95]) for (let k = 0; k < 4; k++) cord(ctx, b * .25, y0 + k * b * .19, w - b * .25, y0 + k * b * .19, { w: b * .12, tone: () => k % 2 ? '#e9e4d2' : '#163f30' });
-    for (const [x0, y0] of [[b * .5, b * 1.1], [w - b * .5, b * 1.1], [b * .5, h - b * 1.2], [w - b * .5, h - b * 1.2]]) sunWheel(ctx, x0, y0, b * .2, { tone: () => '#e9e4d2', rays: 10 });
-    ctx.strokeStyle = 'rgba(233,228,210,.7)'; ctx.lineWidth = 1; ctx.strokeRect(b, b, w - b * 2, h - b * 2);
-  };
-  paint(); addEventListener('repaint', paint);
 }
 
 // ---------------------------------------------------------------------------------------------------- results
@@ -282,11 +278,11 @@ function results(bench) {
       const { ctx, w, h } = fit(cv);
       ctx.clearRect(0, 0, w, h);
       ctx.strokeStyle = 'rgba(246,241,228,.18)'; ctx.lineWidth = 1;
-      for (const g of [25, 50, 75, 100]) { ctx.beginPath(); ctx.moveTo(w * g / 100 - .5, 0); ctx.lineTo(w * g / 100 - .5, h); ctx.stroke(); }
+      
       const L = w * r.lenient / 100 * k, S = w * r.strict / 100 * k;
       hatchRect(ctx, 0, 2, L, h - 4, { color: C.yellow, gap: 6, lw: 1.3 });
       ctx.fillStyle = r.family === 'ours' ? C.yellow : C.deep; ctx.fillRect(0, 2, S, h - 4);
-      ctx.fillStyle = C.ink; ctx.fillRect(S, 2, 2, h - 4);
+      
     };
     paint(0);
     return { el, paint };
@@ -382,16 +378,27 @@ async function specimens(list) {
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
   let lib = null;
-  try { lib = await import('../vendor/initialis/lib/initialis.js'); } catch (e) { console.info('initialis unavailable', e.message); }
+  try { lib = await import('../vendor/initialis/lib/initialis.js'); await lib.use(new URL('kinds/steppe.js', import.meta.url).href); } catch (e) { console.info('initialis unavailable', e.message); }
   const build = (el, i) => {
     const s = list[i], k = pal[i % pal.length];
     const src = s.pie.normalize('NFD'), at = src.search(/[a-z]/i);
     const [cl, base, marks, extra] = src.slice(at).match(/^([a-z])([̀-ͯ]*)([ʰʷ₁₂₃]*)/i);
     const ini = el.querySelector('.ini');
-    if (!lib) { el.querySelector('.pt').innerHTML = typeset(src); return; }
-    el.querySelector('.pt').innerHTML = typeset(src.slice(at + base.length + marks.length));
+    // a parallel text: each PIE sentence with its English beneath, where the sentences match one to one
+    const sent = t => t.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [t];
+    const ps = sent(s.pie), es = sent(s.english), pair = ps.length === es.length && ps.length > 1;
+    const body = pair ? ps.map((x, k) => `<span class="ps">${typeset(k ? x : x.normalize('NFD').slice(at + base.length + marks.length))}</span><span class="pe">${es[k]}</span>`).join(' ')
+      : typeset(src.slice(at + base.length + marks.length));
+    el.querySelector('.pt').innerHTML = body;
+    el.querySelector('.e').style.display = pair ? 'none' : '';
+    if (!lib) return;
     const fs = parseFloat(getComputedStyle(el.querySelector('.p')).fontSize), size = Math.round(fs * 1.28 * 3.4);
-    const P = { ...lib.random(7000 + i * 131), text: (base.toUpperCase() + marks).normalize('NFC'), paper: k.paper, inkA: k.ink, inkB: k.accent, inkC: k.ink };
+    // our own illumination: a cord or a frieze of horses round the frame, an incised ground, sun-wheel corners,
+    // tulips for the growing ornament, all in the leaf's inks on its paper
+    const P = { ...lib.random(7000 + i * 131), text: (base.toUpperCase() + marks).normalize('NFC'), paper: k.paper, inkA: k.ink, inkB: k.accent, inkC: k.ink,
+      frame: 'rect', fRules: 2, fW1: 5, fGap: i % 2 ? 120 : 80, fW2: 2.5, fBand: i % 2 ? 'horses' : 'cord', fField: ['A', 'paper', 'A', 'B'][i % 4],
+      fPattern: ['herringbone', 'steps', 'pitcomb', 'herd'][i % 4], fPatColor: ['paper', 'A', 'paper', 'paper'][i % 4], fPatScale: 12,
+      fCorner: 'sunwheel', fCornerSize: 46, oFlower: 'tulip', oLeaf: 'willow', lFill: ['paper', 'A', 'paper', 'paper'][i % 4] };
     ini.innerHTML = `<initialis-cap settings='${JSON.stringify(P).replace(/'/g, '&#39;')}' size="${size}" grow></initialis-cap>`;
     ini.style.width = ini.style.height = size + 'px';
   };
@@ -427,7 +434,7 @@ function translator() {
 async function boot() {
   const data = await fetch('data/site.json').then(r => r.json());
   typesetAll();
-  ticker();
+  tooth();
   await document.fonts.ready;
 
   overture();

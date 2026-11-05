@@ -19,21 +19,21 @@ const LOCAL = [
 export const SETS = [
   { name: 'steppe', google: ['Archivo:wdth,wght@62..125,100..900', 'Instrument+Serif:ital@0;1', 'JetBrains+Mono:wght@400;700', 'Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800'],
     book: ["'Newsreader'", 500, "'opsz' 18"],
-    display: ["'Archivo'", 900, "'wdth' 125"], pie: ["'Archivo'", 800, "'wdth' 100"], serif: ["'Instrument Serif'", 400, 'normal', 'italic'],
+    display: ["'Archivo'", 900, "'wdth' 125"], pie: null, serif: ["'Instrument Serif'", 400, 'normal', 'italic'],
     data: ["'JetBrains Mono'", 500], accent: ["'Basteleur'", 700] },
   { name: 'ouroboros', google: ['JetBrains+Mono:wght@400;700'],
     book: ["'Compagnon'", 400],
-    display: ["'Ouroboros'", 400], pie: ["'Compagnon'", 700], serif: ["'Happy Times'", 400, 'normal', 'italic'],
+    display: ["'Ouroboros'", 400], pie: null, serif: ["'Happy Times'", 400, 'normal', 'italic'],
     data: ["'JetBrains Mono'", 500], accent: ["'Gulax'", 400] },
   { name: 'climate', book: ["'Fraunces'", 400, "'SOFT' 60, 'WONK' 0, 'opsz' 18"], google: ['Climate+Crisis:YEAR@1979..2048', 'Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800',
       'Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1', 'JetBrains+Mono:wght@400;700'],
-    display: ["'Climate Crisis'", 400, "'YEAR' 1979"], pie: ["'Bricolage Grotesque'", 800, "'wdth' 75, 'opsz' 96"],
+    display: ["'Climate Crisis'", 400, "'YEAR' 1979"], pie: null,
     serif: ["'Fraunces'", 300, "'SOFT' 100, 'WONK' 1", 'italic'], data: ["'JetBrains Mono'", 500], accent: ["'Basteleur'", 400] },
   { name: 'anybody', book: ["'Gloock'", 400], google: ['Anybody:ital,wdth,wght@0,50..150,100..900;1,50..150,100..900', 'Gloock', 'Space+Mono:wght@400;700'],
-    display: ["'Anybody'", 900, "'wdth' 150"], pie: ["'Anybody'", 800, "'wdth' 60"], serif: ["'Gloock'", 400],
+    display: ["'Anybody'", 900, "'wdth' 150"], pie: null, serif: ["'Gloock'", 400],
     data: ["'Space Mono'", 400], accent: ["'Gulax'", 400] },
   { name: 'syne', book: ["'Bodoni Moda'", 500, "'opsz' 14"], google: ['Syne:wght@400..800', 'Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900', 'Handjet:ELGR,ELSH,wght@1..2,0..16,100..900'],
-    display: ["'Syne'", 800], pie: ["'Bodoni Moda'", 900, "'opsz' 96"], serif: ["'Bodoni Moda'", 400, "'opsz' 11", 'italic'],
+    display: ["'Syne'", 800], pie: null, serif: ["'Bodoni Moda'", 400, "'opsz' 11", 'italic'],
     data: ["'Handjet'", 400, "'ELSH' 2"], accent: ["'Ouroboros'", 400] },
 ];
 
@@ -58,7 +58,7 @@ export function applySet(i) {
   loadGoogle(set.google);
   const r = document.documentElement.style;
   for (const role of ROLES) {
-    const [fam, w, v, st] = set[role];
+    const [fam, w, v, st] = set[role] || set.book;   // PIE is set in the book face
     r.setProperty(`--f-${role}`, `${fam}, system-ui, sans-serif`);
     r.setProperty(`--w-${role}`, w);
     r.setProperty(`--v-${role}`, v || 'normal');
