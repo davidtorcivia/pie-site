@@ -53,7 +53,7 @@ button { font: inherit; color: inherit; }
 .hero-title { position: absolute; left: var(--gut); top: clamp(40px, 7vh, 90px); display: flex; align-items: stretch; gap: .8vw; z-index: 2; }
 .hero-cap { flex: none; aspect-ratio: 1; }
 .hero-cap initialis-cap, .hero-cap canvas { display: block; width: 100%; height: 100%; }
-.open-h { margin: 0; font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display); font-size: clamp(46px, 8.6vw, 170px); line-height: .86; letter-spacing: -.035em; }
+.open-h { margin: 0; font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display); font-size: clamp(42px, 7.6vw, 150px); line-height: .86; letter-spacing: -.035em; }
 .open-h .line { display: block; width: fit-content; padding: .02em .32em .08em .22em; margin-bottom: 0; background-size: 100% 100%; background-repeat: no-repeat; }
 .open-h .line:first-child { padding-left: .1em; }
 .open-p { position: absolute; left: calc(var(--gut) + 1vw); z-index: 2; max-width: 58ch; margin: 0; padding: 1.2em 1.7em 1.3em 1.5em;
@@ -235,3 +235,6 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 40; pointer-event
 /* no rules or outlines anywhere */
 .tier, .tier:last-child, .apps, .app, .leaf .rh, .leaf .e, .voices, .tr textarea { border: 0 !important; }
 .tr textarea { background: color-mix(in srgb, var(--chalk) 8%, transparent); padding: 10px 14px; }
+/* the title as a staircase */
+.open-h .line:nth-child(2) { margin-left: .55em; }
+.open-h .line:nth-child(3) { margin-left: 1.1em; }

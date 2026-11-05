@@ -62,12 +62,12 @@ const TAU = Math.PI * 2;
 export default [
   {
     family: 'band', name: 'horses',
-    // a procession round the frame: every horse upright and inside the band, walking clockwise
-    // (left to right along the top, right to left along the bottom, facing the way the band runs on the sides)
+    // a procession round the frame along its inner edge: each horse turned to the band's direction, its hooves on
+    // the inner rule (so the bottom run is upside down, as on a carved border read by turning the panel)
     draw({ out, along, w }) {
       for (const p of along(w * 1.5)) {
-        const dx = Math.cos(p.a), h = w * 0.78;
-        out.polys.push(horse(p.x, p.y + h * 0.5, h, 0, dx < -0.3 || (Math.abs(dx) <= 0.3 && Math.sin(p.a) < 0)));
+        const nx = -Math.sin(p.a), ny = Math.cos(p.a), h = w * 0.78;
+        out.polys.push(horse(p.x + nx * w * 0.44, p.y + ny * w * 0.44, h, p.a));
       }
     },
   },

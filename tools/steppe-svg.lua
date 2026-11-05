@@ -15,40 +15,50 @@ end
 local SPC = require("florilegium-species")
 local ink = require("florilegium-ink")
 
-local STEPPE = {
-  -- slot 1, hero: steppe tulip (Tulipa suaveolens / T. schrenkii), a yellow cup alone on its stalk
-  { role = "hero", fix = { plan = "lily", syndrome = "bee", color = "yellow", form = "lily", cup = 0.85, reflex = 0,
-      petalshape = "obovate", apex = "acute", inflo = "solitary", orient = "erect", leafshape = "lanceolate",
-      venation = "parallel", arrangement = "alternate", guides = "blotch", fruit = "capsule" } },
-  -- slot 2, hero: fern-leaf peony (Paeonia tenuifolia), one flower over thread-fine leaves
-  { role = "hero", fix = { plan = "rose", syndrome = "beetle", color = "pink", inflo = "solitary", compound = "bipinnate",
-      leafshape = "linear", leafmargin = "entire", dissection = 0.9, stamens = "exserted", fruit = "follicle" } },
-  -- slot 3, spray: wormwood (Artemisia), tiny heads in loose panicles, finely cut grey leaves, wind-pollinated
-  { role = "spray", fix = { plan = "daisy", syndrome = "wind", color = "yellow", rays = 0, inflo = "panicle", size = 4,
-      compound = "bipinnate", leafshape = "linear", dissection = 0.85, hairy = 1, fruit = "achene" } },
-  -- slot 4, spray: nodding sage (Salvia nutans), violet two-lipped flowers on a drooping spike
-  { role = "spray", fix = { plan = "mint", syndrome = "bee", color = "violet", inflo = "spike", orient = "nodding",
-      leafshape = "ovate", leafmargin = "crenate", arrangement = "opposite", section = "square", fruit = "nutlets" } },
-  -- slot 5, monocot: dwarf iris (Iris pumila)
-  { role = "monocot", fix = { plan = "iris", syndrome = "bee", color = "violet", inflo = "solitary", leafshape = "linear",
-      venation = "parallel" } },
-  -- slots 6–8: pasque flower (Pulsatilla), milk-vetch (Astragalus), and a second tulip of another colour
-  { role = "any", fix = { plan = "eudicot", syndrome = "bee", color = "violet", form = "rosaceous", merosity = 6,
-      petalshape = "oblong", cup = 0.6, inflo = "solitary", compound = "bipinnate", leafshape = "linear", hairy = 1, fruit = "pappus" } },
-  { role = "any", fix = { plan = "pea", syndrome = "bee", color = "yellow", inflo = "raceme", compound = "pinnate",
-      leaflets = 9, leafshape = "elliptic", fruit = "legume" } },
-  { role = "any", fix = { plan = "lily", syndrome = "butterfly", color = "red", form = "lily", cup = 0.7, reflex = -10,
-      inflo = "solitary", orient = "erect", leafshape = "lanceolate", venation = "parallel", fruit = "capsule" } },
+-- the steppe flora, by the role each can play on a page; every garden draws its own eight (two heroes, two sprays,
+-- a monocot, three others) from these, so neighbouring gardens differ
+local F = {
+  hero = {
+    { plan = "lily", syndrome = "bee", color = "yellow", form = "lily", cup = 0.85, reflex = 0, petalshape = "obovate", inflo = "solitary", orient = "erect", leafshape = "lanceolate", venation = "parallel", guides = "blotch", fruit = "capsule" },   -- steppe tulip
+    { plan = "rose", syndrome = "beetle", color = "pink", inflo = "solitary", compound = "bipinnate", leafshape = "linear", dissection = 0.9, stamens = "exserted", fruit = "follicle" },   -- fern-leaf peony
+    { plan = "daisy", syndrome = "bee", color = "yellow", inflo = "solitary", rays = 16, compound = "bipinnate", leafshape = "linear", dissection = 0.85, fruit = "achene" },   -- Adonis vernalis
+    { plan = "eudicot", syndrome = "bee", color = "violet", form = "rosaceous", merosity = 6, petalshape = "oblong", cup = 0.6, inflo = "solitary", hairy = 1, fruit = "pappus" },   -- pasque flower
+    { plan = "rose", syndrome = "bee", color = "blue", inflo = "corymb", merosity = 5, compound = "simple", leafshape = "linear", fruit = "capsule" },   -- steppe flax
+  },
+  spray = {
+    { plan = "daisy", syndrome = "wind", color = "yellow", rays = 0, inflo = "panicle", size = 4, compound = "bipinnate", leafshape = "linear", dissection = 0.85, hairy = 1, fruit = "achene" },   -- wormwood
+    { plan = "mint", syndrome = "bee", color = "violet", inflo = "spike", orient = "nodding", leafshape = "ovate", leafmargin = "crenate", arrangement = "opposite", fruit = "nutlets" },   -- nodding sage
+    { plan = "mint", syndrome = "bee", color = "blue", inflo = "spike", orient = "erect", leafshape = "lanceolate", arrangement = "opposite", fruit = "nutlets" },   -- spiked speedwell
+    { plan = "mustard", syndrome = "fly", color = "white", inflo = "panicle", fruit = "silicle" },   -- Crambe, sea-kale of the steppe
+    { plan = "mint", syndrome = "bee", color = "yellow", inflo = "thyrse", leafshape = "ovate", hairy = 1, fruit = "nutlets" },   -- Phlomis
+    { plan = "umbellifer", syndrome = "fly", color = "white", fruit = "schizocarp" },   -- steppe fennel
+  },
+  monocot = {
+    { plan = "iris", syndrome = "bee", color = "violet", inflo = "solitary", leafshape = "linear", venation = "parallel" },   -- dwarf iris
+    { plan = "lily", syndrome = "bee", color = "violet", inflo = "umbel", leafshape = "linear", venation = "parallel", fruit = "capsule" },   -- steppe onion
+    { plan = "monocot", syndrome = "wind", color = "green", inflo = "spike", leafshape = "linear", venation = "parallel" },   -- feather grass
+  },
+  any = {
+    { plan = "pea", syndrome = "bee", color = "yellow", inflo = "raceme", compound = "pinnate", leaflets = 9, leafshape = "elliptic", fruit = "legume" },   -- milk-vetch
+    { plan = "lily", syndrome = "butterfly", color = "red", form = "lily", cup = 0.7, reflex = -10, inflo = "solitary", leafshape = "lanceolate", venation = "parallel", fruit = "capsule" },   -- red tulip
+    { plan = "daisy", syndrome = "bee", color = "blue", rays = 0, inflo = "solitary", leafmargin = "pinnatifid", section = "prickly", fruit = "achene" },   -- globe thistle
+    { plan = "daisy", syndrome = "butterfly", color = "pink", rays = 12, inflo = "corymb", leafmargin = "pinnatifid", fruit = "pappus" },   -- knapweed
+    { plan = "rose", syndrome = "butterfly", color = "pink", merosity = 5, petalmargin = "fimbriate", inflo = "dichasium", leafshape = "linear", arrangement = "opposite", fruit = "capsule" },   -- steppe pink
+    { plan = "pea", syndrome = "bee", color = "violet", inflo = "raceme", compound = "pinnate", leaflets = 7, tendrils = 1, habit = "climbing", fruit = "legume" },   -- tufted vetch
+  },
 }
-
+local SLOTS = { "hero", "hero", "spray", "spray", "monocot", "any", "any", "any" }
 local pools = {}
 SPC.pool = function(docseed)
   docseed = docseed or 0
   if pools[docseed] then return pools[docseed] end
   local rng = ink.rng(docseed * 104729 + 307)
-  local pool = {}
-  for i, s in ipairs(STEPPE) do
-    local sp = SPC.sample(1 + math.floor(rng.u() * 2147483645), s.role, nil, s.fix)
+  local pool, used = {}, {}
+  for i, role in ipairs(SLOTS) do
+    local list, fix = F[role]
+    repeat fix = list[1 + math.floor(rng.u() * #list)] until not used[fix] or #list < 3
+    used[fix] = true
+    local sp = SPC.sample(1 + math.floor(rng.u() * 2147483645), role, nil, fix)
     sp.slot = i
     pool[i] = sp
   end

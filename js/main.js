@@ -64,7 +64,7 @@ async function overture() {
     const c = document.createElement('canvas'), w = 260, h = w * ar; c.width = w * 2.4; c.height = h * 2.4; const g = c.getContext('2d'); g.scale(2, 2);
     paintSilhouette(g, m, w * .1, h * .1, w, h, { ...pal, seed: 9, density: 1.3, mane: [.6, .84] }); frames.push(c);
   }
-  const herd = [{ x: .08, ph: 0, s: 1 }, { x: .32, ph: 4, s: .86 }, { x: .55, ph: 7, s: .94 }, { x: .8, ph: 2, s: .8 }];
+  const herd = [{ x: .1, ph: 0, s: 1 }, { x: .36, ph: 4, s: .86 }, { x: .62, ph: 7, s: .94 }, { x: .88, ph: 2, s: .8 }];   // the lead horse starts on the left edge
   let t0 = 0;
   const run = t => {
     const { ctx, w, h } = cv._fit || (cv._fit = fit(cv));
