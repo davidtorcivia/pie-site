@@ -43,7 +43,7 @@ function tooth() {
 async function overture() {
   // the P spans the whole title: its top on the first line's top, its foot on the last line's foot (pre-rendered)
   const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
-  $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
+  if (innerWidth >= 700) $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
   $('.hero-cap').innerHTML = '<img src="art/initials/hero.webp" alt="" width="100%" height="100%" decoding="async">';
   const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
   place(); addEventListener('repaint', place);
@@ -269,6 +269,7 @@ function machine(s) {
   $('#cascade').innerHTML = tiers.map(([n, u, l, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display">${l}</b><span class="serif">${d}</span></div></div>`).join('');
   document.querySelectorAll('.tier .num').forEach(el => {
     const n = +el.dataset.n, dec = n % 1 ? 1 : 0, o = { v: 0 };
+    el.textContent = n.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u;
     ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () =>
       gsap.to(o, { v: n, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
   });
@@ -440,9 +441,9 @@ async function specimens(list) {
   const fitLeaf = el => { const t = el.querySelector('.txt'), p = el.querySelector('.p'); let fs = parseFloat(getComputedStyle(p).fontSize);
     p.style.fontSize = ''; fs = parseFloat(getComputedStyle(p).fontSize);
     for (let n = 0; n < 24 && t.scrollHeight > t.clientHeight + 2; n++) { fs *= .95; p.style.fontSize = fs + 'px'; } };
-  leaves.forEach(fitLeaf); addEventListener('repaint', () => leaves.forEach(fitLeaf));
+  if (innerWidth >= 700) { leaves.forEach(fitLeaf); addEventListener('repaint', () => leaves.forEach(fitLeaf)); }
   const dist = () => track.scrollWidth - innerWidth;
-  gsap.to(track, { x: () => -dist(), ease: 'none',
+  if (innerWidth >= 700) gsap.to(track, { x: () => -dist(), ease: 'none',
     scrollTrigger: { trigger: '#s-spec', start: 'top top', end: () => '+=' + dist(), pin: '.spec-pin', scrub: true, invalidateOnRefresh: true } });
 }
 
@@ -519,6 +520,7 @@ function gardens() {
   // the growth is a video (tools/build_growth.mjs): florilegium's own growth, played once when the section is reached,
   // resting on the finished garden. Browsers without VP9 alpha (Safari) show the finished garden as an image.
   const probe = document.createElement('video');
+  const phone = innerWidth < 700, sfx = phone ? '-m' : '';
   const alphaVideo = !!probe.canPlayType && probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   for (const [name, sel] of [['open', '#s-open'], ['opentop', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
@@ -526,12 +528,12 @@ function gardens() {
     const start = () => {
       if (alphaVideo && !reduce) {
         const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
-        v.src = `art/growth-${name}.webm`; g.append(v);
+        v.src = `art/growth-${name}${sfx}.webm`; g.append(v);
         v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true });
         v.addEventListener('error', () => { v.remove(); still(); }, { once: true });
       } else still();
     };
-    const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}.webp`; g.append(im); };
+    const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`; g.append(im); };
     if (name.startsWith('open')) { start(); continue; }
     new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -15% 0px' }).observe(host);
   }

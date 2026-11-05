@@ -16,3 +16,14 @@ export const SECTIONS = {
   foot: { box: 'footer', side: 'both', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
 };
 export const MM = 420 / 1440;                    // mm per CSS px: one scale for every garden on the page
+
+// phones (PHONE=1): every garden is a field grown round the section's content, measured at 390 px wide
+export const PHONE_AVOID = {
+  open: ['.hero-cap', '.open-h .line', '.open-p'],
+  opentop: ['.hero-cap', '.open-h .line', '.open-p'],
+  wheel: ['.wheel-copy h2', '.wheel-copy p', '.wheel-nav', '#wheel'],
+  machine: ['#s-machine h2', '.tier', '.note'],
+  voice: ['.voice-top h2', '.voice-top p', '.disc', '.hymn', '.voice-bar'],
+  apps: ['#s-apps h2', '.apps-p', '.tr', '.tr-out'],
+  foot: ['.foot-pie', 'footer p', '.foot-cols'],
+};

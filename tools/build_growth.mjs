@@ -6,11 +6,14 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import puppeteer from 'puppeteer-core';
-import { SECTIONS, COL, MM } from './gardens-config.mjs';
-const ROOT = new URL('..', import.meta.url).pathname, FL = ROOT + 'vendor/florilegium', N = +(process.env.FRAMES || 40), SC = 1.25;
+import { SECTIONS as DESK, COL, MM, PHONE_AVOID } from './gardens-config.mjs';
+const PHONE = !!process.env.PHONE, SFX = PHONE ? '-m' : '';
+// on phones every garden is a field round the content
+const SECTIONS = PHONE ? Object.fromEntries(Object.entries(DESK).map(([k, S]) => [k, { ...S, side: 'field', avoid: PHONE_AVOID[k] || S.avoid, keepTop: S.keepTop ? .35 : 0 }])) : DESK;
+const ROOT = new URL('..', import.meta.url).pathname, FL = ROOT + 'vendor/florilegium', N = +(process.env.FRAMES || 40), SC = process.env.PHONE ? 2.2 : 1.25;
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SECTIONS);
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', args: ['--disable-gpu'] });
-const pg = await b.newPage(); await pg.setViewport({ width: 1440, height: 900 });
+const pg = await b.newPage(); await pg.setViewport(PHONE ? { width: 390, height: 844, isMobile: true, hasTouch: true } : { width: 1440, height: 900 });
 await pg.goto('http://localhost:4747/?nogarden', { waitUntil: 'networkidle2' }); await new Promise(r => setTimeout(r, 6000));
 for (const name of names) {
   const S = SECTIONS[name];
@@ -25,7 +28,7 @@ for (const name of names) {
   if (S.turn) m.rects = m.rects.map(([x0, y0, x1, y1]) => [m.w - x1, m.h - y1, m.w - x0, m.h - y0]);   // in the turned page
   const W = m.w * MM, H = m.h * MM, PAD = .5, field = S.side === 'field';
   const obstacles = m.rects.map(([x0, y0, x1, y1]) => [x0 * MM / 10 - PAD, (m.h - y1) * MM / 10 - PAD, x1 * MM / 10 + PAD, (m.h - y0) * MM / 10 + PAD].map(v => v.toFixed(2)).join(',')).join(';');
-  const dir = ROOT + `art/growth-${name}`; mkdirSync(dir, { recursive: true });
+  const dir = ROOT + `art/growth-${name}${SFX}`; mkdirSync(dir, { recursive: true });
   // one working seed per layer, found on the final frame and kept for every frame
   const seeds = S.seeds.map((seed, k) => {
     for (let tr = 0; tr < 8; tr++) { try { lua(seed + tr * 1000, k, N, '/tmp/pie-probe.svg'); return seed + tr * 1000; } catch {} }
@@ -51,13 +54,13 @@ for (const name of names) {
       return c.toDataURL('image/png');
     }, svgs, CW, CH, SC);
     writeFileSync(`${dir}/f${String(f).padStart(3, '0')}.png`, Buffer.from(url.split(',')[1], 'base64'));
-    if (f === N) writeFileSync(ROOT + `art/garden-${name}.webp`, Buffer.from((await p2.evaluate(() => document.getElementById('c').toDataURL('image/webp', .84))).split(',')[1], 'base64'));
+    if (f === N) writeFileSync(ROOT + `art/garden-${name}${SFX}.webp`, Buffer.from((await p2.evaluate(() => document.getElementById('c').toDataURL('image/webp', .84))).split(',')[1], 'base64'));
   }
   await p2.close();
   // VP9 with alpha; the last frame held a moment so the video ends on the finished garden
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-framerate', '12', '-i', `${dir}/f%03d.png`, '-vf', 'tpad=stop_mode=clone:stop_duration=0.5',
-    '-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', '-b:v', '0', '-crf', '36', '-auto-alt-ref', '0', '-row-mt', '1', ROOT + `art/growth-${name}.webm`]);
+    '-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', '-b:v', '0', '-crf', '36', '-auto-alt-ref', '0', '-row-mt', '1', ROOT + `art/growth-${name}${SFX}.webm`]);
   rmSync(dir, { recursive: true });
-  console.log(name, `${N} frames`, (readFileSync(ROOT + `art/growth-${name}.webm`).length / 1024 | 0) + ' KB');
+  console.log(name + SFX, `${N} frames`, (readFileSync(ROOT + `art/growth-${name}${SFX}.webm`).length / 1024 | 0) + ' KB');
 }
 await b.close();

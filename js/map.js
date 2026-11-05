@@ -199,10 +199,17 @@ export async function mapPlate(root) {
   let frame = 0, last = 0;
   // the camera: close on the steppe at first, pulling back as the branches spread
   const cam = { x: hx, y: hy, s: 2.6 };
+  // the extent of every route and its witness
+  const EXT = (() => { const ps = ROUTES.flatMap(r => r.pts.map(([a, b]) => xy(a, b))), xs = ps.map(p => p[0]), ys = ps.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys); return { w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 }; })();
   const place = () => {
-    const vw = stage.clientWidth, vh = stage.clientHeight, base = Math.max(vw / P.w, vh / P.h) * 1.0;
-    const s = base * cam.s, tx = vw / 2 - cam.x * s, ty = vh / 2 - cam.y * s;
-    const lim = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    const vw = stage.clientWidth, vh = stage.clientHeight, cover = Math.max(vw / P.w, vh / P.h), contain = Math.min(vw / (EXT.w * 1.12), vh / (EXT.h * 1.6));
+    // a tall screen ends on the whole plate (every branch's witness in view): the scale eases from cover to contain
+    const tall = vh > vw * .9, out = Math.min(1, Math.max(0, (2.6 - cam.s) / 1.6));
+    const base = tall ? cover + (contain - cover) * out : cover, s = base * (tall ? 1 + (cam.s - 1) * (1 - out) : cam.s);
+    const cx = tall ? cam.x + (EXT.cx - cam.x) * out : cam.x, cy = tall ? cam.y + (EXT.cy - cam.y) * out : cam.y;
+    const tx = vw / 2 - cx * s, ty = vh / 2 - cy * s;
+    const lim = (v, lo, hi) => lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v));
     root.querySelector('.plate-inner').style.transform = `translate(${lim(tx, vw - P.w * s, 0)}px, ${lim(ty, vh - P.h * s, 0)}px) scale(${s})`;
   };
   const yearEl = root.querySelector('.mig-year');
