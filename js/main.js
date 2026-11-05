@@ -247,9 +247,15 @@ function wheel(words) {
       .to([center, mean], { opacity: 1, filter: 'blur(0px)', duration: .6, ease: 'power2.out' });
   };
   set(0);
-  const steps = Math.min(words.length, 6);
-  ScrollTrigger.create({ trigger: '#s-wheel', start: 'top top', end: `+=${steps * 150}%`, pin: '.wheel-pin', scrub: true,
-    onUpdate: s => { set(Math.min(steps - 1, Math.floor(s.progress * steps))); gsap.set(svg.querySelector('.spin'), { rotate: s.progress * 140, svgOrigin: '0 0' }); } });
+  // a row of the words, and previous / next: the reader moves through them, no long scroll
+  const nav = document.createElement('div'); nav.className = 'wheel-nav';
+  nav.innerHTML = `<button class="wn-prev" aria-label="Previous word">‹</button>${words.map((w, i) => `<button class="wn-w pie" data-i="${i}">*${typeset(w.form, { words: false })}</button>`).join('')}<button class="wn-next" aria-label="Next word">›</button>`;
+  $('.wheel-copy').append(nav);
+  const go = i => { i = (i + words.length) % words.length; set(i); nav.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i));
+    gsap.to(svg.querySelector('.spin'), { rotate: '+=36', svgOrigin: '0 0', duration: 1.4, ease: 'power3.inOut' }); };
+  nav.querySelector('.wn-prev').onclick = () => go(cur - 1); nav.querySelector('.wn-next').onclick = () => go(cur + 1);
+  nav.querySelectorAll('.wn-w').forEach(b => b.onclick = () => go(+b.dataset.i));
+  nav.querySelector('.wn-w').classList.add('on');
 }
 
 // ---------------------------------------------------------------------------------------------------- machine
@@ -307,9 +313,10 @@ function voice(h) {
   // lines from the timeline
   const lines = [];
   h.words.forEach((w, i) => { (lines[w.line - 1] ||= []).push(i); });
-  hymn.innerHTML = lines.map(ix => `<span class="hl">${ix.map(i => `<span class="w" data-i="${i}">${typeset(h.words[i].word, { words: false })}</span>`).join(' ')}</span>`).join('');
+  hymn.innerHTML = lines.map((ix, li) => `<div class="hline" data-l="${li}"><span class="hl">${ix.map(i => `<span class="w" data-i="${i}">${typeset(h.words[i].word, { words: false })}</span>`).join(' ')}</span><span class="hen">${h.english_lines[li] || ''}</span></div>`).join('');
+  const hlines = [...hymn.querySelectorAll('.hline')];
   const spans = [...hymn.querySelectorAll('.w')];
-  en.textContent = h.english_lines[0];
+  en.textContent = '';
   // the ring: hatched spokes around the disc, driven by the audio's spectrum
   const ring = $('#ring');
   let actx, an, buf;
@@ -344,7 +351,7 @@ function voice(h) {
     if (k !== cur) {
       cur = k;
       spans.forEach((s, i) => { s.classList.toggle('now', i === k); s.classList.toggle('done', i < k); });
-      if (k >= 0) { ipa.textContent = `[${h.words[k].ipa}]`; en.textContent = h.english_lines[h.words[k].line - 1]; }
+      if (k >= 0) { ipa.textContent = `[${h.words[k].ipa}]`; hlines.forEach((l, i) => l.classList.toggle('now', i === h.words[k].line - 1)); }
     }
     requestAnimationFrame(frame);
   };
@@ -378,12 +385,17 @@ async function specimens(list) {
   track.innerHTML = list.map((s, i) => {
     const k = pal[i % pal.length];
     return `<article class="leaf" style="--lf-ink:${k.ink};--lf-paper:${k.paper};--lf-accent:${k.accent}">
-      <img class="leaf-garden" src="gardens/leaf-${i}.webp" alt="" loading="lazy" decoding="async">
+      <video class="leaf-garden" muted playsinline preload="none" data-src="gardens/leaf-${i}.mp4" data-still="gardens/leaf-${i}.webp"></video>
       <div class="rh"><span>${s.genre}</span><span class="fo">${s.id}</span></div>
-      <div class="txt"><p class="p"><span class="ini"></span><span class="pt"></span></p><p class="e">${s.english}</p></div></article>`;
+      <div class="txt"><p class="p"><span class="ini"></span><span class="pt"></span></p><p class="e">${s.english}</p>
+      ${s.audio ? `<p class="lis serif"><button class="play" aria-label="Listen">listen</button> · <button data-v="male" class="on">male</button> / <button data-v="female">female</button></p>` : ''}</div></article>`;
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('grown'); io.unobserve(e.target); } }), { threshold: .35 });
+  // each leaf's garden grows (gardens/leaf-<i>.mp4) as the leaf comes into view; loaded a little before
+  const near = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src; } near.unobserve(e.target); } }), { rootMargin: '0px 60% 0px 60%' });
+  leaves.forEach(l => near.observe(l));
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) v.src = v.dataset.src;
+    v.play().catch(() => { v.poster = v.dataset.still; }); e.target.classList.add('grown'); io.unobserve(e.target); } }), { threshold: .35 });
   leaves.forEach(l => io.observe(l));
   let lib = null;
   lib = true;
@@ -407,6 +419,23 @@ async function specimens(list) {
     ini.style.width = ini.style.height = size + 'px';
   };
   leaves.forEach(build);
+  // readings: one player for all the leaves; the words light up as they are spoken
+  const player = new Audio(); let playing = null, raf = 0;
+  const stopLeaf = () => { if (playing) { playing.el.classList.remove('reading'); playing.el.querySelectorAll('.w.now').forEach(w => w.classList.remove('now')); playing.el.querySelector('.play').textContent = 'listen'; } playing = null; cancelAnimationFrame(raf); };
+  const tickLeaf = () => { if (!playing) return; const T = playing.T, t = player.currentTime + .06; let k = -1; for (let i = 0; i < T.length; i++) if (t >= T[i].start) k = i;
+    playing.ws.forEach((w, i) => w.classList.toggle('now', i === k)); raf = requestAnimationFrame(tickLeaf); };
+  leaves.forEach((el, i) => {
+    const s = list[i]; if (!s.audio) return;
+    let voice = 'male';
+    el.querySelectorAll('.lis [data-v]').forEach(b => b.onclick = () => { voice = b.dataset.v; el.querySelectorAll('.lis [data-v]').forEach(x => x.classList.toggle('on', x === b)); if (playing?.el === el) { stopLeaf(); el.querySelector('.play').click(); } });
+    el.querySelector('.play').onclick = () => {
+      if (playing?.el === el) { player.pause(); stopLeaf(); return; }
+      stopLeaf(); player.src = s.audio[voice]; player.currentTime = 0; player.play();
+      playing = { el, T: s.timing[voice === 'male' ? 'm' : 'f'], ws: [...el.querySelectorAll('.pt .w')] };
+      el.classList.add('reading'); el.querySelector('.play').textContent = 'stop'; tickLeaf();
+    };
+  });
+  player.addEventListener('ended', stopLeaf);
   // each leaf's text fits its page: the type steps down until nothing runs past the foot
   const fitLeaf = el => { const t = el.querySelector('.txt'), p = el.querySelector('.p'); let fs = parseFloat(getComputedStyle(p).fontSize);
     p.style.fontSize = ''; fs = parseFloat(getComputedStyle(p).fontSize);
@@ -491,7 +520,7 @@ function gardens() {
   // resting on the finished garden. Browsers without VP9 alpha (Safari) show the finished garden as an image.
   const probe = document.createElement('video');
   const alphaVideo = !!probe.canPlayType && probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  for (const [name, sel] of [['open', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
+  for (const [name, sel] of [['open', '#s-open'], ['opentop', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
     const start = () => {
@@ -503,7 +532,7 @@ function gardens() {
       } else still();
     };
     const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}.webp`; g.append(im); };
-    if (name === 'open') { start(); continue; }
+    if (name.startsWith('open')) { start(); continue; }
     new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -15% 0px' }).observe(host);
   }
 }

@@ -23,25 +23,40 @@ console.log('text ends', ends.map(x => x.toFixed(2)).join(' '));
 const p = await b.newPage(); await p.setViewport({ width: 605, height: 786, deviceScaleFactor: 2.6 });   // the SVG's own size (160 × 208 mm), at print-like density
 // each leaf: the margin garden (no text-end fill), and a second garden grown sideways and turned upright, so its
 // plants rise from the foot of the page into the space under the text
-const lua = (args, out) => execFileSync('lua', ['../../tools/steppe-svg.lua', ...args, '-o', out], { cwd: FL });
+// GROW=N: also render the growth (frames 1..N of florilegium's recording) as gardens/leaf-<i>.mp4, played as the leaf is reached
+const GROW = +(process.env.GROW || 0);
+const lua = (args, out, f) => execFileSync('lua', ['../../tools/steppe-svg.lua', ...args, '-o', out], { cwd: FL, env: { ...process.env, ...(f ? { PIE_FRAME: `${f}/${GROW}` } : {}) } });
+const ONLY = process.env.LEAVES ? process.env.LEAVES.split(',').map(Number) : null;
 for (let i = 0; i < n; i++) {
+  if (ONLY && !ONLY.includes(i)) continue;
   const k = pal[i % pal.length], main = ROOT + `gardens/leaf-${i}.svg`, rise = ROOT + `gardens/rise-${i}.svg`;
-  lua(['--seed', String(101 + i * 7), '--paper', '160x208', '--left', '50mm', '--right', '12mm', '--top', '24mm', '--bottom', '22mm',
-    '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--background', k.paper.slice(1), '--season', SEASONS[i % SEASONS.length], '--nohead'], main);
-  // the free body under the text, in mm: from the text's end to the foot, across the text column
   const top = ends[i] * 208 + 4, Hb = Math.max(20, 208 - 14 - top), Wb = 160 - 50 - 8;
-  lua(['--seed', String(5003 + i * 11), '--paper', `${Hb.toFixed(1)}x${Wb}`, '--left', `${(Hb - 3).toFixed(1)}mm`, '--right', '1mm', '--top', '2mm', '--bottom', '2mm',
-    '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--season', SEASONS[(i + 2) % SEASONS.length], '--density', '.7', '--nohead', '--novisitors'], rise);
-  await p.setContent(`<body style="margin:0"><canvas id=c width=${Math.round(605 * 2.6)} height=${Math.round(786 * 2.6)}></canvas></body>`);
-  const buf = await p.evaluate(async (main, rise, top, Hb, Wb) => {
-    const load = async u => { const im = new Image(); im.src = u; await im.decode(); return im; };
-    const [A, B] = await Promise.all([load(main), load(rise)]), c = document.getElementById('c'), g = c.getContext('2d'), mm = c.width / 160;
-    g.drawImage(A, 0, 0, c.width, c.height);
-    // rotate the sideways garden so its left edge (where the stems rise) becomes the foot
-    g.save(); g.translate(50 * mm, (top + Hb) * mm); g.rotate(-Math.PI / 2); g.drawImage(B, 0, 0, Hb * mm, Wb * mm); g.restore();
-    return c.toDataURL('image/webp', .86);
-  }, 'data:image/svg+xml;base64,' + readFileSync(main).toString('base64'), 'data:image/svg+xml;base64,' + readFileSync(rise).toString('base64'), top, Hb, Wb);
-  const out = Buffer.from(buf.split(',')[1], 'base64'); writeFileSync(ROOT + `gardens/leaf-${i}.webp`, out); rmSync(main); rmSync(rise);
-  console.log('leaf', i, k.name, (out.length / 1024).toFixed(0) + ' KB');
+  const mainArgs = ['--seed', String(101 + i * 7), '--paper', '160x208', '--left', '50mm', '--right', '12mm', '--top', '24mm', '--bottom', '22mm',
+    '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--background', k.paper.slice(1), '--season', SEASONS[i % SEASONS.length], '--nohead'];
+  const riseArgs = ['--seed', String(5003 + i * 11), '--paper', `${Hb.toFixed(1)}x${Wb}`, '--left', `${(Hb - 3).toFixed(1)}mm`, '--right', '1mm', '--top', '2mm', '--bottom', '2mm',
+    '--ink', k.ink.slice(1), '--accent', k.accent.slice(1), '--season', SEASONS[(i + 2) % SEASONS.length], '--density', '.7', '--nohead', '--novisitors'];
+  const frame = async (f, type) => {
+    lua(mainArgs, main, f); lua(riseArgs, rise, f);
+    await p.setContent(`<body style="margin:0"><canvas id=c width=${Math.round(605 * 2.6)} height=${Math.round(786 * 2.6)}></canvas></body>`);
+    const buf = await p.evaluate(async (main, rise, top, Hb, Wb, type) => {
+      const load = async u => { const im = new Image(); im.src = u; await im.decode(); return im; };
+      const [A, B] = await Promise.all([load(main), load(rise)]), c = document.getElementById('c'), g = c.getContext('2d'), mm = c.width / 160;
+      g.drawImage(A, 0, 0, c.width, c.height);
+      // rotate the sideways garden so its left edge (where the stems rise) becomes the foot
+      g.save(); g.translate(50 * mm, (top + Hb) * mm); g.rotate(-Math.PI / 2); g.drawImage(B, 0, 0, Hb * mm, Wb * mm); g.restore();
+      return c.toDataURL(type, .86);
+    }, 'data:image/svg+xml;base64,' + readFileSync(main).toString('base64'), 'data:image/svg+xml;base64,' + readFileSync(rise).toString('base64'), top, Hb, Wb, type);
+    return Buffer.from(buf.split(',')[1], 'base64');
+  };
+  const out = await frame(0, 'image/webp'); writeFileSync(ROOT + `gardens/leaf-${i}.webp`, out);
+  if (GROW) {
+    const dir = ROOT + `gardens/grow-${i}`; mkdirSync(dir, { recursive: true });
+    for (let f = 1; f <= GROW; f++) writeFileSync(`${dir}/f${String(f).padStart(3, '0')}.png`, await frame(f, 'image/png'));
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-framerate', '12', '-i', `${dir}/f%03d.png`, '-vf', 'scale=1000:-2,tpad=stop_mode=clone:stop_duration=0.5,format=yuv420p',
+      '-c:v', 'libx264', '-crf', '24', '-preset', 'slow', '-movflags', '+faststart', ROOT + `gardens/leaf-${i}.mp4`]);
+    rmSync(dir, { recursive: true });
+  }
+  rmSync(main); rmSync(rise);
+  console.log('leaf', i, k.name, (out.length / 1024).toFixed(0) + ' KB', GROW ? `+ growth ${(readFileSync(ROOT + `gardens/leaf-${i}.mp4`).length / 1024) | 0} KB` : '');
 }
 await b.close();

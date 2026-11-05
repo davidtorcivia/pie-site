@@ -265,456 +265,456 @@
    }
   ],
   "audio": {
-   "female": "audio/dawn-f.mp3?v=1793911391",
-   "male": "audio/dawn-m.mp3?v=1793911389"
+   "female": "audio/dawn-f.mp3?v=1793914131",
+   "male": "audio/dawn-m.mp3?v=1793914129"
   },
   "timing": {
    "m": [
     {
      "line": 1,
      "word": "h₂éwsos",
-     "start": 0.0,
-     "end": 0.55
+     "start": 0.625,
+     "end": 1.175
     },
     {
      "line": 1,
      "word": "léwka",
-     "start": 0.6,
-     "end": 1.0
+     "start": 1.225,
+     "end": 1.625
     },
     {
      "line": 1,
      "word": "déywi",
-     "start": 1.05,
-     "end": 1.45
+     "start": 1.675,
+     "end": 2.075
     },
     {
      "line": 1,
      "word": "diwés",
-     "start": 1.5,
-     "end": 1.95
+     "start": 2.125,
+     "end": 2.575
     },
     {
      "line": 1,
      "word": "dʰúgh₂ter",
-     "start": 2.0,
-     "end": 2.675
+     "start": 2.625,
+     "end": 3.3
     },
     {
      "line": 2,
      "word": "n̥sméy",
-     "start": 3.97,
-     "end": 4.395
+     "start": 4.545,
+     "end": 4.97
     },
     {
      "line": 2,
      "word": "léwks",
-     "start": 4.445,
-     "end": 4.845
+     "start": 5.02,
+     "end": 5.42
     },
     {
      "line": 2,
      "word": "sḱih₃wós-kʷe",
-     "start": 4.92,
-     "end": 5.695
+     "start": 5.495,
+     "end": 6.27
     },
     {
      "line": 2,
      "word": "twéd",
-     "start": 5.745,
-     "end": 6.045
+     "start": 6.32,
+     "end": 6.62
     },
     {
      "line": 2,
      "word": "bʰéwgt",
-     "start": 6.095,
-     "end": 6.82
+     "start": 6.67,
+     "end": 7.395
     },
     {
      "line": 3,
      "word": "nu",
-     "start": 7.99,
-     "end": 8.14
+     "start": 8.565,
+     "end": 8.715
     },
     {
      "line": 3,
      "word": "wiHrṓs",
-     "start": 8.215,
-     "end": 8.815
+     "start": 8.79,
+     "end": 9.39
     },
     {
      "line": 3,
      "word": "twé",
-     "start": 8.865,
-     "end": 9.115
+     "start": 9.44,
+     "end": 9.69
     },
     {
      "line": 3,
      "word": "kʷḱént",
-     "start": 9.165,
-     "end": 9.49
+     "start": 9.74,
+     "end": 10.065
     },
     {
      "line": 3,
      "word": "mudént-kʷe",
-     "start": 9.565,
-     "end": 10.415
+     "start": 10.14,
+     "end": 10.99
     },
     {
      "line": 4,
      "word": "túH",
-     "start": 11.685,
-     "end": 11.96
+     "start": 12.285,
+     "end": 12.56
     },
     {
      "line": 4,
      "word": "h₂yuHénih₂",
-     "start": 12.035,
-     "end": 12.81
+     "start": 12.635,
+     "end": 13.41
     },
     {
      "line": 4,
      "word": "túH",
-     "start": 12.86,
-     "end": 13.11
+     "start": 13.46,
+     "end": 13.71
     },
     {
      "line": 4,
      "word": "ń̥dʰgʷʰiteh₂",
-     "start": 13.16,
-     "end": 14.285
+     "start": 13.76,
+     "end": 14.885
     },
     {
      "line": 5,
      "word": "túH",
-     "start": 15.43,
-     "end": 15.73
+     "start": 16.03,
+     "end": 16.33
     },
     {
      "line": 5,
      "word": "kʷspés",
-     "start": 15.78,
-     "end": 16.18
+     "start": 16.38,
+     "end": 16.78
     },
     {
      "line": 5,
      "word": "swésōr",
-     "start": 16.23,
-     "end": 16.83
+     "start": 16.83,
+     "end": 17.43
     },
     {
      "line": 5,
      "word": "téwe",
-     "start": 16.88,
-     "end": 17.18
+     "start": 17.48,
+     "end": 17.78
     },
     {
      "line": 5,
      "word": "bʰéh₂os",
-     "start": 17.23,
-     "end": 17.705
+     "start": 17.83,
+     "end": 18.305
     },
     {
      "line": 5,
      "word": "h₃kʷbʰós",
-     "start": 17.755,
-     "end": 18.155
+     "start": 18.355,
+     "end": 18.755
     },
     {
      "line": 5,
      "word": "lewbʰóm",
-     "start": 18.205,
-     "end": 18.83
+     "start": 18.805,
+     "end": 19.43
     },
     {
      "line": 6,
      "word": "nu",
-     "start": 20.15,
-     "end": 20.3
+     "start": 20.725,
+     "end": 20.875
     },
     {
      "line": 6,
      "word": "ḱéywa",
-     "start": 20.375,
-     "end": 20.775
+     "start": 20.95,
+     "end": 21.35
     },
     {
      "line": 6,
      "word": "n̥sméy",
-     "start": 20.825,
-     "end": 21.275
+     "start": 21.4,
+     "end": 21.85
     },
     {
      "line": 6,
      "word": "h₁wésu",
-     "start": 21.325,
-     "end": 21.775
-    },
-    {
-     "line": 6,
-     "word": "ḱléwos",
-     "start": 21.825,
+     "start": 21.9,
      "end": 22.35
     },
     {
      "line": 6,
-     "word": "dh₃dʰí",
+     "word": "ḱléwos",
      "start": 22.4,
-     "end": 23.0
+     "end": 22.925
+    },
+    {
+     "line": 6,
+     "word": "dh₃dʰí",
+     "start": 22.975,
+     "end": 23.575
     },
     {
      "line": 7,
      "word": "nu-kʷe",
-     "start": 24.095,
-     "end": 24.42
+     "start": 24.67,
+     "end": 24.995
     },
     {
      "line": 7,
      "word": "n̥sméy",
-     "start": 24.47,
-     "end": 24.895
+     "start": 25.045,
+     "end": 25.47
     },
     {
      "line": 7,
      "word": "ń̥dʰgʷʰitom",
-     "start": 24.945,
-     "end": 25.545
-    },
-    {
-     "line": 7,
-     "word": "ḱléwos",
-     "start": 25.595,
+     "start": 25.52,
      "end": 26.12
     },
     {
      "line": 7,
-     "word": "h₁áydʰi",
+     "word": "ḱléwos",
      "start": 26.17,
-     "end": 26.745
+     "end": 26.695
+    },
+    {
+     "line": 7,
+     "word": "h₁áydʰi",
+     "start": 26.745,
+     "end": 27.32
     }
    ],
    "f": [
     {
      "line": 1,
      "word": "h₂éwsos",
-     "start": 0.0,
-     "end": 0.55
+     "start": 0.625,
+     "end": 1.175
     },
     {
      "line": 1,
      "word": "léwka",
-     "start": 0.6,
-     "end": 1.0
+     "start": 1.225,
+     "end": 1.625
     },
     {
      "line": 1,
      "word": "déywi",
-     "start": 1.05,
-     "end": 1.45
+     "start": 1.675,
+     "end": 2.075
     },
     {
      "line": 1,
      "word": "diwés",
-     "start": 1.5,
-     "end": 1.95
+     "start": 2.125,
+     "end": 2.575
     },
     {
      "line": 1,
      "word": "dʰúgh₂ter",
-     "start": 2.0,
-     "end": 2.65
+     "start": 2.625,
+     "end": 3.275
     },
     {
      "line": 2,
      "word": "n̥sméy",
-     "start": 3.92,
-     "end": 4.37
+     "start": 4.495,
+     "end": 4.945
     },
     {
      "line": 2,
      "word": "léwks",
-     "start": 4.42,
-     "end": 4.82
+     "start": 4.995,
+     "end": 5.395
     },
     {
      "line": 2,
      "word": "sḱih₃wós-kʷe",
-     "start": 4.895,
-     "end": 5.695
+     "start": 5.47,
+     "end": 6.27
     },
     {
      "line": 2,
      "word": "twéd",
-     "start": 5.745,
-     "end": 6.07
+     "start": 6.32,
+     "end": 6.645
     },
     {
      "line": 2,
      "word": "bʰéwgt",
-     "start": 6.12,
-     "end": 6.895
+     "start": 6.695,
+     "end": 7.47
     },
     {
      "line": 3,
      "word": "nu",
-     "start": 8.09,
-     "end": 8.24
+     "start": 8.69,
+     "end": 8.84
     },
     {
      "line": 3,
      "word": "wiHrṓs",
-     "start": 8.315,
-     "end": 8.915
+     "start": 8.915,
+     "end": 9.515
     },
     {
      "line": 3,
      "word": "twé",
-     "start": 8.965,
-     "end": 9.215
+     "start": 9.565,
+     "end": 9.815
     },
     {
      "line": 3,
      "word": "kʷḱént",
-     "start": 9.265,
-     "end": 9.615
+     "start": 9.865,
+     "end": 10.215
     },
     {
      "line": 3,
      "word": "mudént-kʷe",
-     "start": 9.69,
-     "end": 10.49
+     "start": 10.29,
+     "end": 11.09
     },
     {
      "line": 4,
      "word": "túH",
-     "start": 11.735,
-     "end": 12.01
+     "start": 12.335,
+     "end": 12.61
     },
     {
      "line": 4,
      "word": "h₂yuHénih₂",
-     "start": 12.085,
-     "end": 12.835
+     "start": 12.685,
+     "end": 13.435
     },
     {
      "line": 4,
      "word": "túH",
-     "start": 12.885,
-     "end": 13.135
+     "start": 13.485,
+     "end": 13.735
     },
     {
      "line": 4,
      "word": "ń̥dʰgʷʰiteh₂",
-     "start": 13.185,
-     "end": 14.285
+     "start": 13.785,
+     "end": 14.885
     },
     {
      "line": 5,
      "word": "túH",
-     "start": 15.455,
-     "end": 15.73
+     "start": 16.055,
+     "end": 16.33
     },
     {
      "line": 5,
      "word": "kʷspés",
-     "start": 15.78,
-     "end": 16.23
+     "start": 16.38,
+     "end": 16.83
     },
     {
      "line": 5,
      "word": "swésōr",
-     "start": 16.28,
-     "end": 16.88
+     "start": 16.88,
+     "end": 17.48
     },
     {
      "line": 5,
      "word": "téwe",
-     "start": 16.93,
-     "end": 17.23
+     "start": 17.53,
+     "end": 17.83
     },
     {
      "line": 5,
      "word": "bʰéh₂os",
-     "start": 17.28,
-     "end": 17.755
+     "start": 17.88,
+     "end": 18.355
     },
     {
      "line": 5,
      "word": "h₃kʷbʰós",
-     "start": 17.805,
-     "end": 18.255
+     "start": 18.405,
+     "end": 18.855
     },
     {
      "line": 5,
      "word": "lewbʰóm",
-     "start": 18.305,
-     "end": 19.005
+     "start": 18.905,
+     "end": 19.605
     },
     {
      "line": 6,
      "word": "nu",
-     "start": 20.3,
-     "end": 20.45
+     "start": 20.875,
+     "end": 21.025
     },
     {
      "line": 6,
      "word": "ḱéywa",
-     "start": 20.525,
-     "end": 20.95
+     "start": 21.1,
+     "end": 21.525
     },
     {
      "line": 6,
      "word": "n̥sméy",
-     "start": 21.0,
-     "end": 21.475
+     "start": 21.575,
+     "end": 22.05
     },
     {
      "line": 6,
      "word": "h₁wésu",
-     "start": 21.525,
-     "end": 21.975
-    },
-    {
-     "line": 6,
-     "word": "ḱléwos",
-     "start": 22.025,
+     "start": 22.1,
      "end": 22.55
     },
     {
      "line": 6,
-     "word": "dh₃dʰí",
+     "word": "ḱléwos",
      "start": 22.6,
-     "end": 23.2
+     "end": 23.125
+    },
+    {
+     "line": 6,
+     "word": "dh₃dʰí",
+     "start": 23.175,
+     "end": 23.775
     },
     {
      "line": 7,
      "word": "nu-kʷe",
-     "start": 24.32,
-     "end": 24.645
+     "start": 24.92,
+     "end": 25.245
     },
     {
      "line": 7,
      "word": "n̥sméy",
-     "start": 24.695,
-     "end": 25.145
+     "start": 25.295,
+     "end": 25.745
     },
     {
      "line": 7,
      "word": "ń̥dʰgʷʰitom",
-     "start": 25.195,
-     "end": 25.845
+     "start": 25.795,
+     "end": 26.445
     },
     {
      "line": 7,
      "word": "ḱléwos",
-     "start": 25.895,
-     "end": 26.42
+     "start": 26.495,
+     "end": 27.02
     },
     {
      "line": 7,
      "word": "h₁áydʰi",
-     "start": 26.47,
-     "end": 26.995
+     "start": 27.07,
+     "end": 27.595
     }
    ]
   },
@@ -1415,55 +1415,3553 @@
    "id": "t3-t026-00039",
    "genre": "prayer",
    "pie": "h₁regʷesyéti kʷséps gʷm̥yéti. nu sóh₂wl̥ wódr̥ Hn̥dʰí séngʷs. ph₂ter n̥smé nékʷti h₂lékse. l̥gʰih₁mé swépnos n̥smé h₁pyéh₁t. ḱwṓ nos ḱléytreh₂m h₂léksoyh₁t pérkʷus n̥smé ḱéloyh₁t. bʰudʰih₁mé léwkm̥-kʷe h₂ew dedr̥ḱih₁mé.",
-   "english": "It is getting dark, night is coming. Sun, you sank into the water below. Father, guard us in the night! May we lie down, may sleep seize us. May the dog guard our shelter. May the oak cover us. May we wake, and may we see the light again."
+   "english": "It is getting dark, night is coming. Sun, you sank into the water below. Father, guard us in the night! May we lie down, may sleep seize us. May the dog guard our shelter. May the oak cover us. May we wake, and may we see the light again.",
+   "audio": {
+    "female": "audio/text-0-f.mp3?v=1793914134",
+    "male": "audio/text-0-m.mp3?v=1793914132"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "h₁regʷesyéti",
+      "start": 0.575,
+      "end": 1.45
+     },
+     {
+      "line": 1,
+      "word": "kʷséps",
+      "start": 1.5,
+      "end": 1.925
+     },
+     {
+      "line": 1,
+      "word": "gʷm̥yéti.",
+      "start": 1.975,
+      "end": 3.05
+     },
+     {
+      "line": 2,
+      "word": "nu",
+      "start": 4.095,
+      "end": 4.245
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥",
+      "start": 4.32,
+      "end": 4.795
+     },
+     {
+      "line": 2,
+      "word": "wódr̥",
+      "start": 4.845,
+      "end": 5.17
+     },
+     {
+      "line": 2,
+      "word": "Hn̥dʰí",
+      "start": 5.22,
+      "end": 5.595
+     },
+     {
+      "line": 2,
+      "word": "séngʷs.",
+      "start": 5.645,
+      "end": 6.645
+     },
+     {
+      "line": 3,
+      "word": "ph₂ter",
+      "start": 7.715,
+      "end": 8.015
+     },
+     {
+      "line": 3,
+      "word": "n̥smé",
+      "start": 8.065,
+      "end": 8.415
+     },
+     {
+      "line": 3,
+      "word": "nékʷti",
+      "start": 8.465,
+      "end": 8.89
+     },
+     {
+      "line": 3,
+      "word": "h₂lékse.",
+      "start": 8.965,
+      "end": 10.04
+     },
+     {
+      "line": 4,
+      "word": "l̥gʰih₁mé",
+      "start": 11.06,
+      "end": 11.635
+     },
+     {
+      "line": 4,
+      "word": "swépnos",
+      "start": 11.685,
+      "end": 12.31
+     },
+     {
+      "line": 4,
+      "word": "n̥smé",
+      "start": 12.36,
+      "end": 12.76
+     },
+     {
+      "line": 4,
+      "word": "h₁pyéh₁t.",
+      "start": 12.81,
+      "end": 13.835
+     },
+     {
+      "line": 5,
+      "word": "ḱwṓ",
+      "start": 14.905,
+      "end": 15.23
+     },
+     {
+      "line": 5,
+      "word": "nos",
+      "start": 15.28,
+      "end": 15.53
+     },
+     {
+      "line": 5,
+      "word": "ḱléytreh₂m",
+      "start": 15.58,
+      "end": 16.33
+     },
+     {
+      "line": 5,
+      "word": "h₂léksoyh₁t",
+      "start": 16.405,
+      "end": 17.08
+     },
+     {
+      "line": 5,
+      "word": "pérkʷus",
+      "start": 17.155,
+      "end": 17.605
+     },
+     {
+      "line": 5,
+      "word": "n̥smé",
+      "start": 17.655,
+      "end": 18.03
+     },
+     {
+      "line": 5,
+      "word": "ḱéloyh₁t.",
+      "start": 18.08,
+      "end": 19.18
+     },
+     {
+      "line": 6,
+      "word": "bʰudʰih₁mé",
+      "start": 20.225,
+      "end": 20.775
+     },
+     {
+      "line": 6,
+      "word": "léwkm̥-kʷe",
+      "start": 20.825,
+      "end": 21.45
+     },
+     {
+      "line": 6,
+      "word": "h₂ew",
+      "start": 21.525,
+      "end": 21.725
+     },
+     {
+      "line": 6,
+      "word": "dedr̥ḱih₁mé.",
+      "start": 21.775,
+      "end": 23.15
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "h₁regʷesyéti",
+      "start": 0.6,
+      "end": 1.45
+     },
+     {
+      "line": 1,
+      "word": "kʷséps",
+      "start": 1.5,
+      "end": 1.975
+     },
+     {
+      "line": 1,
+      "word": "gʷm̥yéti.",
+      "start": 2.025,
+      "end": 3.05
+     },
+     {
+      "line": 2,
+      "word": "nu",
+      "start": 4.07,
+      "end": 4.22
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥",
+      "start": 4.295,
+      "end": 4.795
+     },
+     {
+      "line": 2,
+      "word": "wódr̥",
+      "start": 4.845,
+      "end": 5.17
+     },
+     {
+      "line": 2,
+      "word": "Hn̥dʰí",
+      "start": 5.22,
+      "end": 5.57
+     },
+     {
+      "line": 2,
+      "word": "séngʷs.",
+      "start": 5.62,
+      "end": 6.62
+     },
+     {
+      "line": 3,
+      "word": "ph₂ter",
+      "start": 7.715,
+      "end": 8.015
+     },
+     {
+      "line": 3,
+      "word": "n̥smé",
+      "start": 8.065,
+      "end": 8.465
+     },
+     {
+      "line": 3,
+      "word": "nékʷti",
+      "start": 8.54,
+      "end": 9.04
+     },
+     {
+      "line": 3,
+      "word": "h₂lékse.",
+      "start": 9.115,
+      "end": 10.19
+     },
+     {
+      "line": 4,
+      "word": "l̥gʰih₁mé",
+      "start": 11.21,
+      "end": 11.785
+     },
+     {
+      "line": 4,
+      "word": "swépnos",
+      "start": 11.835,
+      "end": 12.485
+     },
+     {
+      "line": 4,
+      "word": "n̥smé",
+      "start": 12.535,
+      "end": 12.935
+     },
+     {
+      "line": 4,
+      "word": "h₁pyéh₁t.",
+      "start": 13.01,
+      "end": 14.035
+     },
+     {
+      "line": 5,
+      "word": "ḱwṓ",
+      "start": 15.105,
+      "end": 15.43
+     },
+     {
+      "line": 5,
+      "word": "nos",
+      "start": 15.48,
+      "end": 15.73
+     },
+     {
+      "line": 5,
+      "word": "ḱléytreh₂m",
+      "start": 15.78,
+      "end": 16.53
+     },
+     {
+      "line": 5,
+      "word": "h₂léksoyh₁t",
+      "start": 16.605,
+      "end": 17.33
+     },
+     {
+      "line": 5,
+      "word": "pérkʷus",
+      "start": 17.405,
+      "end": 17.88
+     },
+     {
+      "line": 5,
+      "word": "n̥smé",
+      "start": 17.93,
+      "end": 18.33
+     },
+     {
+      "line": 5,
+      "word": "ḱéloyh₁t.",
+      "start": 18.38,
+      "end": 19.505
+     },
+     {
+      "line": 6,
+      "word": "bʰudʰih₁mé",
+      "start": 20.575,
+      "end": 21.15
+     },
+     {
+      "line": 6,
+      "word": "léwkm̥-kʷe",
+      "start": 21.2,
+      "end": 21.825
+     },
+     {
+      "line": 6,
+      "word": "h₂ew",
+      "start": 21.9,
+      "end": 22.1
+     },
+     {
+      "line": 6,
+      "word": "dedr̥ḱih₁mé.",
+      "start": 22.15,
+      "end": 23.575
+     }
+    ]
+   }
   },
   {
    "id": "t3-t002-00006",
    "genre": "hymn",
    "pie": "nu kʷís kʷékʷlom ń̥dʰgʷʰitosyo sh₂wéns dʰéh₁t? ish₁rós-kʷe-ge dyḗws tóm dʰéh₁t. wéǵʰetes HeHḱúh₁ h₁éḱwoh₁ tóm. nu-kʷe deywṓs tóm dedr̥ḱḗr. só ish₁rós h₁ésti só HeHḱús h₁ésti. nu kʷékʷlom sh₂wéns gʷéHyōmes. só nos wewórte só néḱus ne h₁ésti. nu-kʷe h₂lékse n̥smé tóh₁.",
-   "english": "Who set the wheel of the imperishable sun? And strong Sky indeed set it. The two swift horses carry it. And the gods see it. It is strong; it is swift. Now let us sing the wheel of the sun. It is turned toward us; it is not mortal. And now protect us with it."
+   "english": "Who set the wheel of the imperishable sun? And strong Sky indeed set it. The two swift horses carry it. And the gods see it. It is strong; it is swift. Now let us sing the wheel of the sun. It is turned toward us; it is not mortal. And now protect us with it.",
+   "audio": {
+    "female": "audio/text-1-f.mp3?v=1793914139",
+    "male": "audio/text-1-m.mp3?v=1793914137"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "nu",
+      "start": 0.575,
+      "end": 0.725
+     },
+     {
+      "line": 1,
+      "word": "kʷís",
+      "start": 0.775,
+      "end": 1.075
+     },
+     {
+      "line": 1,
+      "word": "kʷékʷlom",
+      "start": 1.125,
+      "end": 1.6
+     },
+     {
+      "line": 1,
+      "word": "ń̥dʰgʷʰitosyo",
+      "start": 1.65,
+      "end": 2.475
+     },
+     {
+      "line": 1,
+      "word": "sh₂wéns",
+      "start": 2.55,
+      "end": 3.05
+     },
+     {
+      "line": 1,
+      "word": "dʰéh₁t?",
+      "start": 3.1,
+      "end": 4.0
+     },
+     {
+      "line": 2,
+      "word": "ish₁rós-kʷe-ge",
+      "start": 5.045,
+      "end": 5.945
+     },
+     {
+      "line": 2,
+      "word": "dyḗws",
+      "start": 5.995,
+      "end": 6.495
+     },
+     {
+      "line": 2,
+      "word": "tóm",
+      "start": 6.545,
+      "end": 6.745
+     },
+     {
+      "line": 2,
+      "word": "dʰéh₁t.",
+      "start": 6.795,
+      "end": 7.67
+     },
+     {
+      "line": 3,
+      "word": "wéǵʰetes",
+      "start": 8.74,
+      "end": 9.365
+     },
+     {
+      "line": 3,
+      "word": "HeHḱúh₁",
+      "start": 9.415,
+      "end": 9.89
+     },
+     {
+      "line": 3,
+      "word": "h₁éḱwoh₁",
+      "start": 9.94,
+      "end": 10.465
+     },
+     {
+      "line": 3,
+      "word": "tóm.",
+      "start": 10.515,
+      "end": 11.29
+     },
+     {
+      "line": 4,
+      "word": "nu-kʷe",
+      "start": 12.335,
+      "end": 12.66
+     },
+     {
+      "line": 4,
+      "word": "deywṓs",
+      "start": 12.71,
+      "end": 13.31
+     },
+     {
+      "line": 4,
+      "word": "tóm",
+      "start": 13.36,
+      "end": 13.56
+     },
+     {
+      "line": 4,
+      "word": "dedr̥ḱḗr.",
+      "start": 13.61,
+      "end": 14.935
+     },
+     {
+      "line": 5,
+      "word": "só",
+      "start": 16.005,
+      "end": 16.205
+     },
+     {
+      "line": 5,
+      "word": "ish₁rós",
+      "start": 16.28,
+      "end": 16.805
+     },
+     {
+      "line": 5,
+      "word": "h₁ésti",
+      "start": 16.855,
+      "end": 17.28
+     },
+     {
+      "line": 5,
+      "word": "só",
+      "start": 17.355,
+      "end": 17.53
+     },
+     {
+      "line": 5,
+      "word": "HeHḱús",
+      "start": 17.58,
+      "end": 18.08
+     },
+     {
+      "line": 5,
+      "word": "h₁ésti.",
+      "start": 18.13,
+      "end": 19.105
+     },
+     {
+      "line": 6,
+      "word": "nu",
+      "start": 20.15,
+      "end": 20.3
+     },
+     {
+      "line": 6,
+      "word": "kʷékʷlom",
+      "start": 20.35,
+      "end": 20.85
+     },
+     {
+      "line": 6,
+      "word": "sh₂wéns",
+      "start": 20.925,
+      "end": 21.425
+     },
+     {
+      "line": 6,
+      "word": "gʷéHyōmes.",
+      "start": 21.475,
+      "end": 22.8
+     },
+     {
+      "line": 7,
+      "word": "só",
+      "start": 23.87,
+      "end": 24.045
+     },
+     {
+      "line": 7,
+      "word": "nos",
+      "start": 24.095,
+      "end": 24.345
+     },
+     {
+      "line": 7,
+      "word": "wewórte",
+      "start": 24.42,
+      "end": 24.97
+     },
+     {
+      "line": 7,
+      "word": "só",
+      "start": 25.045,
+      "end": 25.195
+     },
+     {
+      "line": 7,
+      "word": "néḱus",
+      "start": 25.245,
+      "end": 25.72
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 25.77,
+      "end": 25.895
+     },
+     {
+      "line": 7,
+      "word": "h₁ésti.",
+      "start": 25.97,
+      "end": 26.97
+     },
+     {
+      "line": 8,
+      "word": "nu-kʷe",
+      "start": 27.99,
+      "end": 28.315
+     },
+     {
+      "line": 8,
+      "word": "h₂lékse",
+      "start": 28.39,
+      "end": 28.89
+     },
+     {
+      "line": 8,
+      "word": "n̥smé",
+      "start": 28.94,
+      "end": 29.34
+     },
+     {
+      "line": 8,
+      "word": "tóh₁.",
+      "start": 29.39,
+      "end": 30.165
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "nu",
+      "start": 0.575,
+      "end": 0.725
+     },
+     {
+      "line": 1,
+      "word": "kʷís",
+      "start": 0.775,
+      "end": 1.075
+     },
+     {
+      "line": 1,
+      "word": "kʷékʷlom",
+      "start": 1.125,
+      "end": 1.6
+     },
+     {
+      "line": 1,
+      "word": "ń̥dʰgʷʰitosyo",
+      "start": 1.65,
+      "end": 2.475
+     },
+     {
+      "line": 1,
+      "word": "sh₂wéns",
+      "start": 2.55,
+      "end": 3.05
+     },
+     {
+      "line": 1,
+      "word": "dʰéh₁t?",
+      "start": 3.1,
+      "end": 3.975
+     },
+     {
+      "line": 2,
+      "word": "ish₁rós-kʷe-ge",
+      "start": 5.02,
+      "end": 5.945
+     },
+     {
+      "line": 2,
+      "word": "dyḗws",
+      "start": 5.995,
+      "end": 6.495
+     },
+     {
+      "line": 2,
+      "word": "tóm",
+      "start": 6.545,
+      "end": 6.745
+     },
+     {
+      "line": 2,
+      "word": "dʰéh₁t.",
+      "start": 6.795,
+      "end": 7.645
+     },
+     {
+      "line": 3,
+      "word": "wéǵʰetes",
+      "start": 8.715,
+      "end": 9.34
+     },
+     {
+      "line": 3,
+      "word": "HeHḱúh₁",
+      "start": 9.39,
+      "end": 9.865
+     },
+     {
+      "line": 3,
+      "word": "h₁éḱwoh₁",
+      "start": 9.915,
+      "end": 10.465
+     },
+     {
+      "line": 3,
+      "word": "tóm.",
+      "start": 10.515,
+      "end": 11.29
+     },
+     {
+      "line": 4,
+      "word": "nu-kʷe",
+      "start": 12.36,
+      "end": 12.685
+     },
+     {
+      "line": 4,
+      "word": "deywṓs",
+      "start": 12.735,
+      "end": 13.335
+     },
+     {
+      "line": 4,
+      "word": "tóm",
+      "start": 13.385,
+      "end": 13.585
+     },
+     {
+      "line": 4,
+      "word": "dedr̥ḱḗr.",
+      "start": 13.66,
+      "end": 14.985
+     },
+     {
+      "line": 5,
+      "word": "só",
+      "start": 16.03,
+      "end": 16.23
+     },
+     {
+      "line": 5,
+      "word": "ish₁rós",
+      "start": 16.305,
+      "end": 16.83
+     },
+     {
+      "line": 5,
+      "word": "h₁ésti",
+      "start": 16.88,
+      "end": 17.305
+     },
+     {
+      "line": 5,
+      "word": "só",
+      "start": 17.38,
+      "end": 17.555
+     },
+     {
+      "line": 5,
+      "word": "HeHḱús",
+      "start": 17.605,
+      "end": 18.105
+     },
+     {
+      "line": 5,
+      "word": "h₁ésti.",
+      "start": 18.155,
+      "end": 19.155
+     },
+     {
+      "line": 6,
+      "word": "nu",
+      "start": 20.175,
+      "end": 20.325
+     },
+     {
+      "line": 6,
+      "word": "kʷékʷlom",
+      "start": 20.375,
+      "end": 20.9
+     },
+     {
+      "line": 6,
+      "word": "sh₂wéns",
+      "start": 20.975,
+      "end": 21.475
+     },
+     {
+      "line": 6,
+      "word": "gʷéHyōmes.",
+      "start": 21.525,
+      "end": 22.85
+     },
+     {
+      "line": 7,
+      "word": "só",
+      "start": 23.92,
+      "end": 24.095
+     },
+     {
+      "line": 7,
+      "word": "nos",
+      "start": 24.145,
+      "end": 24.395
+     },
+     {
+      "line": 7,
+      "word": "wewórte",
+      "start": 24.47,
+      "end": 25.02
+     },
+     {
+      "line": 7,
+      "word": "só",
+      "start": 25.095,
+      "end": 25.27
+     },
+     {
+      "line": 7,
+      "word": "néḱus",
+      "start": 25.345,
+      "end": 25.82
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 25.87,
+      "end": 25.995
+     },
+     {
+      "line": 7,
+      "word": "h₁ésti.",
+      "start": 26.07,
+      "end": 27.07
+     },
+     {
+      "line": 8,
+      "word": "nu-kʷe",
+      "start": 28.115,
+      "end": 28.44
+     },
+     {
+      "line": 8,
+      "word": "h₂lékse",
+      "start": 28.515,
+      "end": 29.015
+     },
+     {
+      "line": 8,
+      "word": "n̥smé",
+      "start": 29.065,
+      "end": 29.465
+     },
+     {
+      "line": 8,
+      "word": "tóh₁.",
+      "start": 29.515,
+      "end": 30.315
+     }
+    ]
+   }
   },
   {
    "id": "t3-t023-00019",
    "genre": "lament",
    "pie": "wíHre h₂epó h₁éys h₂ew ne gʷéms. wésmn̥ toy wésh₂er yugóm-kʷe toy spéḱyoh₂. nu-kʷe h₁regʷesyéti ḱóymoy. h₂isḱóh₂ te memónh₂e-kʷe te.",
-   "english": "Husband, you went away; you did not come back. I wear your garment, and I look at your yoke. And now it is getting dark in the household. I seek you, and I remember you."
+   "english": "Husband, you went away; you did not come back. I wear your garment, and I look at your yoke. And now it is getting dark in the household. I seek you, and I remember you.",
+   "audio": {
+    "female": "audio/text-2-f.mp3?v=1793914141",
+    "male": "audio/text-2-m.mp3?v=1793914140"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "wíHre",
+      "start": 0.575,
+      "end": 1.025
+     },
+     {
+      "line": 1,
+      "word": "h₂epó",
+      "start": 1.1,
+      "end": 1.45
+     },
+     {
+      "line": 1,
+      "word": "h₁éys",
+      "start": 1.5,
+      "end": 1.85
+     },
+     {
+      "line": 1,
+      "word": "h₂ew",
+      "start": 1.925,
+      "end": 2.125
+     },
+     {
+      "line": 1,
+      "word": "ne",
+      "start": 2.175,
+      "end": 2.3
+     },
+     {
+      "line": 1,
+      "word": "gʷéms.",
+      "start": 2.35,
+      "end": 3.175
+     },
+     {
+      "line": 2,
+      "word": "wésmn̥",
+      "start": 4.22,
+      "end": 4.67
+     },
+     {
+      "line": 2,
+      "word": "toy",
+      "start": 4.72,
+      "end": 4.92
+     },
+     {
+      "line": 2,
+      "word": "wésh₂er",
+      "start": 4.97,
+      "end": 5.47
+     },
+     {
+      "line": 2,
+      "word": "yugóm-kʷe",
+      "start": 5.52,
+      "end": 6.07
+     },
+     {
+      "line": 2,
+      "word": "toy",
+      "start": 6.12,
+      "end": 6.32
+     },
+     {
+      "line": 2,
+      "word": "spéḱyoh₂.",
+      "start": 6.37,
+      "end": 7.52
+     },
+     {
+      "line": 3,
+      "word": "nu-kʷe",
+      "start": 8.565,
+      "end": 8.89
+     },
+     {
+      "line": 3,
+      "word": "h₁regʷesyéti",
+      "start": 8.965,
+      "end": 9.865
+     },
+     {
+      "line": 3,
+      "word": "ḱóymoy.",
+      "start": 9.94,
+      "end": 10.94
+     },
+     {
+      "line": 4,
+      "word": "h₂isḱóh₂",
+      "start": 12.01,
+      "end": 12.61
+     },
+     {
+      "line": 4,
+      "word": "te",
+      "start": 12.66,
+      "end": 12.785
+     },
+     {
+      "line": 4,
+      "word": "memónh₂e-kʷe",
+      "start": 12.86,
+      "end": 13.685
+     },
+     {
+      "line": 4,
+      "word": "te.",
+      "start": 13.735,
+      "end": 14.385
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "wíHre",
+      "start": 0.6,
+      "end": 1.025
+     },
+     {
+      "line": 1,
+      "word": "h₂epó",
+      "start": 1.1,
+      "end": 1.45
+     },
+     {
+      "line": 1,
+      "word": "h₁éys",
+      "start": 1.5,
+      "end": 1.85
+     },
+     {
+      "line": 1,
+      "word": "h₂ew",
+      "start": 1.925,
+      "end": 2.125
+     },
+     {
+      "line": 1,
+      "word": "ne",
+      "start": 2.2,
+      "end": 2.325
+     },
+     {
+      "line": 1,
+      "word": "gʷéms.",
+      "start": 2.375,
+      "end": 3.25
+     },
+     {
+      "line": 2,
+      "word": "wésmn̥",
+      "start": 4.32,
+      "end": 4.795
+     },
+     {
+      "line": 2,
+      "word": "toy",
+      "start": 4.845,
+      "end": 5.045
+     },
+     {
+      "line": 2,
+      "word": "wésh₂er",
+      "start": 5.095,
+      "end": 5.62
+     },
+     {
+      "line": 2,
+      "word": "yugóm-kʷe",
+      "start": 5.67,
+      "end": 6.22
+     },
+     {
+      "line": 2,
+      "word": "toy",
+      "start": 6.27,
+      "end": 6.47
+     },
+     {
+      "line": 2,
+      "word": "spéḱyoh₂.",
+      "start": 6.52,
+      "end": 7.72
+     },
+     {
+      "line": 3,
+      "word": "nu-kʷe",
+      "start": 8.79,
+      "end": 9.115
+     },
+     {
+      "line": 3,
+      "word": "h₁regʷesyéti",
+      "start": 9.165,
+      "end": 10.065
+     },
+     {
+      "line": 3,
+      "word": "ḱóymoy.",
+      "start": 10.14,
+      "end": 11.165
+     },
+     {
+      "line": 4,
+      "word": "h₂isḱóh₂",
+      "start": 12.235,
+      "end": 12.835
+     },
+     {
+      "line": 4,
+      "word": "te",
+      "start": 12.885,
+      "end": 13.01
+     },
+     {
+      "line": 4,
+      "word": "memónh₂e-kʷe",
+      "start": 13.085,
+      "end": 13.91
+     },
+     {
+      "line": 4,
+      "word": "te.",
+      "start": 13.96,
+      "end": 14.635
+     }
+    ]
+   }
   },
   {
    "id": "t3-t027-00011",
    "genre": "epic",
    "pie": "tréyes h₂néres móri gʷmént. nu h₁íd h₁wr̥Hú h₁regʷesyét-kʷe. nu pr̥h₂wós h₂éǵt. ḱéywōs mē tr̥mté. móri upér h₁éyomes ḱléwos-kʷe h₂isḱṓmes. nu litént. nu h₁íd h₁íns gʷr̥h₃ét nu h₁éysōm ḱléwos ń̥dʰgʷʰitom.",
-   "english": "Three men came to the sea. It was broad, and it was getting dark. Then the first said, \"Dear ones, do not tremble. We shall go over the sea and seek fame.\" They went away. It swallowed them, but their fame is imperishable."
+   "english": "Three men came to the sea. It was broad, and it was getting dark. Then the first said, \"Dear ones, do not tremble. We shall go over the sea and seek fame.\" They went away. It swallowed them, but their fame is imperishable.",
+   "audio": {
+    "female": "audio/text-3-f.mp3?v=1793914145",
+    "male": "audio/text-3-m.mp3?v=1793914143"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "tréyes",
+      "start": 0.6,
+      "end": 1.125
+     },
+     {
+      "line": 1,
+      "word": "h₂néres",
+      "start": 1.2,
+      "end": 1.675
+     },
+     {
+      "line": 1,
+      "word": "móri",
+      "start": 1.725,
+      "end": 2.0
+     },
+     {
+      "line": 1,
+      "word": "gʷmént.",
+      "start": 2.05,
+      "end": 2.975
+     },
+     {
+      "line": 2,
+      "word": "nu",
+      "start": 4.02,
+      "end": 4.17
+     },
+     {
+      "line": 2,
+      "word": "h₁íd",
+      "start": 4.245,
+      "end": 4.445
+     },
+     {
+      "line": 2,
+      "word": "h₁wr̥Hú",
+      "start": 4.495,
+      "end": 4.945
+     },
+     {
+      "line": 2,
+      "word": "h₁regʷesyét-kʷe.",
+      "start": 4.995,
+      "end": 6.495
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 7.515,
+      "end": 7.665
+     },
+     {
+      "line": 3,
+      "word": "pr̥h₂wós",
+      "start": 7.74,
+      "end": 8.315
+     },
+     {
+      "line": 3,
+      "word": "h₂éǵt.",
+      "start": 8.39,
+      "end": 9.24
+     },
+     {
+      "line": 4,
+      "word": "ḱéywōs",
+      "start": 10.31,
+      "end": 10.91
+     },
+     {
+      "line": 4,
+      "word": "mē",
+      "start": 10.985,
+      "end": 11.235
+     },
+     {
+      "line": 4,
+      "word": "tr̥mté.",
+      "start": 11.31,
+      "end": 12.285
+     },
+     {
+      "line": 5,
+      "word": "móri",
+      "start": 13.305,
+      "end": 13.63
+     },
+     {
+      "line": 5,
+      "word": "upér",
+      "start": 13.705,
+      "end": 14.005
+     },
+     {
+      "line": 5,
+      "word": "h₁éyomes",
+      "start": 14.055,
+      "end": 14.705
+     },
+     {
+      "line": 5,
+      "word": "ḱléwos-kʷe",
+      "start": 14.755,
+      "end": 15.455
+     },
+     {
+      "line": 5,
+      "word": "h₂isḱṓmes.",
+      "start": 15.53,
+      "end": 16.955
+     },
+     {
+      "line": 6,
+      "word": "nu",
+      "start": 18.0,
+      "end": 18.15
+     },
+     {
+      "line": 6,
+      "word": "litént.",
+      "start": 18.2,
+      "end": 19.275
+     },
+     {
+      "line": 7,
+      "word": "nu",
+      "start": 20.32,
+      "end": 20.47
+     },
+     {
+      "line": 7,
+      "word": "h₁íd",
+      "start": 20.545,
+      "end": 20.745
+     },
+     {
+      "line": 7,
+      "word": "h₁íns",
+      "start": 20.795,
+      "end": 21.095
+     },
+     {
+      "line": 7,
+      "word": "gʷr̥h₃ét",
+      "start": 21.145,
+      "end": 21.57
+     },
+     {
+      "line": 7,
+      "word": "nu",
+      "start": 21.62,
+      "end": 21.745
+     },
+     {
+      "line": 7,
+      "word": "h₁éysōm",
+      "start": 21.82,
+      "end": 22.395
+     },
+     {
+      "line": 7,
+      "word": "ḱléwos",
+      "start": 22.445,
+      "end": 22.945
+     },
+     {
+      "line": 7,
+      "word": "ń̥dʰgʷʰitom.",
+      "start": 22.995,
+      "end": 24.12
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "tréyes",
+      "start": 0.625,
+      "end": 1.175
+     },
+     {
+      "line": 1,
+      "word": "h₂néres",
+      "start": 1.25,
+      "end": 1.725
+     },
+     {
+      "line": 1,
+      "word": "móri",
+      "start": 1.8,
+      "end": 2.075
+     },
+     {
+      "line": 1,
+      "word": "gʷmént.",
+      "start": 2.125,
+      "end": 3.075
+     },
+     {
+      "line": 2,
+      "word": "nu",
+      "start": 4.12,
+      "end": 4.27
+     },
+     {
+      "line": 2,
+      "word": "h₁íd",
+      "start": 4.345,
+      "end": 4.57
+     },
+     {
+      "line": 2,
+      "word": "h₁wr̥Hú",
+      "start": 4.62,
+      "end": 5.07
+     },
+     {
+      "line": 2,
+      "word": "h₁regʷesyét-kʷe.",
+      "start": 5.12,
+      "end": 6.645
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 7.665,
+      "end": 7.815
+     },
+     {
+      "line": 3,
+      "word": "pr̥h₂wós",
+      "start": 7.89,
+      "end": 8.465
+     },
+     {
+      "line": 3,
+      "word": "h₂éǵt.",
+      "start": 8.54,
+      "end": 9.415
+     },
+     {
+      "line": 4,
+      "word": "ḱéywōs",
+      "start": 10.51,
+      "end": 11.135
+     },
+     {
+      "line": 4,
+      "word": "mē",
+      "start": 11.21,
+      "end": 11.46
+     },
+     {
+      "line": 4,
+      "word": "tr̥mté.",
+      "start": 11.535,
+      "end": 12.535
+     },
+     {
+      "line": 5,
+      "word": "móri",
+      "start": 13.58,
+      "end": 13.905
+     },
+     {
+      "line": 5,
+      "word": "upér",
+      "start": 13.98,
+      "end": 14.305
+     },
+     {
+      "line": 5,
+      "word": "h₁éyomes",
+      "start": 14.355,
+      "end": 15.03
+     },
+     {
+      "line": 5,
+      "word": "ḱléwos-kʷe",
+      "start": 15.08,
+      "end": 15.755
+     },
+     {
+      "line": 5,
+      "word": "h₂isḱṓmes.",
+      "start": 15.83,
+      "end": 17.23
+     },
+     {
+      "line": 6,
+      "word": "nu",
+      "start": 18.275,
+      "end": 18.425
+     },
+     {
+      "line": 6,
+      "word": "litént.",
+      "start": 18.475,
+      "end": 19.525
+     },
+     {
+      "line": 7,
+      "word": "nu",
+      "start": 20.57,
+      "end": 20.72
+     },
+     {
+      "line": 7,
+      "word": "h₁íd",
+      "start": 20.795,
+      "end": 20.995
+     },
+     {
+      "line": 7,
+      "word": "h₁íns",
+      "start": 21.045,
+      "end": 21.37
+     },
+     {
+      "line": 7,
+      "word": "gʷr̥h₃ét",
+      "start": 21.42,
+      "end": 21.845
+     },
+     {
+      "line": 7,
+      "word": "nu",
+      "start": 21.895,
+      "end": 22.02
+     },
+     {
+      "line": 7,
+      "word": "h₁éysōm",
+      "start": 22.095,
+      "end": 22.695
+     },
+     {
+      "line": 7,
+      "word": "ḱléwos",
+      "start": 22.745,
+      "end": 23.22
+     },
+     {
+      "line": 7,
+      "word": "ń̥dʰgʷʰitom.",
+      "start": 23.27,
+      "end": 24.47
+     }
+    ]
+   }
   },
   {
    "id": "t3-t088-00029",
    "genre": "myth",
    "pie": "h₁stā́m dwóh₁ bʰréh₂terh₁e yemHóh₁. dyḗws ne h₁ést sóh₂wl̥-kʷe ne h₁ést. nu sḿ̥teros h₁éterom gʷʰént. dʰéǵʰōm h₁ésyo mémsos kʷért. h₂éḱmonn̥s h₁ésyo h₃sth₁bʰós kʷért. dyḗm h₁ésyo ḱr̥h₂snés kʷért. wédōr h₁ésyo h₁sh₂éns kʷért. tód pr̥h₂wóm némos h₁ést. nu mórtōs deywóybʰos uksénn̥s gʷʰnénti.",
-   "english": "There were two brothers, twins. There was no sky, and there was no sun. Then the one killed the other. From his flesh he made the earth. From his bones he made the stones. From his skull he made the sky. From his blood he made the waters. That was the first sacrifice. Now mortals kill bulls for the gods."
+   "english": "There were two brothers, twins. There was no sky, and there was no sun. Then the one killed the other. From his flesh he made the earth. From his bones he made the stones. From his skull he made the sky. From his blood he made the waters. That was the first sacrifice. Now mortals kill bulls for the gods.",
+   "audio": {
+    "female": "audio/text-4-f.mp3?v=1793914151",
+    "male": "audio/text-4-m.mp3?v=1793914148"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "h₁stā́m",
+      "start": 0.6,
+      "end": 1.075
+     },
+     {
+      "line": 1,
+      "word": "dwóh₁",
+      "start": 1.125,
+      "end": 1.475
+     },
+     {
+      "line": 1,
+      "word": "bʰréh₂terh₁e",
+      "start": 1.525,
+      "end": 2.2
+     },
+     {
+      "line": 1,
+      "word": "yemHóh₁.",
+      "start": 2.25,
+      "end": 3.3
+     },
+     {
+      "line": 2,
+      "word": "dyḗws",
+      "start": 4.32,
+      "end": 4.82
+     },
+     {
+      "line": 2,
+      "word": "ne",
+      "start": 4.87,
+      "end": 4.995
+     },
+     {
+      "line": 2,
+      "word": "h₁ést",
+      "start": 5.07,
+      "end": 5.37
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥-kʷe",
+      "start": 5.445,
+      "end": 6.095
+     },
+     {
+      "line": 2,
+      "word": "ne",
+      "start": 6.145,
+      "end": 6.27
+     },
+     {
+      "line": 2,
+      "word": "h₁ést.",
+      "start": 6.345,
+      "end": 7.22
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 8.265,
+      "end": 8.415
+     },
+     {
+      "line": 3,
+      "word": "sḿ̥teros",
+      "start": 8.49,
+      "end": 9.165
+     },
+     {
+      "line": 3,
+      "word": "h₁éterom",
+      "start": 9.215,
+      "end": 9.74
+     },
+     {
+      "line": 3,
+      "word": "gʷʰént.",
+      "start": 9.79,
+      "end": 10.615
+     },
+     {
+      "line": 4,
+      "word": "dʰéǵʰōm",
+      "start": 11.66,
+      "end": 12.16
+     },
+     {
+      "line": 4,
+      "word": "h₁ésyo",
+      "start": 12.235,
+      "end": 12.635
+     },
+     {
+      "line": 4,
+      "word": "mémsos",
+      "start": 12.71,
+      "end": 13.26
+     },
+     {
+      "line": 4,
+      "word": "kʷért.",
+      "start": 13.31,
+      "end": 14.11
+     },
+     {
+      "line": 5,
+      "word": "h₂éḱmonn̥s",
+      "start": 15.205,
+      "end": 15.905
+     },
+     {
+      "line": 5,
+      "word": "h₁ésyo",
+      "start": 15.955,
+      "end": 16.38
+     },
+     {
+      "line": 5,
+      "word": "h₃sth₁bʰós",
+      "start": 16.43,
+      "end": 17.055
+     },
+     {
+      "line": 5,
+      "word": "kʷért.",
+      "start": 17.105,
+      "end": 17.905
+     },
+     {
+      "line": 6,
+      "word": "dyḗm",
+      "start": 18.95,
+      "end": 19.35
+     },
+     {
+      "line": 6,
+      "word": "h₁ésyo",
+      "start": 19.425,
+      "end": 19.9
+     },
+     {
+      "line": 6,
+      "word": "ḱr̥h₂snés",
+      "start": 19.95,
+      "end": 20.625
+     },
+     {
+      "line": 6,
+      "word": "kʷért.",
+      "start": 20.675,
+      "end": 21.475
+     },
+     {
+      "line": 7,
+      "word": "wédōr",
+      "start": 22.545,
+      "end": 23.045
+     },
+     {
+      "line": 7,
+      "word": "h₁ésyo",
+      "start": 23.095,
+      "end": 23.545
+     },
+     {
+      "line": 7,
+      "word": "h₁sh₂éns",
+      "start": 23.595,
+      "end": 24.12
+     },
+     {
+      "line": 7,
+      "word": "kʷért.",
+      "start": 24.17,
+      "end": 25.02
+     },
+     {
+      "line": 8,
+      "word": "tód",
+      "start": 26.09,
+      "end": 26.34
+     },
+     {
+      "line": 8,
+      "word": "pr̥h₂wóm",
+      "start": 26.415,
+      "end": 26.94
+     },
+     {
+      "line": 8,
+      "word": "némos",
+      "start": 27.015,
+      "end": 27.465
+     },
+     {
+      "line": 8,
+      "word": "h₁ést.",
+      "start": 27.515,
+      "end": 28.39
+     },
+     {
+      "line": 9,
+      "word": "nu",
+      "start": 29.435,
+      "end": 29.585
+     },
+     {
+      "line": 9,
+      "word": "mórtōs",
+      "start": 29.66,
+      "end": 30.235
+     },
+     {
+      "line": 9,
+      "word": "deywóybʰos",
+      "start": 30.285,
+      "end": 31.035
+     },
+     {
+      "line": 9,
+      "word": "uksénn̥s",
+      "start": 31.11,
+      "end": 31.71
+     },
+     {
+      "line": 9,
+      "word": "gʷʰnénti.",
+      "start": 31.76,
+      "end": 32.81
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "h₁stā́m",
+      "start": 0.6,
+      "end": 1.1
+     },
+     {
+      "line": 1,
+      "word": "dwóh₁",
+      "start": 1.15,
+      "end": 1.5
+     },
+     {
+      "line": 1,
+      "word": "bʰréh₂terh₁e",
+      "start": 1.55,
+      "end": 2.225
+     },
+     {
+      "line": 1,
+      "word": "yemHóh₁.",
+      "start": 2.275,
+      "end": 3.325
+     },
+     {
+      "line": 2,
+      "word": "dyḗws",
+      "start": 4.37,
+      "end": 4.87
+     },
+     {
+      "line": 2,
+      "word": "ne",
+      "start": 4.92,
+      "end": 5.045
+     },
+     {
+      "line": 2,
+      "word": "h₁ést",
+      "start": 5.12,
+      "end": 5.42
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥-kʷe",
+      "start": 5.495,
+      "end": 6.145
+     },
+     {
+      "line": 2,
+      "word": "ne",
+      "start": 6.195,
+      "end": 6.32
+     },
+     {
+      "line": 2,
+      "word": "h₁ést.",
+      "start": 6.395,
+      "end": 7.32
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 8.365,
+      "end": 8.515
+     },
+     {
+      "line": 3,
+      "word": "sḿ̥teros",
+      "start": 8.59,
+      "end": 9.24
+     },
+     {
+      "line": 3,
+      "word": "h₁éterom",
+      "start": 9.29,
+      "end": 9.815
+     },
+     {
+      "line": 3,
+      "word": "gʷʰént.",
+      "start": 9.865,
+      "end": 10.74
+     },
+     {
+      "line": 4,
+      "word": "dʰéǵʰōm",
+      "start": 11.785,
+      "end": 12.31
+     },
+     {
+      "line": 4,
+      "word": "h₁ésyo",
+      "start": 12.385,
+      "end": 12.81
+     },
+     {
+      "line": 4,
+      "word": "mémsos",
+      "start": 12.885,
+      "end": 13.435
+     },
+     {
+      "line": 4,
+      "word": "kʷért.",
+      "start": 13.485,
+      "end": 14.335
+     },
+     {
+      "line": 5,
+      "word": "h₂éḱmonn̥s",
+      "start": 15.43,
+      "end": 16.18
+     },
+     {
+      "line": 5,
+      "word": "h₁ésyo",
+      "start": 16.23,
+      "end": 16.68
+     },
+     {
+      "line": 5,
+      "word": "h₃sth₁bʰós",
+      "start": 16.73,
+      "end": 17.355
+     },
+     {
+      "line": 5,
+      "word": "kʷért.",
+      "start": 17.405,
+      "end": 18.255
+     },
+     {
+      "line": 6,
+      "word": "dyḗm",
+      "start": 19.325,
+      "end": 19.725
+     },
+     {
+      "line": 6,
+      "word": "h₁ésyo",
+      "start": 19.8,
+      "end": 20.275
+     },
+     {
+      "line": 6,
+      "word": "ḱr̥h₂snés",
+      "start": 20.325,
+      "end": 21.025
+     },
+     {
+      "line": 6,
+      "word": "kʷért.",
+      "start": 21.075,
+      "end": 21.925
+     },
+     {
+      "line": 7,
+      "word": "wédōr",
+      "start": 22.995,
+      "end": 23.495
+     },
+     {
+      "line": 7,
+      "word": "h₁ésyo",
+      "start": 23.545,
+      "end": 23.995
+     },
+     {
+      "line": 7,
+      "word": "h₁sh₂éns",
+      "start": 24.045,
+      "end": 24.57
+     },
+     {
+      "line": 7,
+      "word": "kʷért.",
+      "start": 24.62,
+      "end": 25.495
+     },
+     {
+      "line": 8,
+      "word": "tód",
+      "start": 26.565,
+      "end": 26.815
+     },
+     {
+      "line": 8,
+      "word": "pr̥h₂wóm",
+      "start": 26.89,
+      "end": 27.39
+     },
+     {
+      "line": 8,
+      "word": "némos",
+      "start": 27.465,
+      "end": 27.915
+     },
+     {
+      "line": 8,
+      "word": "h₁ést.",
+      "start": 27.965,
+      "end": 28.865
+     },
+     {
+      "line": 9,
+      "word": "nu",
+      "start": 29.91,
+      "end": 30.06
+     },
+     {
+      "line": 9,
+      "word": "mórtōs",
+      "start": 30.135,
+      "end": 30.71
+     },
+     {
+      "line": 9,
+      "word": "deywóybʰos",
+      "start": 30.76,
+      "end": 31.535
+     },
+     {
+      "line": 9,
+      "word": "uksénn̥s",
+      "start": 31.585,
+      "end": 32.185
+     },
+     {
+      "line": 9,
+      "word": "gʷʰnénti.",
+      "start": 32.235,
+      "end": 33.285
+     }
+    ]
+   }
   },
   {
    "id": "t3-t026-00010",
    "genre": "myth",
    "pie": "h₃érō úd yéh₂t. sóh₂wl̥ swṓys h₃kʷbʰís spéḱyet. nu h₁íd h₃r̥néy sékʷt. kʷís h₁mé spéḱyeti? wérh₁t. h₁eǵóh₂ twé spéḱyoh₂. méne h₃ókʷih₁ ne trésetes h₁eǵóh₂-kʷe ne bʰebʰóyh₂h₂e. nu sóh₂wl̥ h₃éronm̥ ǵnéh₃t h₁ésmey-kʷe ḱlutóm h₁nómn̥ dʰéh₁t. h₁éy h₂wéyōm h₃rḗǵs.",
-   "english": "The eagle was going upwards. He kept looking at the sun with his own eyes. Then it spoke to the eagle: \"Who looks at me?\" He spoke: \"I look at you. My eyes do not tremble, and I am not afraid.\" Then the sun knew the eagle, and set a famous name for him. The eagle is the king of birds."
+   "english": "The eagle was going upwards. He kept looking at the sun with his own eyes. Then it spoke to the eagle: \"Who looks at me?\" He spoke: \"I look at you. My eyes do not tremble, and I am not afraid.\" Then the sun knew the eagle, and set a famous name for him. The eagle is the king of birds.",
+   "audio": {
+    "female": "audio/text-5-f.mp3?v=1793914156",
+    "male": "audio/text-5-m.mp3?v=1793914154"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "h₃érō",
+      "start": 0.575,
+      "end": 1.0
+     },
+     {
+      "line": 1,
+      "word": "úd",
+      "start": 1.05,
+      "end": 1.2
+     },
+     {
+      "line": 1,
+      "word": "yéh₂t.",
+      "start": 1.25,
+      "end": 2.15
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥",
+      "start": 3.22,
+      "end": 3.72
+     },
+     {
+      "line": 2,
+      "word": "swṓys",
+      "start": 3.77,
+      "end": 4.27
+     },
+     {
+      "line": 2,
+      "word": "h₃kʷbʰís",
+      "start": 4.32,
+      "end": 4.695
+     },
+     {
+      "line": 2,
+      "word": "spéḱyet.",
+      "start": 4.77,
+      "end": 5.945
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 6.99,
+      "end": 7.14
+     },
+     {
+      "line": 3,
+      "word": "h₁íd",
+      "start": 7.215,
+      "end": 7.44
+     },
+     {
+      "line": 3,
+      "word": "h₃r̥néy",
+      "start": 7.49,
+      "end": 7.915
+     },
+     {
+      "line": 3,
+      "word": "sékʷt.",
+      "start": 7.965,
+      "end": 8.84
+     },
+     {
+      "line": 4,
+      "word": "kʷís",
+      "start": 9.885,
+      "end": 10.185
+     },
+     {
+      "line": 4,
+      "word": "h₁mé",
+      "start": 10.235,
+      "end": 10.485
+     },
+     {
+      "line": 4,
+      "word": "spéḱyeti?",
+      "start": 10.56,
+      "end": 11.885
+     },
+     {
+      "line": 5,
+      "word": "wérh₁t.",
+      "start": 12.905,
+      "end": 13.78
+     },
+     {
+      "line": 6,
+      "word": "h₁eǵóh₂",
+      "start": 14.85,
+      "end": 15.325
+     },
+     {
+      "line": 6,
+      "word": "twé",
+      "start": 15.375,
+      "end": 15.625
+     },
+     {
+      "line": 6,
+      "word": "spéḱyoh₂.",
+      "start": 15.675,
+      "end": 16.9
+     },
+     {
+      "line": 7,
+      "word": "méne",
+      "start": 17.945,
+      "end": 18.245
+     },
+     {
+      "line": 7,
+      "word": "h₃ókʷih₁",
+      "start": 18.295,
+      "end": 18.72
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 18.77,
+      "end": 18.895
+     },
+     {
+      "line": 7,
+      "word": "trésetes",
+      "start": 18.97,
+      "end": 19.72
+     },
+     {
+      "line": 7,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 19.77,
+      "end": 20.37
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 20.42,
+      "end": 20.545
+     },
+     {
+      "line": 7,
+      "word": "bʰebʰóyh₂h₂e.",
+      "start": 20.595,
+      "end": 21.845
+     },
+     {
+      "line": 8,
+      "word": "nu",
+      "start": 22.89,
+      "end": 23.04
+     },
+     {
+      "line": 8,
+      "word": "sóh₂wl̥",
+      "start": 23.115,
+      "end": 23.59
+     },
+     {
+      "line": 8,
+      "word": "h₃éronm̥",
+      "start": 23.64,
+      "end": 24.14
+     },
+     {
+      "line": 8,
+      "word": "ǵnéh₃t",
+      "start": 24.19,
+      "end": 24.59
+     },
+     {
+      "line": 8,
+      "word": "h₁ésmey-kʷe",
+      "start": 24.665,
+      "end": 25.34
+     },
+     {
+      "line": 8,
+      "word": "ḱlutóm",
+      "start": 25.39,
+      "end": 25.865
+     },
+     {
+      "line": 8,
+      "word": "h₁nómn̥",
+      "start": 25.915,
+      "end": 26.34
+     },
+     {
+      "line": 8,
+      "word": "dʰéh₁t.",
+      "start": 26.39,
+      "end": 27.24
+     },
+     {
+      "line": 9,
+      "word": "h₁éy",
+      "start": 28.31,
+      "end": 28.56
+     },
+     {
+      "line": 9,
+      "word": "h₂wéyōm",
+      "start": 28.635,
+      "end": 29.235
+     },
+     {
+      "line": 9,
+      "word": "h₃rḗǵs.",
+      "start": 29.31,
+      "end": 30.385
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "h₃érō",
+      "start": 0.6,
+      "end": 1.025
+     },
+     {
+      "line": 1,
+      "word": "úd",
+      "start": 1.075,
+      "end": 1.225
+     },
+     {
+      "line": 1,
+      "word": "yéh₂t.",
+      "start": 1.275,
+      "end": 2.2
+     },
+     {
+      "line": 2,
+      "word": "sóh₂wl̥",
+      "start": 3.27,
+      "end": 3.795
+     },
+     {
+      "line": 2,
+      "word": "swṓys",
+      "start": 3.845,
+      "end": 4.345
+     },
+     {
+      "line": 2,
+      "word": "h₃kʷbʰís",
+      "start": 4.395,
+      "end": 4.795
+     },
+     {
+      "line": 2,
+      "word": "spéḱyet.",
+      "start": 4.87,
+      "end": 6.02
+     },
+     {
+      "line": 3,
+      "word": "nu",
+      "start": 7.065,
+      "end": 7.215
+     },
+     {
+      "line": 3,
+      "word": "h₁íd",
+      "start": 7.29,
+      "end": 7.515
+     },
+     {
+      "line": 3,
+      "word": "h₃r̥néy",
+      "start": 7.565,
+      "end": 8.015
+     },
+     {
+      "line": 3,
+      "word": "sékʷt.",
+      "start": 8.09,
+      "end": 8.99
+     },
+     {
+      "line": 4,
+      "word": "kʷís",
+      "start": 10.035,
+      "end": 10.335
+     },
+     {
+      "line": 4,
+      "word": "h₁mé",
+      "start": 10.385,
+      "end": 10.635
+     },
+     {
+      "line": 4,
+      "word": "spéḱyeti?",
+      "start": 10.71,
+      "end": 12.035
+     },
+     {
+      "line": 5,
+      "word": "wérh₁t.",
+      "start": 13.055,
+      "end": 13.955
+     },
+     {
+      "line": 6,
+      "word": "h₁eǵóh₂",
+      "start": 15.025,
+      "end": 15.525
+     },
+     {
+      "line": 6,
+      "word": "twé",
+      "start": 15.575,
+      "end": 15.825
+     },
+     {
+      "line": 6,
+      "word": "spéḱyoh₂.",
+      "start": 15.9,
+      "end": 17.125
+     },
+     {
+      "line": 7,
+      "word": "méne",
+      "start": 18.17,
+      "end": 18.495
+     },
+     {
+      "line": 7,
+      "word": "h₃ókʷih₁",
+      "start": 18.545,
+      "end": 18.97
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 19.02,
+      "end": 19.145
+     },
+     {
+      "line": 7,
+      "word": "trésetes",
+      "start": 19.22,
+      "end": 19.97
+     },
+     {
+      "line": 7,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 20.02,
+      "end": 20.62
+     },
+     {
+      "line": 7,
+      "word": "ne",
+      "start": 20.67,
+      "end": 20.795
+     },
+     {
+      "line": 7,
+      "word": "bʰebʰóyh₂h₂e.",
+      "start": 20.845,
+      "end": 22.12
+     },
+     {
+      "line": 8,
+      "word": "nu",
+      "start": 23.14,
+      "end": 23.29
+     },
+     {
+      "line": 8,
+      "word": "sóh₂wl̥",
+      "start": 23.365,
+      "end": 23.89
+     },
+     {
+      "line": 8,
+      "word": "h₃éronm̥",
+      "start": 23.94,
+      "end": 24.44
+     },
+     {
+      "line": 8,
+      "word": "ǵnéh₃t",
+      "start": 24.49,
+      "end": 24.89
+     },
+     {
+      "line": 8,
+      "word": "h₁ésmey-kʷe",
+      "start": 24.94,
+      "end": 25.615
+     },
+     {
+      "line": 8,
+      "word": "ḱlutóm",
+      "start": 25.665,
+      "end": 26.14
+     },
+     {
+      "line": 8,
+      "word": "h₁nómn̥",
+      "start": 26.19,
+      "end": 26.615
+     },
+     {
+      "line": 8,
+      "word": "dʰéh₁t.",
+      "start": 26.665,
+      "end": 27.515
+     },
+     {
+      "line": 9,
+      "word": "h₁éy",
+      "start": 28.585,
+      "end": 28.835
+     },
+     {
+      "line": 9,
+      "word": "h₂wéyōm",
+      "start": 28.91,
+      "end": 29.535
+     },
+     {
+      "line": 9,
+      "word": "h₃rḗǵs.",
+      "start": 29.61,
+      "end": 30.71
+     }
+    ]
+   }
   },
   {
    "id": "t3-t085-00018",
    "genre": "dialogue",
    "pie": "kúdʰe gʰóstey h₂éyeri h₁éysi? h₂ewsér h₁éymi. méh₂tēr moy méǵh₂i déh₂newi h₁épi tḱéyti. h₁ésyeh₂ey ḱód wéwke. dʰugh₂tḗr toy gʷíh₃weti. kʷíd h₁ésyeh₂s h₁nómn̥? h₁íh₂ h₁suḱléwēs wiḱpóteys h₁widʰéwh₂. h₁íh₂m̥ winédoh₂ h₁ésyeh₂ey-kʷe wérh₁oh₂. príHe moy túH ḱéywos.",
-   "english": "Stranger, where are you going in the morning? I am going toward the dawn. My mother dwells by the great river. Tell her this: Your daughter lives. What is her name? She is Of-Good-Fame, the widow of a chief. I will find her and tell her. You are dear to me, friend."
+   "english": "Stranger, where are you going in the morning? I am going toward the dawn. My mother dwells by the great river. Tell her this: Your daughter lives. What is her name? She is Of-Good-Fame, the widow of a chief. I will find her and tell her. You are dear to me, friend.",
+   "audio": {
+    "female": "audio/text-6-f.mp3?v=1793914161",
+    "male": "audio/text-6-m.mp3?v=1793914159"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "kúdʰe",
+      "start": 0.6,
+      "end": 0.9
+     },
+     {
+      "line": 1,
+      "word": "gʰóstey",
+      "start": 0.95,
+      "end": 1.475
+     },
+     {
+      "line": 1,
+      "word": "h₂éyeri",
+      "start": 1.55,
+      "end": 2.025
+     },
+     {
+      "line": 1,
+      "word": "h₁éysi?",
+      "start": 2.1,
+      "end": 3.1
+     },
+     {
+      "line": 2,
+      "word": "h₂ewsér",
+      "start": 4.17,
+      "end": 4.62
+     },
+     {
+      "line": 2,
+      "word": "h₁éymi.",
+      "start": 4.67,
+      "end": 5.62
+     },
+     {
+      "line": 3,
+      "word": "méh₂tēr",
+      "start": 6.665,
+      "end": 7.215
+     },
+     {
+      "line": 3,
+      "word": "moy",
+      "start": 7.265,
+      "end": 7.465
+     },
+     {
+      "line": 3,
+      "word": "méǵh₂i",
+      "start": 7.515,
+      "end": 7.915
+     },
+     {
+      "line": 3,
+      "word": "déh₂newi",
+      "start": 7.965,
+      "end": 8.565
+     },
+     {
+      "line": 3,
+      "word": "h₁épi",
+      "start": 8.64,
+      "end": 8.99
+     },
+     {
+      "line": 3,
+      "word": "tḱéyti.",
+      "start": 9.065,
+      "end": 10.115
+     },
+     {
+      "line": 4,
+      "word": "h₁ésyeh₂ey",
+      "start": 11.185,
+      "end": 11.885
+     },
+     {
+      "line": 4,
+      "word": "ḱód",
+      "start": 11.935,
+      "end": 12.16
+     },
+     {
+      "line": 4,
+      "word": "wéwke.",
+      "start": 12.21,
+      "end": 13.135
+     },
+     {
+      "line": 5,
+      "word": "dʰugh₂tḗr",
+      "start": 14.18,
+      "end": 14.78
+     },
+     {
+      "line": 5,
+      "word": "toy",
+      "start": 14.83,
+      "end": 15.03
+     },
+     {
+      "line": 5,
+      "word": "gʷíh₃weti.",
+      "start": 15.08,
+      "end": 16.255
+     },
+     {
+      "line": 6,
+      "word": "kʷíd",
+      "start": 17.3,
+      "end": 17.55
+     },
+     {
+      "line": 6,
+      "word": "h₁ésyeh₂s",
+      "start": 17.6,
+      "end": 18.225
+     },
+     {
+      "line": 6,
+      "word": "h₁nómn̥?",
+      "start": 18.275,
+      "end": 19.3
+     },
+     {
+      "line": 7,
+      "word": "h₁íh₂",
+      "start": 20.345,
+      "end": 20.62
+     },
+     {
+      "line": 7,
+      "word": "h₁suḱléwēs",
+      "start": 20.67,
+      "end": 21.545
+     },
+     {
+      "line": 7,
+      "word": "wiḱpóteys",
+      "start": 21.595,
+      "end": 22.395
+     },
+     {
+      "line": 7,
+      "word": "h₁widʰéwh₂.",
+      "start": 22.445,
+      "end": 23.52
+     },
+     {
+      "line": 8,
+      "word": "h₁íh₂m̥",
+      "start": 24.59,
+      "end": 25.015
+     },
+     {
+      "line": 8,
+      "word": "winédoh₂",
+      "start": 25.065,
+      "end": 25.69
+     },
+     {
+      "line": 8,
+      "word": "h₁ésyeh₂ey-kʷe",
+      "start": 25.74,
+      "end": 26.59
+     },
+     {
+      "line": 8,
+      "word": "wérh₁oh₂.",
+      "start": 26.64,
+      "end": 27.64
+     },
+     {
+      "line": 9,
+      "word": "príHe",
+      "start": 28.735,
+      "end": 29.135
+     },
+     {
+      "line": 9,
+      "word": "moy",
+      "start": 29.21,
+      "end": 29.41
+     },
+     {
+      "line": 9,
+      "word": "túH",
+      "start": 29.46,
+      "end": 29.71
+     },
+     {
+      "line": 9,
+      "word": "ḱéywos.",
+      "start": 29.76,
+      "end": 30.81
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "kúdʰe",
+      "start": 0.6,
+      "end": 0.925
+     },
+     {
+      "line": 1,
+      "word": "gʰóstey",
+      "start": 0.975,
+      "end": 1.5
+     },
+     {
+      "line": 1,
+      "word": "h₂éyeri",
+      "start": 1.575,
+      "end": 2.05
+     },
+     {
+      "line": 1,
+      "word": "h₁éysi?",
+      "start": 2.125,
+      "end": 3.15
+     },
+     {
+      "line": 2,
+      "word": "h₂ewsér",
+      "start": 4.22,
+      "end": 4.67
+     },
+     {
+      "line": 2,
+      "word": "h₁éymi.",
+      "start": 4.72,
+      "end": 5.67
+     },
+     {
+      "line": 3,
+      "word": "méh₂tēr",
+      "start": 6.74,
+      "end": 7.29
+     },
+     {
+      "line": 3,
+      "word": "moy",
+      "start": 7.365,
+      "end": 7.565
+     },
+     {
+      "line": 3,
+      "word": "méǵh₂i",
+      "start": 7.64,
+      "end": 8.04
+     },
+     {
+      "line": 3,
+      "word": "déh₂newi",
+      "start": 8.09,
+      "end": 8.715
+     },
+     {
+      "line": 3,
+      "word": "h₁épi",
+      "start": 8.79,
+      "end": 9.14
+     },
+     {
+      "line": 3,
+      "word": "tḱéyti.",
+      "start": 9.215,
+      "end": 10.265
+     },
+     {
+      "line": 4,
+      "word": "h₁ésyeh₂ey",
+      "start": 11.31,
+      "end": 12.035
+     },
+     {
+      "line": 4,
+      "word": "ḱód",
+      "start": 12.085,
+      "end": 12.31
+     },
+     {
+      "line": 4,
+      "word": "wéwke.",
+      "start": 12.36,
+      "end": 13.285
+     },
+     {
+      "line": 5,
+      "word": "dʰugh₂tḗr",
+      "start": 14.33,
+      "end": 14.955
+     },
+     {
+      "line": 5,
+      "word": "toy",
+      "start": 15.005,
+      "end": 15.205
+     },
+     {
+      "line": 5,
+      "word": "gʷíh₃weti.",
+      "start": 15.255,
+      "end": 16.43
+     },
+     {
+      "line": 6,
+      "word": "kʷíd",
+      "start": 17.475,
+      "end": 17.725
+     },
+     {
+      "line": 6,
+      "word": "h₁ésyeh₂s",
+      "start": 17.775,
+      "end": 18.425
+     },
+     {
+      "line": 6,
+      "word": "h₁nómn̥?",
+      "start": 18.475,
+      "end": 19.475
+     },
+     {
+      "line": 7,
+      "word": "h₁íh₂",
+      "start": 20.52,
+      "end": 20.795
+     },
+     {
+      "line": 7,
+      "word": "h₁suḱléwēs",
+      "start": 20.845,
+      "end": 21.745
+     },
+     {
+      "line": 7,
+      "word": "wiḱpóteys",
+      "start": 21.795,
+      "end": 22.595
+     },
+     {
+      "line": 7,
+      "word": "h₁widʰéwh₂.",
+      "start": 22.645,
+      "end": 23.77
+     },
+     {
+      "line": 8,
+      "word": "h₁íh₂m̥",
+      "start": 24.815,
+      "end": 25.215
+     },
+     {
+      "line": 8,
+      "word": "winédoh₂",
+      "start": 25.265,
+      "end": 25.915
+     },
+     {
+      "line": 8,
+      "word": "h₁ésyeh₂ey-kʷe",
+      "start": 25.965,
+      "end": 26.815
+     },
+     {
+      "line": 8,
+      "word": "wérh₁oh₂.",
+      "start": 26.865,
+      "end": 27.89
+     },
+     {
+      "line": 9,
+      "word": "príHe",
+      "start": 28.96,
+      "end": 29.36
+     },
+     {
+      "line": 9,
+      "word": "moy",
+      "start": 29.435,
+      "end": 29.635
+     },
+     {
+      "line": 9,
+      "word": "túH",
+      "start": 29.685,
+      "end": 29.935
+     },
+     {
+      "line": 9,
+      "word": "ḱéywos.",
+      "start": 29.985,
+      "end": 31.01
+     }
+    ]
+   }
   },
   {
    "id": "t3-t028-00002",
    "genre": "fable",
    "pie": "wl̥kʷíh₂s ḱwónm̥ widét mléwHt wl̥kʷíh₂s. ḱwón túH pleh₁tós h₁eǵóh₂-kʷe tr̥syóh₂. ḱwṓ sékʷt. wĺ̥kʷih₂ méne ḱóymom gʷm̥yé. méne moy pótnih₂ péyh₂tu dédeh₃ti. h₁eǵóh₂ yugtós. séh₂ wérh₁yet. túH yugtós. h₁eǵóh₂ h₁léwdʰereh₂. h₁eǵóh₂ tr̥syóh₂ h₁eǵóh₂-kʷe h₁léwdʰereh₂. nu wl̥kʷíh₂s léytt.",
-   "english": "A she-wolf saw a dog. The she-wolf said: \"Dog, you are full, and I thirst.\" The dog said: \"Come to my home, she-wolf. My mistress gives me nourishment. I am yoked.\" She said: \"You are yoked. I am free. I thirst, and I am free.\" Then the she-wolf went away."
+   "english": "A she-wolf saw a dog. The she-wolf said: \"Dog, you are full, and I thirst.\" The dog said: \"Come to my home, she-wolf. My mistress gives me nourishment. I am yoked.\" She said: \"You are yoked. I am free. I thirst, and I am free.\" Then the she-wolf went away.",
+   "audio": {
+    "female": "audio/text-7-f.mp3?v=1793914167",
+    "male": "audio/text-7-m.mp3?v=1793914164"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "wl̥kʷíh₂s",
+      "start": 0.575,
+      "end": 1.175
+     },
+     {
+      "line": 1,
+      "word": "ḱwónm̥",
+      "start": 1.225,
+      "end": 1.6
+     },
+     {
+      "line": 1,
+      "word": "widét",
+      "start": 1.65,
+      "end": 2.025
+     },
+     {
+      "line": 1,
+      "word": "mléwHt",
+      "start": 2.1,
+      "end": 2.55
+     },
+     {
+      "line": 1,
+      "word": "wl̥kʷíh₂s.",
+      "start": 2.6,
+      "end": 3.675
+     },
+     {
+      "line": 2,
+      "word": "ḱwón",
+      "start": 4.745,
+      "end": 5.045
+     },
+     {
+      "line": 2,
+      "word": "túH",
+      "start": 5.095,
+      "end": 5.345
+     },
+     {
+      "line": 2,
+      "word": "pleh₁tós",
+      "start": 5.395,
+      "end": 5.97
+     },
+     {
+      "line": 2,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 6.02,
+      "end": 6.645
+     },
+     {
+      "line": 2,
+      "word": "tr̥syóh₂.",
+      "start": 6.695,
+      "end": 7.72
+     },
+     {
+      "line": 3,
+      "word": "ḱwṓ",
+      "start": 8.79,
+      "end": 9.115
+     },
+     {
+      "line": 3,
+      "word": "sékʷt.",
+      "start": 9.19,
+      "end": 10.09
+     },
+     {
+      "line": 4,
+      "word": "wĺ̥kʷih₂",
+      "start": 11.135,
+      "end": 11.635
+     },
+     {
+      "line": 4,
+      "word": "méne",
+      "start": 11.685,
+      "end": 12.01
+     },
+     {
+      "line": 4,
+      "word": "ḱóymom",
+      "start": 12.06,
+      "end": 12.51
+     },
+     {
+      "line": 4,
+      "word": "gʷm̥yé.",
+      "start": 12.56,
+      "end": 13.36
+     },
+     {
+      "line": 5,
+      "word": "méne",
+      "start": 14.405,
+      "end": 14.73
+     },
+     {
+      "line": 5,
+      "word": "moy",
+      "start": 14.805,
+      "end": 15.005
+     },
+     {
+      "line": 5,
+      "word": "pótnih₂",
+      "start": 15.055,
+      "end": 15.605
+     },
+     {
+      "line": 5,
+      "word": "péyh₂tu",
+      "start": 15.655,
+      "end": 16.155
+     },
+     {
+      "line": 5,
+      "word": "dédeh₃ti.",
+      "start": 16.205,
+      "end": 17.38
+     },
+     {
+      "line": 6,
+      "word": "h₁eǵóh₂",
+      "start": 18.45,
+      "end": 18.875
+     },
+     {
+      "line": 6,
+      "word": "yugtós.",
+      "start": 18.925,
+      "end": 19.95
+     },
+     {
+      "line": 7,
+      "word": "séh₂",
+      "start": 21.02,
+      "end": 21.295
+     },
+     {
+      "line": 7,
+      "word": "wérh₁yet.",
+      "start": 21.345,
+      "end": 22.395
+     },
+     {
+      "line": 8,
+      "word": "túH",
+      "start": 23.465,
+      "end": 23.765
+     },
+     {
+      "line": 8,
+      "word": "yugtós.",
+      "start": 23.815,
+      "end": 24.865
+     },
+     {
+      "line": 9,
+      "word": "h₁eǵóh₂",
+      "start": 25.935,
+      "end": 26.36
+     },
+     {
+      "line": 9,
+      "word": "h₁léwdʰereh₂.",
+      "start": 26.41,
+      "end": 27.71
+     },
+     {
+      "line": 10,
+      "word": "h₁eǵóh₂",
+      "start": 28.78,
+      "end": 29.255
+     },
+     {
+      "line": 10,
+      "word": "tr̥syóh₂",
+      "start": 29.305,
+      "end": 29.83
+     },
+     {
+      "line": 10,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 29.88,
+      "end": 30.505
+     },
+     {
+      "line": 10,
+      "word": "h₁léwdʰereh₂.",
+      "start": 30.555,
+      "end": 31.78
+     },
+     {
+      "line": 11,
+      "word": "nu",
+      "start": 32.825,
+      "end": 32.975
+     },
+     {
+      "line": 11,
+      "word": "wl̥kʷíh₂s",
+      "start": 33.025,
+      "end": 33.575
+     },
+     {
+      "line": 11,
+      "word": "léytt.",
+      "start": 33.625,
+      "end": 34.575
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "wl̥kʷíh₂s",
+      "start": 0.575,
+      "end": 1.175
+     },
+     {
+      "line": 1,
+      "word": "ḱwónm̥",
+      "start": 1.225,
+      "end": 1.6
+     },
+     {
+      "line": 1,
+      "word": "widét",
+      "start": 1.65,
+      "end": 2.05
+     },
+     {
+      "line": 1,
+      "word": "mléwHt",
+      "start": 2.125,
+      "end": 2.625
+     },
+     {
+      "line": 1,
+      "word": "wl̥kʷíh₂s.",
+      "start": 2.675,
+      "end": 3.775
+     },
+     {
+      "line": 2,
+      "word": "ḱwón",
+      "start": 4.845,
+      "end": 5.145
+     },
+     {
+      "line": 2,
+      "word": "túH",
+      "start": 5.22,
+      "end": 5.47
+     },
+     {
+      "line": 2,
+      "word": "pleh₁tós",
+      "start": 5.52,
+      "end": 6.095
+     },
+     {
+      "line": 2,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 6.145,
+      "end": 6.77
+     },
+     {
+      "line": 2,
+      "word": "tr̥syóh₂.",
+      "start": 6.82,
+      "end": 7.92
+     },
+     {
+      "line": 3,
+      "word": "ḱwṓ",
+      "start": 9.015,
+      "end": 9.34
+     },
+     {
+      "line": 3,
+      "word": "sékʷt.",
+      "start": 9.415,
+      "end": 10.315
+     },
+     {
+      "line": 4,
+      "word": "wĺ̥kʷih₂",
+      "start": 11.335,
+      "end": 11.835
+     },
+     {
+      "line": 4,
+      "word": "méne",
+      "start": 11.91,
+      "end": 12.26
+     },
+     {
+      "line": 4,
+      "word": "ḱóymom",
+      "start": 12.335,
+      "end": 12.81
+     },
+     {
+      "line": 4,
+      "word": "gʷm̥yé.",
+      "start": 12.86,
+      "end": 13.685
+     },
+     {
+      "line": 5,
+      "word": "méne",
+      "start": 14.73,
+      "end": 15.08
+     },
+     {
+      "line": 5,
+      "word": "moy",
+      "start": 15.155,
+      "end": 15.355
+     },
+     {
+      "line": 5,
+      "word": "pótnih₂",
+      "start": 15.43,
+      "end": 15.98
+     },
+     {
+      "line": 5,
+      "word": "péyh₂tu",
+      "start": 16.03,
+      "end": 16.555
+     },
+     {
+      "line": 5,
+      "word": "dédeh₃ti.",
+      "start": 16.605,
+      "end": 17.805
+     },
+     {
+      "line": 6,
+      "word": "h₁eǵóh₂",
+      "start": 18.85,
+      "end": 19.325
+     },
+     {
+      "line": 6,
+      "word": "yugtós.",
+      "start": 19.375,
+      "end": 20.4
+     },
+     {
+      "line": 7,
+      "word": "séh₂",
+      "start": 21.47,
+      "end": 21.77
+     },
+     {
+      "line": 7,
+      "word": "wérh₁yet.",
+      "start": 21.82,
+      "end": 22.895
+     },
+     {
+      "line": 8,
+      "word": "túH",
+      "start": 23.965,
+      "end": 24.24
+     },
+     {
+      "line": 8,
+      "word": "yugtós.",
+      "start": 24.29,
+      "end": 25.315
+     },
+     {
+      "line": 9,
+      "word": "h₁eǵóh₂",
+      "start": 26.385,
+      "end": 26.885
+     },
+     {
+      "line": 9,
+      "word": "h₁léwdʰereh₂.",
+      "start": 26.935,
+      "end": 28.235
+     },
+     {
+      "line": 10,
+      "word": "h₁eǵóh₂",
+      "start": 29.28,
+      "end": 29.755
+     },
+     {
+      "line": 10,
+      "word": "tr̥syóh₂",
+      "start": 29.805,
+      "end": 30.355
+     },
+     {
+      "line": 10,
+      "word": "h₁eǵóh₂-kʷe",
+      "start": 30.405,
+      "end": 31.03
+     },
+     {
+      "line": 10,
+      "word": "h₁léwdʰereh₂.",
+      "start": 31.08,
+      "end": 32.355
+     },
+     {
+      "line": 11,
+      "word": "nu",
+      "start": 33.375,
+      "end": 33.525
+     },
+     {
+      "line": 11,
+      "word": "wl̥kʷíh₂s",
+      "start": 33.575,
+      "end": 34.15
+     },
+     {
+      "line": 11,
+      "word": "léytt.",
+      "start": 34.2,
+      "end": 35.15
+     }
+    ]
+   }
   },
   {
    "id": "t3-rl6-005-00008",
    "genre": "riddle",
    "pie": "stestóh₂h₂e ne-kʷe stéygʰoh₂. méne pódes wódr̥ dʰǵʰémi Hn̥dʰí píph₃onti. h₂éweyes swóns nisdóns méne ǵʰóstoysu démonti. péth₂leh₂ sémeh₂i wésh₂er snóygʷʰos-kʷe me ǵʰyémi stégeti. méne h₁nómn̥ wr̥h₁dʰí. dóru.",
-   "english": "I stand, and I do not walk. My feet drink water under the earth. Birds build their nests in my hands. In summer I wear leaves, and in winter the snow covers me. Say my name. A tree."
+   "english": "I stand, and I do not walk. My feet drink water under the earth. Birds build their nests in my hands. In summer I wear leaves, and in winter the snow covers me. Say my name. A tree.",
+   "audio": {
+    "female": "audio/text-8-f.mp3?v=1793914171",
+    "male": "audio/text-8-m.mp3?v=1793914169"
+   },
+   "timing": {
+    "m": [
+     {
+      "line": 1,
+      "word": "stestóh₂h₂e",
+      "start": 0.6,
+      "end": 1.425
+     },
+     {
+      "line": 1,
+      "word": "ne-kʷe",
+      "start": 1.475,
+      "end": 1.8
+     },
+     {
+      "line": 1,
+      "word": "stéygʰoh₂.",
+      "start": 1.875,
+      "end": 3.025
+     },
+     {
+      "line": 2,
+      "word": "méne",
+      "start": 4.095,
+      "end": 4.445
+     },
+     {
+      "line": 2,
+      "word": "pódes",
+      "start": 4.52,
+      "end": 4.945
+     },
+     {
+      "line": 2,
+      "word": "wódr̥",
+      "start": 4.995,
+      "end": 5.295
+     },
+     {
+      "line": 2,
+      "word": "dʰǵʰémi",
+      "start": 5.345,
+      "end": 5.695
+     },
+     {
+      "line": 2,
+      "word": "Hn̥dʰí",
+      "start": 5.745,
+      "end": 6.12
+     },
+     {
+      "line": 2,
+      "word": "píph₃onti.",
+      "start": 6.17,
+      "end": 7.47
+     },
+     {
+      "line": 3,
+      "word": "h₂éweyes",
+      "start": 8.565,
+      "end": 9.165
+     },
+     {
+      "line": 3,
+      "word": "swóns",
+      "start": 9.215,
+      "end": 9.615
+     },
+     {
+      "line": 3,
+      "word": "nisdóns",
+      "start": 9.665,
+      "end": 10.24
+     },
+     {
+      "line": 3,
+      "word": "méne",
+      "start": 10.29,
+      "end": 10.59
+     },
+     {
+      "line": 3,
+      "word": "ǵʰóstoysu",
+      "start": 10.64,
+      "end": 11.365
+     },
+     {
+      "line": 3,
+      "word": "démonti.",
+      "start": 11.415,
+      "end": 12.565
+     },
+     {
+      "line": 4,
+      "word": "péth₂leh₂",
+      "start": 13.635,
+      "end": 14.21
+     },
+     {
+      "line": 4,
+      "word": "sémeh₂i",
+      "start": 14.285,
+      "end": 14.86
+     },
+     {
+      "line": 4,
+      "word": "wésh₂er",
+      "start": 14.91,
+      "end": 15.41
+     },
+     {
+      "line": 4,
+      "word": "snóygʷʰos-kʷe",
+      "start": 15.46,
+      "end": 16.21
+     },
+     {
+      "line": 4,
+      "word": "me",
+      "start": 16.285,
+      "end": 16.41
+     },
+     {
+      "line": 4,
+      "word": "ǵʰyémi",
+      "start": 16.46,
+      "end": 16.835
+     },
+     {
+      "line": 4,
+      "word": "stégeti.",
+      "start": 16.91,
+      "end": 18.11
+     },
+     {
+      "line": 5,
+      "word": "méne",
+      "start": 19.155,
+      "end": 19.48
+     },
+     {
+      "line": 5,
+      "word": "h₁nómn̥",
+      "start": 19.53,
+      "end": 19.955
+     },
+     {
+      "line": 5,
+      "word": "wr̥h₁dʰí.",
+      "start": 20.005,
+      "end": 20.93
+     },
+     {
+      "line": 6,
+      "word": "dóru.",
+      "start": 21.95,
+      "end": 22.825
+     }
+    ],
+    "f": [
+     {
+      "line": 1,
+      "word": "stestóh₂h₂e",
+      "start": 0.6,
+      "end": 1.425
+     },
+     {
+      "line": 1,
+      "word": "ne-kʷe",
+      "start": 1.5,
+      "end": 1.825
+     },
+     {
+      "line": 1,
+      "word": "stéygʰoh₂.",
+      "start": 1.9,
+      "end": 3.075
+     },
+     {
+      "line": 2,
+      "word": "méne",
+      "start": 4.12,
+      "end": 4.47
+     },
+     {
+      "line": 2,
+      "word": "pódes",
+      "start": 4.545,
+      "end": 4.97
+     },
+     {
+      "line": 2,
+      "word": "wódr̥",
+      "start": 5.02,
+      "end": 5.32
+     },
+     {
+      "line": 2,
+      "word": "dʰǵʰémi",
+      "start": 5.37,
+      "end": 5.72
+     },
+     {
+      "line": 2,
+      "word": "Hn̥dʰí",
+      "start": 5.77,
+      "end": 6.12
+     },
+     {
+      "line": 2,
+      "word": "píph₃onti.",
+      "start": 6.195,
+      "end": 7.495
+     },
+     {
+      "line": 3,
+      "word": "h₂éweyes",
+      "start": 8.59,
+      "end": 9.24
+     },
+     {
+      "line": 3,
+      "word": "swóns",
+      "start": 9.29,
+      "end": 9.69
+     },
+     {
+      "line": 3,
+      "word": "nisdóns",
+      "start": 9.74,
+      "end": 10.315
+     },
+     {
+      "line": 3,
+      "word": "méne",
+      "start": 10.39,
+      "end": 10.69
+     },
+     {
+      "line": 3,
+      "word": "ǵʰóstoysu",
+      "start": 10.74,
+      "end": 11.465
+     },
+     {
+      "line": 3,
+      "word": "démonti.",
+      "start": 11.515,
+      "end": 12.665
+     },
+     {
+      "line": 4,
+      "word": "péth₂leh₂",
+      "start": 13.76,
+      "end": 14.335
+     },
+     {
+      "line": 4,
+      "word": "sémeh₂i",
+      "start": 14.41,
+      "end": 14.985
+     },
+     {
+      "line": 4,
+      "word": "wésh₂er",
+      "start": 15.035,
+      "end": 15.535
+     },
+     {
+      "line": 4,
+      "word": "snóygʷʰos-kʷe",
+      "start": 15.585,
+      "end": 16.385
+     },
+     {
+      "line": 4,
+      "word": "me",
+      "start": 16.46,
+      "end": 16.585
+     },
+     {
+      "line": 4,
+      "word": "ǵʰyémi",
+      "start": 16.635,
+      "end": 17.06
+     },
+     {
+      "line": 4,
+      "word": "stégeti.",
+      "start": 17.135,
+      "end": 18.31
+     },
+     {
+      "line": 5,
+      "word": "méne",
+      "start": 19.38,
+      "end": 19.705
+     },
+     {
+      "line": 5,
+      "word": "h₁nómn̥",
+      "start": 19.755,
+      "end": 20.23
+     },
+     {
+      "line": 5,
+      "word": "wr̥h₁dʰí.",
+      "start": 20.28,
+      "end": 21.205
+     },
+     {
+      "line": 6,
+      "word": "dóru.",
+      "start": 22.225,
+      "end": 23.1
+     }
+    ]
+   }
   }
  ]
 }

@@ -6,6 +6,9 @@ export const COL = .27;
 export const FRAMES = [2, 3, 4, 5, 6, 8];
 export const SECTIONS = {
   open: { box: '#s-open', side: 'field', avoid: ['.hero-cap', '.open-h .line', '.open-p'], ink: '2A1F12', accent: 'A8361F', seeds: [23, 58] },
+  // a second header garden hanging from the top-right corner: grown as a field turned through 180°, kept to the
+  // upper part of the header (the lower part is an obstacle) so it meets the rising garden without crowding it
+  opentop: { box: '#s-open', side: 'field', turn: true, avoid: ['.hero-cap', '.open-h .line', '.open-p'], keepTop: .5, ink: '2A1F12', accent: 'A8361F', seeds: [131] },
   wheel: { box: '#s-wheel .wheel-pin', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [77, 141] },
   machine: { box: '#s-machine', side: 'right', avoid: [], ink: '5A3B18', accent: '1F5A43', seeds: [91, 203] },
   voice: { box: '#s-voice', side: 'left', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [17, 99] },

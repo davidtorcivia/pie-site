@@ -165,9 +165,29 @@ export async function mapPlate(root) {
     await im.decode().catch(() => {});
     painted.getContext('2d').drawImage(im, 0, 0, painted.width, painted.height);
   }
+  // the homeland: a wash of red ochre laid over the Pontic–Caspian steppe, strongest before the branches leave
+  const HOME = [[29, 47], [32.5, 49.3], [37, 51.2], [42.5, 52.4], [48.5, 52.2], [53, 50.4], [52.5, 47.6], [49, 45.8], [44, 44.9], [39, 45.3], [34, 45.6], [30.5, 46]];
+  const homeCv = document.createElement('canvas'); homeCv.width = paintCv.width; homeCv.height = paintCv.height;
+  {
+    const g = homeCv.getContext('2d'); g.scale(SC, SC);
+    const pts = HOME.map(([a, b]) => xy(a, b)), path = new Path2D(`M${pts.map(p => p.join(',')).join('L')}Z`);
+    let s = 7; const r = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+    g.save(); g.filter = 'blur(34px)'; g.fillStyle = 'rgba(178,40,18,.3)'; g.fill(path); g.restore();
+    // the brush marks, laid over a wider area, then feathered out through a soft mask of the region (no hard edge)
+    const marks = document.createElement('canvas'); marks.width = homeCv.width; marks.height = homeCv.height;
+    const mk = marks.getContext('2d'); mk.scale(SC, SC); mk.lineCap = 'round';
+    const [x0, y0] = xy(27, 54), [x1, y1] = xy(55, 43.5);
+    for (let n = 0; n < 3400; n++) { const x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0), L = 30 + r() * 70, a = -.25 + r() * .5;
+      mk.strokeStyle = ['rgba(176,36,16,.22)', 'rgba(150,28,12,.2)', 'rgba(200,70,30,.18)'][n % 3]; mk.lineWidth = 3 + r() * 7;
+      mk.beginPath(); mk.moveTo(x, y); mk.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L); mk.stroke(); }
+    mk.setTransform(1, 0, 0, 1, 0, 0); mk.globalCompositeOperation = 'destination-in'; mk.filter = `blur(${48 * SC}px)`; mk.scale(SC, SC);
+    mk.fillStyle = '#000'; mk.fill(path);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(marks, 0, 0);
+  }
   const pc = paintCv.getContext('2d');
   const paintArrows = ks => {
-    pc.setTransform(1, 0, 0, 1, 0, 0); pc.clearRect(0, 0, paintCv.width, paintCv.height); pc.setTransform(SC, 0, 0, SC, 0, 0);
+    pc.setTransform(1, 0, 0, 1, 0, 0); pc.clearRect(0, 0, paintCv.width, paintCv.height);
+    pc.globalAlpha = Math.max(.45, 1 - (window.__migP || 0) * 1.2); pc.drawImage(homeCv, 0, 0); pc.globalAlpha = 1; pc.setTransform(SC, 0, 0, SC, 0, 0);
     const clip = new Path2D();
     ks.forEach((k, i) => { if (k > .002) clip.addPath(new Path2D(arrow(curves[i], k))); });
     pc.save(); pc.clip(clip); pc.setTransform(1, 0, 0, 1, 0, 0); pc.drawImage(painted, 0, 0); pc.restore();
@@ -187,6 +207,7 @@ export async function mapPlate(root) {
   };
   const yearEl = root.querySelector('.mig-year');
   const update = p => {
+    window.__migP = p;
     // 0–.08 the homeland; .08–.92 the branches, in order of their first texts; the camera eases out to the whole plate
     const n = ROUTES.length, span = .84 / n;
     cam.s = 2.6 - 1.6 * Math.min(1, p / .7); cam.x = hx + (P.w * .52 - hx) * Math.min(1, p / .7); cam.y = hy + (P.h * .5 - hy) * Math.min(1, p / .7);

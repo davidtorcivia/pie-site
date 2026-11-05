@@ -109,6 +109,9 @@ def english_lines(english, n):
     return [english] * n
 
 
+TEXTS = json.loads((SITE / "data/texts-timing.json").read_text()) if (SITE / "data/texts-timing.json").exists() else {}
+
+
 def main():
     recs = corpus()
     h = recs[HYMN_ID]
@@ -123,8 +126,12 @@ def main():
         "wheels": wheels(),
         "bench": bench(),
         "stats": stats(recs),
-        "specimens": [{"id": i, "genre": recs[i].get("genre"), "pie": recs[i]["pie"], "english": recs[i]["english"]}
-                      for i in SPECIMENS if i in recs],
+        "specimens": [{"id": i, "genre": recs[i].get("genre"), "pie": recs[i]["pie"], "english": recs[i]["english"],
+                       # the reading in the project's Kokoro voices (tools/render_hymn_kokoro.py)
+                       "audio": {v: f"audio/text-{n}-{k}.mp3?v={int((SITE / f'audio/text-{n}-{k}.mp3').stat().st_mtime)}" for v, k in (("female", "f"), ("male", "m"))}
+                                if (SITE / f"audio/text-{n}-m.mp3").exists() else None,
+                       "timing": TEXTS.get(i)}
+                      for n, i in enumerate(SPECIMENS) if i in recs],
     }
     (SITE / "data/site.json").write_text(json.dumps(data, ensure_ascii=False, indent=1), "utf-8")
     print(f"wheels {len(data['wheels'])}, bench {len(data['bench'])}, specimens {len(data['specimens'])}, stats {data['stats']}")
