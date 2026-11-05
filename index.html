@@ -98,16 +98,21 @@
   <h2 class="display h2">Instruments</h2>
   <p class="serif apps-p">The translator below runs on the project's grammar engine. It parses English, picks the PIE words, inflects them, and gives a gloss and pronunciation for each. A chat interface to the model and a reader for the corpus are in progress.</p>
   <div class="tr">
-    <label class="serif cap" for="trIn">Type a sentence in English.</label>
-    <textarea id="trIn" class="serif" rows="2">The wolf sees the sheep, and the dog guards them.</textarea>
+    <div class="tr-dir serif"><button data-d="en2pie" class="on">English to PIE</button> · <button data-d="pie2en">PIE to English</button></div>
+    <textarea id="trIn" class="serif" rows="2" aria-label="Text to translate">The wolf sees the sheep, and the dog guards them.</textarea>
+    <div class="tr-ex serif" id="trEx"></div>
     <div class="tr-out" id="trOut"></div>
   </div>
 </section>
 
 <footer class="s yellow foot">
   <div class="foot-pie pie" data-pie>h₂ówis h₁éḱwōs-kʷe</div>
-  <p class="serif">“The sheep and the horses.” August Schleicher wrote the first text in reconstructed PIE, a fable with this title, in 1868.</p>
-  <p class="serif cap">The lexicon draws on Wiktionary (CC BY-SA 4.0) and the scholarly literature. Type by Velvetyne (OFL) and Google Fonts. Margins grown with florilegium, initials printed with initialis, horses after Muybridge (1878).</p>
+  <p class="serif foot-en">“The sheep and the horses.” In 1868 August Schleicher wrote a short fable in the language he had reconstructed, the first text ever composed in it. Every reconstruction since has been tested by rewriting it.</p>
+  <div class="foot-cols serif">
+    <p>The lexicon draws on Wiktionary (CC BY-SA 4.0), LIV² and the Nomina im Indogermanischen Lexikon. Elevation: AWS Terrain Tiles; coasts and rivers: Natural Earth.</p>
+    <p>Margins grown with florilegium (Kevin Raymond), initials printed with initialis (azlen), horses after Eadweard Muybridge, <i>The Horse in Motion</i>, 1878. Type by Velvetyne and Google Fonts.</p>
+  </div>
+  <canvas class="foot-herd" aria-hidden="true"></canvas>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

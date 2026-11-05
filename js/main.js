@@ -24,7 +24,7 @@ if (!reduce && window.Lenis) {
 
 
 // ---------------------------------------------------------------------------------------------------- paper tooth
-// one fine texture over the whole page (body::after): noise and a faint weave, multiplied
+// one fine paper texture, used only on the map plate (it moves with the map)
 function tooth() {
   const c = document.createElement('canvas'); c.width = c.height = 384; const g = c.getContext('2d'), im = g.createImageData(384, 384), r = rng(11), n = noise2(12);
   for (let y = 0; y < 384; y++) for (let x = 0; x < 384; x++) {
@@ -41,7 +41,7 @@ function tooth() {
 // our own kinds (a horse frieze, the herd, sun wheels, tulips), the title on brush-stroke grounds, and a herd of
 // painted horses galloping across the foot.
 async function overture() {
-  document.querySelectorAll('.open-h .line, .open-p').forEach((el, i) => brushGround(el, 11 + i, '#ffd21a'));
+  document.querySelectorAll('.open-h .line, .open-p, .foot-pie, .foot-en').forEach((el, i) => brushGround(el, 11 + i, '#ffd21a'));
   try {
     const lib = await import('../vendor/initialis/lib/initialis.js');
     await lib.use(new URL('kinds/steppe.js', import.meta.url).href);
@@ -52,34 +52,28 @@ async function overture() {
     const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
     $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
     // the paragraph sits under the title, never across it
-    const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(); $('.open-p').style.top = (tb.bottom - sb.top + 26) + 'px'; };
+    const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(); const pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
     place(); addEventListener('repaint', place);
     $('.hero-cap').innerHTML = `<initialis-cap settings='${JSON.stringify(P)}' size="${size}" grow></initialis-cap>`;
   } catch (e) { console.info('initialis unavailable', e.message); }
   // the herd: painted Muybridge frames, a few horses out of step with each other
-  const cv = $('.hero-herd'), pal = { ground: '#1d1a16', mids: ['#1d1a16', '#2a2620', '#3a352c', '#5a5246'], lights: ['#8e2a17', '#a8361f', '#c86a40'], paper: '#ffd21a', accent: '#a8361f' };
-  const frames = [];
-  for (let k = 1; k <= 11; k++) {
-    const m = await loadMask(`art/horse/frame-${String(k).padStart(2, '0')}.png`), ar = m.naturalHeight / m.naturalWidth;
-    const c = document.createElement('canvas'), w = 260, h = w * ar; c.width = w * 2.4; c.height = h * 2.4; const g = c.getContext('2d'); g.scale(2, 2);
-    paintSilhouette(g, m, w * .1, h * .1, w, h, { ...pal, seed: 9, density: 1.3, mane: [.6, .84] }); frames.push(c);
-  }
-  const herd = [{ x: .1, ph: 0, s: 1 }, { x: .36, ph: 4, s: .86 }, { x: .62, ph: 7, s: .94 }, { x: .88, ph: 2, s: .8 }];   // the lead horse starts on the left edge
+  const cv = $('.hero-herd'), frames = [];
+  await Promise.all(Array.from({ length: 11 }, (_, k) => new Promise(res => { const im = new Image(); im.onload = res; im.onerror = res; im.src = `art/horse/paint-dark-${String(k + 1).padStart(2, '0')}.webp`; frames[k] = im; })));
+  const herd = [{ x: 0, ph: 0, s: 1 }, { x: .27, ph: 4, s: .86 }, { x: .53, ph: 7, s: .94 }, { x: .79, ph: 2, s: .8 }];   // the lead horse at the left edge
   let t0 = 0;
   const run = t => {
     const { ctx, w, h } = cv._fit || (cv._fit = fit(cv));
     ctx.clearRect(0, 0, w, h);
     const f = Math.floor(t / 90);
     herd.forEach(o => {
-      const im = frames[(f + o.ph) % 11], hh = h * .92 * o.s, ww = hh * im.width / im.height;
-      const x = ((o.x + t * .00002) % 1.2 - .1) * w;
+      const im = frames[(f + o.ph) % 11], hh = h * .98 * o.s, ww = hh * (im.naturalWidth || 2) / (im.naturalHeight || 1);
+      const x = ((o.x + t * .00002) % 1.1) * w - ww * .08;
       ctx.drawImage(im, x, h - hh, ww, hh);
     });
     if (!reduce) requestAnimationFrame(run);
   };
   requestAnimationFrame(run);
   addEventListener('repaint', () => { cv._fit = null; });
-  gsap.to('.hero-field', { scale: 1.03, ease: 'none', scrollTrigger: { trigger: '#s-open', start: 'top top', end: 'bottom top', scrub: true } });
   if (!reduce) gsap.from('.open-h .line', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: .1, delay: .2 });
 }
 
@@ -226,6 +220,7 @@ function wheel(words) {
   
   svg.innerHTML = `<g class="spin"><g stroke="${C.ink}" stroke-linecap="round">${rim}</g>
     
+    <g stroke="${C.ink}" stroke-width="1.2">${Array.from({ length: 240 }, (_, i) => { const a = i / 240 * Math.PI * 2, r0 = R0 + 6, r1 = R0 + (i % 2 ? 20 : 30); return `<line x1="${(Math.cos(a) * r0).toFixed(1)}" y1="${(Math.sin(a) * r0).toFixed(1)}" x2="${(Math.cos(a) * r1).toFixed(1)}" y2="${(Math.sin(a) * r1).toFixed(1)}"/>`; }).join('')}</g>
     <g class="arms"></g></g>
     <circle r="${R0 - 8}" fill="${C.ink}"/>
     <text class="w-center" text-anchor="middle" dy=".3em" fill="${C.yellow}" style="fill:${C.yellow}"></text>
@@ -244,7 +239,8 @@ function wheel(words) {
       const mid = pts[20], down = mid[1] > 0, run = down ? [...pts].reverse() : [...pts];
       pts.length = 0; run.forEach(([x, y]) => pts.push(`${x.toFixed(1)},${y.toFixed(1)}`));
       const off = down ? ['62%', '20%'] : ['3%', '30%'];
-      return `<path id="arm${k}" d="M${pts.join('L')}" fill="none" stroke="${C.ink}" stroke-width="1.4"/>
+      const end = down ? pts[0] : pts[pts.length - 1];
+      return `<path id="arm${k}" d="M${pts.join('L')}" fill="none" stroke="${C.ink}" stroke-width="1.4"/><circle cx="${end.split(',')[0]}" cy="${end.split(',')[1]}" r="7" fill="#8e2a17"/>
         <text font-size="15" class="w-br"><textPath href="#arm${k}" startOffset="${off[0]}">${br}</textPath></text>
         <text font-size="34" class="w-form" dy="-10"><textPath href="#arm${k}" startOffset="${off[1]}">${svgPie(d.form)}</textPath></text>`;
     }).join('');
@@ -261,13 +257,12 @@ function wheel(words) {
 // ---------------------------------------------------------------------------------------------------- machine
 function machine(s) {
   const tiers = [
-    [s.lexicon_entries, 'Lexicon', 'Entries from Wiktionary, checked against LIV², the Nomina im Indogermanischen Lexikon and the standard handbooks.'],
-    [s.engine_agreement, 'Grammar engine', `The engine inflects nouns, adjectives and verbs. It matches ${s.engine_cells} cells in the published paradigms it was tested on.`, '%'],
-    [s.records, 'Corpus', `Texts in about fifty genres, including hymns, laws, riddles, laments, oaths and dialogue: ${s.pie_words.toLocaleString('en')} words.`],
-    [122, 'Model', 'Nemotron 3.5 Super, an open model with 122 billion parameters, fine-tuned on the corpus and then trained with reinforcement learning on a Mac.', 'B'],
-    [7, 'Voice', 'Lines in the hymn to Dawn below.'],
+    [s.lexicon_entries, '', 'Lexicon', 'Entries, each with its source: 7,401 reconstructions from Wiktionary, 829 verbal roots added from LIV² and 135 nouns from the Nomina im Indogermanischen Lexikon.'],
+    [s.engine_agreement, '%', 'Grammar engine', `The engine inflects nouns, adjectives and verbs. Tested against the published paradigms, it reproduces ${s.engine_cells} of their cells.`],
+    [s.records, '', 'Corpus', `Texts in about fifty genres, from hymns, laws and riddles to laments, oaths and everyday dialogue: ${s.pie_words.toLocaleString('en')} words.`],
+    [86.2, '', 'Model', 'The fine-tuned model’s strict score on the held-out benchmark. The strongest frontier model scores 56.5.'],
   ];
-  $('#cascade').innerHTML = tiers.map(([n, l, d, u]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u || ''}">0</div><div class="lab serif"><b>${l}</b>${d}</div></div>`).join('');
+  $('#cascade').innerHTML = tiers.map(([n, u, l, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display">${l}</b><span class="serif">${d}</span></div></div>`).join('');
   document.querySelectorAll('.tier .num').forEach(el => {
     const n = +el.dataset.n, dec = n % 1 ? 1 : 0, o = { v: 0 };
     ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () =>
@@ -345,7 +340,7 @@ function voice(h) {
     // the current word
     const tt = audio.currentTime;
     let k = -1;
-    for (let i = 0; i < h.words.length; i++) if (tt >= h.words[i].start - .02) k = i;
+    for (let i = 0; i < h.words.length; i++) if (tt + .12 >= h.words[i].start) k = i;
     if (audio.paused && tt === 0) k = -1;
     if (k !== cur) {
       cur = k;
@@ -421,32 +416,87 @@ async function specimens(list) {
 }
 
 // ---------------------------------------------------------------------------------------------------- translator
+// The engine's translator, both ways: the sentence set large, then each word with its gloss, and the pronunciation
+const EXAMPLES = {
+  en2pie: ['The wolf sees the sheep, and the dog guards them.', 'The king gives the horses to the shepherd.', 'Dawn, daughter of the sky, shines.', 'We carry water to the house.'],
+  pie2en: ['h₂ówis h₁éḱwōs-kʷe', 'dyḗws ph₂tḗr h₁ésti', 'wĺ̥kʷos h₂ówim widéh₁yeti', 'ḱléwos ń̥dʰgʷʰitom'],
+};
 function translator() {
-  const inp = $('#trIn'), out = $('#trOut');
-  let tm, seq = 0;
+  const inp = $('#trIn'), out = $('#trOut'), ex = $('#trEx');
+  let dir = 'en2pie', tm, seq = 0;
+  const examples = () => { ex.innerHTML = 'Try: ' + EXAMPLES[dir].map(e => `<button>${dir === 'pie2en' ? typeset(e, { words: false }) : e}</button>`).join(' · ');
+    ex.querySelectorAll('button').forEach((b, i) => b.onclick = () => { inp.value = EXAMPLES[dir][i]; run(); }); };
   const run = async () => {
     const text = inp.value.trim(), my = ++seq;
     if (!text) { out.innerHTML = ''; return; }
+    out.classList.add('busy');
     try {
-      const r = await fetch('/api/en2pie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+      const r = await fetch('/api/' + dir, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
       const js = await r.json();
       if (my !== seq) return;
       if (js.error) throw new Error(js.error);
-      out.innerHTML = js.map(s => s.words.map(w => `<div class="tw"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${w.gloss}</span></div>`).join('')
-        + `<div class="ipa">[${s.ipa}]</div>`).join('');
-      gsap.from(out.querySelectorAll('.tw'), { y: 18, opacity: 0, duration: .5, stagger: .05, ease: 'power3.out' });
+      if (dir === 'en2pie') {
+        // substitutions the engine made ("'brown' ≈ 'grey' (no PIE word for 'brown' …)"): the stand-in word is marked
+        const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
+        out.innerHTML = js.map(s => { const sub = subOf(s);
+          return `<div class="tr-line pie">${typeset(s.pie)}</div>
+          <div class="tr-words">${s.words.map(w => { const base = w.gloss.split('-')[0].replace(/_/g, ' '), was = sub[base];
+            return `<div class="tw ${was ? 'sub' : ''} st-${w.status}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${w.gloss.replace(/_/g, ' ')}</span>${was ? `<span class="was">for “${was}”</span>` : ''}</div>`; }).join('')}</div>
+          <div class="tr-ipa">[${s.ipa}]</div>
+          ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for “${en}”; the nearest, “${pie}”, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(x => `“${x}”`).join(', ')}.` : ''}</div>` : ''}`; }).join('');
+      } else {
+        out.innerHTML = `<div class="tr-line serif">${js.rough_english || '—'}</div>
+          <div class="tr-words">${js.words.map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? a.gloss.replace(/_/g, ' ') : 'not found'}</span></div>`; }).join('')}</div>
+          <div class="tr-ipa">[${js.ipa}]</div>`;
+      }
+      gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .5, stagger: .035, ease: 'power3.out' });
     } catch (e) {
-      out.innerHTML = `<div class="err">The translator is offline here (${e.message}). On the LAN it runs on the Mac.</div>`;
-    }
+      out.innerHTML = `<div class="err">The translator runs on the project's machine and is not reachable from here.</div>`;
+    } finally { out.classList.remove('busy'); }
   };
+  document.querySelectorAll('.tr-dir button').forEach(b => b.onclick = () => {
+    if (b.dataset.d === dir) return; dir = b.dataset.d;
+    document.querySelectorAll('.tr-dir button').forEach(x => x.classList.toggle('on', x === b));
+    inp.value = EXAMPLES[dir][0]; examples(); run();
+  });
+  examples();
   inp.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(run, 450); });
   ScrollTrigger.create({ trigger: '#s-apps', start: 'top 70%', once: true, onEnter: run });
+}
+
+// ---------------------------------------------------------------------------------------------------- footer
+async function footer() {
+  const cv = $('.foot-herd'), frames = await Promise.all(Array.from({ length: 11 }, (_, k) => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = `art/horse/paint-dark-${String(k + 1).padStart(2, '0')}.webp`; })));
+  let on = false; new IntersectionObserver(e => { on = e[0].isIntersecting; if (on) requestAnimationFrame(run); }).observe(cv);
+  const run = t => {
+    if (!on) return;
+    const { ctx, w, h } = cv._fit || (cv._fit = fit(cv)); ctx.clearRect(0, 0, w, h);
+    [0, .5].forEach((x0, i) => { const im = frames[(Math.floor(t / 90) + i * 5) % 11], hh = h * .95, ww = hh * im.naturalWidth / im.naturalHeight;
+      ctx.drawImage(im, ((x0 + t * .00003) % 1.15) * w - ww * .1, h - hh, ww, hh); });
+    requestAnimationFrame(run);
+  };
+  addEventListener('repaint', () => { cv._fit = null; });
+}
+
+// ---------------------------------------------------------------------------------------------------- gardens
+// each section's steppe garden (tools/build_section_gardens.mjs), laid behind it; skipped with ?nogarden (the build
+// measures the page without them)
+function gardens() {
+  if (location.search.includes('nogarden')) return;
+  for (const [name, sel] of [['open', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
+    const host = $(sel); if (!host) continue;
+    const g = document.createElement('div'); g.className = 'garden'; host.prepend(g);
+    const im = new Image(); im.decoding = 'async';
+    im.onload = () => { g.style.backgroundImage = `url(${im.src})`; g.style.backgroundSize = `100% ${im.naturalHeight / 1.6}px`; g.classList.add('on'); };
+    // load when the section comes near, so the first screen is fast
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { im.src = `art/garden-${name}.webp`; o.disconnect(); } }, { rootMargin: '120% 0px' }).observe(host);
+  }
 }
 
 async function boot() {
   const data = await fetch('data/site.json').then(r => r.json());
   typesetAll();
-  tooth();
+  tooth();      // for the map plate only
   await document.fonts.ready;
 
   overture();
@@ -458,6 +508,8 @@ async function boot() {
   voice(data.hymn);
   specimens(data.specimens);
   translator();
+  footer();
+  gardens();
 
   ScrollTrigger.refresh();
   addEventListener('typechange', () => { typesetAll(); ScrollTrigger.refresh(); });

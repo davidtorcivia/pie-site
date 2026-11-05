@@ -4,12 +4,65 @@
 -- (bees, butterflies, beetles, flies, wind): no hummingbirds.
 --   cd vendor/florilegium && lua ../../tools/steppe-svg.lua --seed 7 [florilegium-svg options] -o leaf.svg
 package.path = "./?.lua;" .. package.path
--- PIE_NOFOOTER: no footer stem running along the foot (it reads as a long, repetitive horizontal); the grower is
--- loaded from its own source with that one switch changed
-if os.getenv("PIE_NOFOOTER") then
+local OBS = {}
+for q in (os.getenv("PIE_OBSTACLES") or ""):gmatch("[^;]+") do
+  local a, b, c, d = q:match("([%d.-]+),([%d.-]+),([%d.-]+),([%d.-]+)")
+  if a then OBS[#OBS + 1] = { tonumber(a), tonumber(b), tonumber(c), tonumber(d) } end
+end
+-- repulsors: text and other objects push the garden away. A main stem is pushed sideways round an obstacle (easing in
+-- and out, so it curves); a branch only grows from a stem point with a clear line to its flower.
+local M_STEM, M_LINE = 0.7, 0.35
+local function seg_hits(x1, y1, x2, y2, o, m)
+  local t0, t1, dx, dy = 0, 1, x2 - x1, y2 - y1
+  for _, e in ipairs({ { -dx, x1 - (o[1] - m) }, { dx, (o[3] + m) - x1 }, { -dy, y1 - (o[2] - m) }, { dy, (o[4] + m) - y1 } }) do
+    local pp, q = e[1], e[2]
+    if pp == 0 then if q < 0 then return false end
+    else local r = q / pp; if pp < 0 then if r > t1 then return false elseif r > t0 then t0 = r end else if r < t0 then return false elseif r < t1 then t1 = r end end end
+  end
+  return true
+end
+function PIE_BLOCKED(x1, y1, x2, y2) for _, o in ipairs(OBS) do if seg_hits(x1, y1, x2, y2, o, M_LINE) then return true end end return false end
+function PIE_PUSH(x, y)
+  for _, o in ipairs(OBS) do
+    local m = M_STEM
+    local dy = (y < o[2] - m) and (o[2] - m - y) or (y > o[4] + m) and (y - o[4] - m) or 0
+    local w = 1 - math.min(1, dy / 2.0); w = w * w * (3 - 2 * w)                    -- full inside its height, easing off over 2 cm
+    if w > 0 and x > o[1] - m - 1.5 and x < o[3] + m + 1.5 then
+      local left, right = o[1] - m, o[3] + m
+      local tgt = (x - left < right - x) and math.min(x, left) or math.max(x, right)
+      if math.abs(tgt - x) > 2.5 then return nil end            -- too far round: the stem ends here
+      x = x + (tgt - x) * w
+    end
+  end
+  return x
+end
+function PIE_INSIDE(x, y) for _, o in ipairs(OBS) do if x > o[1] - .2 and x < o[3] + .2 and y > o[2] - .2 and y < o[4] + .2 then return true end end return false end
+-- the grower is loaded from its own source with two switches changed:
+--   PIE_NOFOOTER  no footer stem running along the foot (it reads as a long, repetitive horizontal)
+--   always        no safety clip round the regions: a plant ends where it grows to, it is never cut off
+do
   local f = assert(io.open("florilegium-grow.lua")); local src = f:read("a"); f:close()
-  local n; src, n = src:gsub("local FOOTER = D >= 0%.2", "local FOOTER = false")
-  assert(n == 1, "steppe-svg: the footer switch moved")
+  local n
+  if os.getenv("PIE_NOFOOTER") then
+    src, n = src:gsub("local FOOTER = D >= 0%.2", "local FOOTER = false"); assert(n == 1, "steppe-svg: the footer switch moved")
+  end
+  src, n = src:gsub("ink%.poly%(%{ %{ x1, y1 %}, %{ x2, y1 %}, %{ x2, y2 %}, %{ x1, y2 %} %}, true%)",
+    "ink.poly({ { -80, -80 }, { 400, -80 }, { 400, 400 }, { -80, 400 } }, true)")
+  assert(n == 1, "steppe-svg: the safety clip moved")
+  if #OBS > 0 then
+    -- main stems: pushed round obstacles; a stem that cannot pass ends below it
+    src, n = src:gsub("      x = max%(0%.9, min%(g%.colright %- 0%.9, x%)%)\n      pts%[#pts %+ 1%] = %{ x, y %}",
+      "      x = max(0.9, min(g.colright - 0.9, x))\n      if PIE_INSIDE(x, y) then break end\n      pts[#pts + 1] = { x, y }")
+    assert(n == 1, "steppe-svg: the main stem loop moved")
+    -- the nearest stem point with a clear line, if there is one
+    src, n = src:gsub("        local d = dist%(x, y, p%[1%], p%[2%]%)\n        if d < best then best, bp = d, p end",
+      "        local d = dist(x, y, p[1], p[2])\n        if PIE_BLOCKED(x, y, p[1], p[2]) then d = d + 1000 end\n        if d < best then best, bp = d, p end")
+    assert(n == 1, "steppe-svg: nearest_stem moved")
+    -- the branch loop skips holes no stem reaches cleanly
+    src, n = src:gsub("    local _, bi = layout%.best%(free, #gx, 0%.85, 1%.15, sdist, REACH%)\n",
+      "    local _, bi = layout.best(free, #gx, 0.85, 1.15, sdist, REACH)\n    for __k = 1, 60 do\n      if not bi then break end\n      local S0, dd = nearest_stem(gx[bi], gy[bi])\n      if not S0 or dd < 1000 then break end\n      free[bi] = 0\n      local __u; __u, bi = layout.best(free, #gx, 0.85, 1.15, sdist, REACH)\n    end\n", 1)
+    assert(n == 1, "steppe-svg: the branch loop moved")
+  end
   package.preload["florilegium-grow"] = function(...) return assert(load(src, "@florilegium-grow.lua"))(...) end
 end
 local SPC = require("florilegium-species")
@@ -69,11 +122,6 @@ end
 -- obstacles (PIE_OBSTACLES="x0,y0,x1,y1;..." in page cm, y up from the foot): the garden grows around them, never
 -- under them. The region the garden may use becomes the page cut into a grid at the obstacles' edges, every cell not
 -- inside an obstacle kept; shared edges are open, so the free discs flow round the obstacles.
-local OBS = {}
-for q in (os.getenv("PIE_OBSTACLES") or ""):gmatch("[^;]+") do
-  local a, b, c, d = q:match("([%d.-]+),([%d.-]+),([%d.-]+),([%d.-]+)")
-  if a then OBS[#OBS + 1] = { tonumber(a), tonumber(b), tonumber(c), tonumber(d) } end
-end
 if #OBS > 0 then
   local GROW = require("florilegium-grow")
   local orig = GROW.regions

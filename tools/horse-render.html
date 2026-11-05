@@ -1,0 +1,18 @@
+<!doctype html><meta charset=utf-8><body>
+<script type=module>
+// paints the 11 Muybridge frames in a palette (?pal=ochre|dark) for tools/build_horses.mjs
+import { paintSilhouette, loadMask } from '../js/painter.js';
+const PALS = {
+  ochre: { ground: '#2a120c', mids: ['#5e1a0e', '#7a2414', '#8e2a17', '#a8361f', '#c0582f'], lights: ['#d9824e', '#e8a46a', '#f0c08a'], paper: '#efe7d6', accent: '#2f5e8e' },
+  dark: { ground: '#1d1a16', mids: ['#1d1a16', '#2a2620', '#3a352c', '#5a5246'], lights: ['#8e2a17', '#a8361f', '#c86a40'], paper: '#ffd21a', accent: '#a8361f' },
+};
+const pal = PALS[new URLSearchParams(location.search).get('pal')], out = [];
+for (let k = 1; k <= 11; k++) {
+  const m = await loadMask(`../art/horse/frame-${String(k).padStart(2, '0')}.png`), ar = m.naturalHeight / m.naturalWidth;
+  const w = 420, h = w * ar, c = document.createElement('canvas'); c.width = Math.round(w * 1.2 * 2); c.height = Math.round(h * 1.2 * 2);
+  const g = c.getContext('2d'); g.scale(2, 2);
+  paintSilhouette(g, m, w * .1, h * .1, w, h, { ...pal, seed: 9, density: 1.2, mane: [.6, .84] });
+  out.push(c.toDataURL('image/webp', .9));
+}
+window.OUT = out; document.title = 'done';
+</script>

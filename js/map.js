@@ -2,7 +2,6 @@
 // tools/build_map.py) printed as ink on paper, lettered in spaced capitals and italics, with each branch's route
 // engraved in red ochre as the reader scrolls, ending at its first written witness. A painted horse gallops along
 // the route being drawn.
-import { loadMask, paintSilhouette } from './painter.js';
 import { brushStroke, uniqueSeed } from './brush.js';
 
 // routes: lon/lat waypoints from the steppe to the place of each branch's earliest substantial texts
@@ -96,7 +95,7 @@ export async function mapPlate(root) {
 
     <g class="ends">${ROUTES.map((r, i) => { const [x, y] = xy(...r.pts[r.pts.length - 1]); return `<g class="end" data-i="${i}"><circle cx="${x}" cy="${y}" r="9"/>
       <g class="tag"><image class="lab" preserveAspectRatio="none" href="${brushStroke('#ffd21a', uniqueSeed())}"/><text class="br" x="0" y="0" font-size="44">${r.b.toUpperCase()}</text><text class="wit" x="0" y="32" font-size="26">${r.w}, ${r.at}, ${fmtYear(r.y)}</text></g></g>`; }).join('')}</g>
-    <image class="horse" width="190" height="110" href=""/>`;
+    <g class="horses">${ROUTES.map(() => `<image class="horse" width="200" height="118" href=""/>`).join('')}</g>`;
   const arrows = [...svg.querySelectorAll('.arw')], ends = [...svg.querySelectorAll('.end')];
   // place every label so none overlaps another, or the lettering, or the plate's edge
   {
@@ -133,7 +132,13 @@ export async function mapPlate(root) {
     ROUTES.forEach((r, i) => {
       const f = curves[i], full = new Path2D(arrow(f, 1));
       g.save(); g.globalAlpha = 1; g.fillStyle = '#7a2414'; g.fill(full); g.restore();     // the wash: under the strokes, so no gap shows paper
-      const wOf = t => (W0 + (W1 - W0) * Math.pow(t, .8)) / 2;
+      const wOf = t => (W0 + (W1 - W0) * Math.pow(t, .8)) / 2, hwOf = t => Math.max(W1 * 1.9, wOf(t) * 2.3) + 6;
+      // the head is wider than the shaft and travels with the drawing, so paint a band as wide as the head all along
+      { const Lw = [], Rw = []; for (let i = 0; i <= 120; i++) { const t = i / 120, [x, y, a] = f(t), w = hwOf(t); Lw.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); Rw.push([x + Math.sin(a) * w, y - Math.cos(a) * w]); }
+        const band = new Path2D(`M${[...Lw, ...Rw.reverse()].map(p => p.join(',')).join('L')}Z`); g.fillStyle = '#7a2414'; g.fill(band);
+        for (let n = 0; n < 500; n++) { const t0 = rnd(), off = (rnd() * 2 - 1), len = .02 + rnd() * .04, pts = [];
+          for (let k = 0; k <= 8; k++) { const t = Math.min(1, t0 + len * k / 8), [x, y, a] = f(t), w = hwOf(t) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
+          g.strokeStyle = ramp[Math.floor(rnd() * ramp.length)]; g.globalAlpha = .7; hair(pts, 2.4 * (.6 + rnd())); } }
       for (let n = 0; n < 900; n++) {                                                   // strokes along the route
         const t0 = rnd() * 1.02 - .02, off = (rnd() * 2 - 1) * 1.08, len = .03 + rnd() * .07, pts = [];
         for (let k = 0; k <= 10; k++) { const t = Math.min(1, t0 + len * k / 10), [x, y, a] = f(t), w = wOf(t) * off; pts.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); }
@@ -160,17 +165,10 @@ export async function mapPlate(root) {
     ks.forEach((k, i) => { if (k > .002) clip.addPath(new Path2D(arrow(curves[i], k))); });
     pc.save(); pc.clip(clip); pc.setTransform(1, 0, 0, 1, 0, 0); pc.drawImage(painted, 0, 0); pc.restore();
   };
-  // the painted gallop: 11 Muybridge frames, painted once
-  const horseImg = svg.querySelector('.horse'), frames = [];
-  (async () => {
-    const pal = { ground: '#2a120c', mids: ['#5e1a0e', '#7a2414', '#8e2a17', '#a8361f', '#c0582f'], lights: ['#d9824e', '#e8a46a', '#f0c08a'], paper: '#efe7d6', accent: '#2f5e8e' };
-    for (let k = 1; k <= 11; k++) {
-      const m = await loadMask(`art/horse/frame-${String(k).padStart(2, '0')}.png`), ar = m.naturalHeight / m.naturalWidth;
-      const c = document.createElement('canvas'), w = 300, h = w * ar; c.width = w * 2.4; c.height = h * 2.4; const g = c.getContext('2d'); g.scale(2, 2);
-      paintSilhouette(g, m, w * .1, h * .1, w, h, { ...pal, seed: 4, density: 1.4, mane: [.6, .84] });
-      frames.push(c.toDataURL());
-    }
-  })();
+  // the painted gallop: 11 Muybridge frames, painted at build time (tools/build_horses.mjs); one horse per route
+  const horses = [...svg.querySelectorAll('.horse')];
+  const frames = Array.from({ length: 11 }, (_, k) => `art/horse/paint-ochre-${String(k + 1).padStart(2, '0')}.webp`);
+  frames.forEach(f => { const im = new Image(); im.src = f; });
   let frame = 0, last = 0;
   // the camera: close on the steppe at first, pulling back as the branches spread
   const cam = { x: hx, y: hy, s: 2.6 };
@@ -198,17 +196,18 @@ export async function mapPlate(root) {
     const k0 = p < .08 ? -1 : Math.min(n - 1, Math.floor((p - .08) / span));
     yearEl.textContent = p < .08 ? 'c. 4000 BCE' : fmtYear(ROUTES[Math.max(0, k0)].y);
     root.querySelectorAll('.mig-p').forEach(el => { const on = +el.dataset.step === Math.min(3, Math.floor(p * 4.2)); el.classList.toggle('on', on); });
-    // the horse rides the route being drawn
-    if (active >= 0 && frames.length === 11) {
-      const i = active, k = Math.min(1, Math.max(0, (p - .08 - i * span) / (span * 1.6)));
+    // each route has its own horse, riding its tip while it is drawn and fading out once it arrives
+    ROUTES.forEach((r, i) => {
+      const k = ks[i], h = horses[i];
+      if (k <= 0) { h.style.opacity = 0; return; }
       const [bx, by, ba] = curves[i](k), flip = Math.cos(ba) < 0;
-      horseImg.setAttribute('x', bx - 95); horseImg.setAttribute('y', by - 118);
-      horseImg.setAttribute('transform', flip ? `translate(${2 * bx},0) scale(-1,1)` : '');
-      horseImg.style.opacity = 1;
-    } else horseImg.style.opacity = 0;
+      h.setAttribute('x', bx - 100); h.setAttribute('y', by - 124);
+      h.setAttribute('transform', flip ? `translate(${2 * bx},0) scale(-1,1)` : '');
+      h.style.opacity = k < 1 ? 1 : Math.max(0, 1 - (p - (.08 + i * span + span * 1.6)) / .03);
+    });
   };
   // the gallop keeps time on its own, at 11 frames a second
-  const tick = t => { if (frames.length === 11 && t - last > 90) { frame = (frame + 1) % 11; horseImg.setAttribute('href', frames[frame]); last = t; } requestAnimationFrame(tick); };
+  const tick = t => { if (t - last > 90) { frame = (frame + 1) % 11; horses.forEach((h, i) => { if (+h.style.opacity > 0) h.setAttribute('href', frames[(frame + i * 3) % 11]); }); last = t; } requestAnimationFrame(tick); };
   requestAnimationFrame(tick);
   update(0);
   ScrollTrigger.create({ trigger: root, start: 'top top', end: '+=420%', pin: root.querySelector('.mig-pin'), scrub: true, onUpdate: s => update(s.progress) });
