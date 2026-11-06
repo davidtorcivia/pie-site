@@ -90,7 +90,7 @@ button { font: inherit; color: inherit; }
 #s-wheel { padding: 0; }
 .wheel-pin { height: 100svh; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: center; gap: var(--gut); padding: 60px var(--gut) 24px; }
 .wheel-copy .h2 { font-size: clamp(34px, 4.1vw, 76px); }
-.wheel-copy p { max-width: 32ch; font-size: clamp(19px, 1.6vw, 26px); line-height: 1.2; }
+.wheel-copy p { max-width: 34ch; font-size: clamp(17px, 1.42vw, 24px); line-height: 1.2; }
 .wheel { width: 100%; height: min(86svh, 100%); overflow: visible; }
 .wheel text { fill: var(--ink); }
 .wheel .w-center { font-family: var(--f-pie); font-weight: var(--w-pie); font-variation-settings: var(--v-pie); }
@@ -599,3 +599,4 @@ footer.colo .colo-notes p { margin: 0; }
   .colo-pie { font-size: 13vw; }
   footer.colo .colo-notes { grid-template-columns: 1fr; gap: 1em; }
 }
+.nobr { white-space: nowrap; }
