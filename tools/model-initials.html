@@ -1,0 +1,16 @@
+<!doctype html><meta charset=utf-8><body>
+<script type=module>
+// the model page's drop caps (tools/build_model_initials.mjs): the leaves' settings in each palette in turn, on the
+// page's own paper; one per section opening letter
+import { use, draw, random } from '../vendor/initialis/lib/initialis.js';
+import { leafP } from '../js/initials.js';
+await use(new URL('../js/kinds/steppe.js', location.href).href);
+const pal = await fetch('palette.json').then(r => r.json());
+const out = {};
+for (const [i, L] of ['O', 'T', 'F', 'R', 'E'].entries()) {
+  const c = document.createElement('canvas');
+  await draw(c, leafP({ random }, i + 120, { ...pal[(i + 2) % pal.length], paper: '#efe7d6' }, L), { size: 360 });
+  out[L] = c.toDataURL('image/webp', .9);
+}
+window.OUT = out; document.title = 'done';
+</script>

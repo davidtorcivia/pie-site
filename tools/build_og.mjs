@@ -2,7 +2,7 @@
 import puppeteer from 'puppeteer-core'; import { mkdirSync } from 'node:fs';
 const ROOT = new URL('..', import.meta.url).pathname; mkdirSync(ROOT + 'art/og', { recursive: true });
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', args: ['--disable-gpu'] });
-for (const page of ['home', 'dictionary', 'voices']) {
+for (const page of (process.argv.slice(2).length ? process.argv.slice(2) : ['home', 'dictionary', 'voices', 'model'])) {
   const p = await b.newPage(); await p.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
   p.on('pageerror', e => console.log('ERR', e.message));
   await p.goto(`http://localhost:4747/tools/og.html?page=${page}`); await p.waitForFunction(() => document.title === 'ready', { timeout: 60000 });

@@ -1,0 +1,687 @@
+{
+ "bench": {
+  "segments": [
+   {
+    "id": "inflection",
+    "name": "Inflection",
+    "weight": 20
+   },
+   {
+    "id": "paradigm",
+    "name": "Paradigm",
+    "weight": 15
+   },
+   {
+    "id": "en_pie",
+    "name": "English → PIE",
+    "weight": 30
+   },
+   {
+    "id": "pie_en",
+    "name": "PIE → English",
+    "weight": 20
+   },
+   {
+    "id": "dialogue",
+    "name": "Dialogue",
+    "weight": 15
+   }
+  ],
+  "rows": [
+   {
+    "id": "ours-nemotron35-e3-bf16",
+    "name": "Ours, Nemotron 3.5 Super, stage e3",
+    "score": {
+     "strict": 86.2,
+     "lenient": 88.5
+    },
+    "seg": {
+     "inflection": {
+      "n": 335,
+      "of": 335,
+      "strict": 89.3,
+      "lenient": 89.9
+     },
+     "paradigm": {
+      "n": 124,
+      "of": 124,
+      "strict": 88.4,
+      "lenient": 88.4
+     },
+     "en_pie": {
+      "n": 42,
+      "of": 42,
+      "strict": 81.0,
+      "lenient": 88.1
+     },
+     "pie_en": {
+      "n": 42,
+      "of": 42,
+      "strict": 88.7,
+      "lenient": 88.7
+     },
+     "dialogue": {
+      "n": 64,
+      "of": 64,
+      "strict": 87.1,
+      "lenient": 87.1
+     }
+    }
+   },
+   {
+    "id": "claude-opus-xhigh",
+    "name": "Claude Opus 5.5, xhigh",
+    "score": {
+     "strict": 50.0,
+     "lenient": 86.0
+    },
+    "seg": {
+     "inflection": {
+      "n": 335,
+      "of": 335,
+      "strict": 65.4,
+      "lenient": 66.9
+     },
+     "paradigm": {
+      "n": 124,
+      "of": 124,
+      "strict": 64.8,
+      "lenient": 67.3
+     },
+     "en_pie": {
+      "n": 42,
+      "of": 42,
+      "strict": 14.3,
+      "lenient": 94.6
+     },
+     "pie_en": {
+      "n": 42,
+      "of": 42,
+      "strict": 98.2,
+      "lenient": 98.2
+     },
+     "dialogue": {
+      "n": 64,
+      "of": 64,
+      "strict": 21.9,
+      "lenient": 96.5
+     }
+    }
+   },
+   {
+    "id": "codex-gpt-6.1-sol-high",
+    "name": "GPT-6.1 Sol, high",
+    "score": {
+     "strict": 47.0,
+     "lenient": 84.4
+    },
+    "seg": {
+     "inflection": {
+      "n": 335,
+      "of": 335,
+      "strict": 63.6,
+      "lenient": 68.1
+     },
+     "paradigm": {
+      "n": 124,
+      "of": 124,
+      "strict": 56.8,
+      "lenient": 61.7
+     },
+     "en_pie": {
+      "n": 42,
+      "of": 42,
+      "strict": 13.7,
+      "lenient": 92.9
+     },
+     "pie_en": {
+      "n": 42,
+      "of": 42,
+      "strict": 96.4,
+      "lenient": 96.4
+     },
+     "dialogue": {
+      "n": 64,
+      "of": 64,
+      "strict": 15.6,
+      "lenient": 95.7
+     }
+    }
+   }
+  ]
+ },
+ "gap": [
+  {
+   "id": "ours-nemotron35-e3-bf16",
+   "lenient": 88.5,
+   "strict": 86.2
+  },
+  {
+   "id": "ours-nemotron35-rl5",
+   "lenient": 87.7,
+   "strict": 86.2
+  },
+  {
+   "id": "ours-nemotron35-e1",
+   "lenient": 87.6,
+   "strict": 84.6
+  },
+  {
+   "id": "ours-nemotron35-e1-bf16",
+   "lenient": 87.1,
+   "strict": 84.2
+  },
+  {
+   "id": "ours-nemotron35-e2",
+   "lenient": 86.1,
+   "strict": 83.9
+  },
+  {
+   "id": "claude-opus-xhigh",
+   "lenient": 86.0,
+   "strict": 50.0
+  },
+  {
+   "id": "ours-merge-half",
+   "lenient": 84.5,
+   "strict": 82.4
+  },
+  {
+   "id": "codex-gpt-6.1-sol-high",
+   "lenient": 84.4,
+   "strict": 47.0
+  },
+  {
+   "id": "claude-opus-high",
+   "lenient": 84.3,
+   "strict": 56.5
+  },
+  {
+   "id": "ours-rl1-step500",
+   "lenient": 83.9,
+   "strict": 81.1
+  },
+  {
+   "id": "ours-rl3-step275",
+   "lenient": 83.9,
+   "strict": 81.0
+  },
+  {
+   "id": "codex-gpt-6.1-sol-medium",
+   "lenient": 83.6,
+   "strict": 47.3
+  },
+  {
+   "id": "ours-e3",
+   "lenient": 81.1,
+   "strict": 79.6
+  },
+  {
+   "id": "claude-opus-medium",
+   "lenient": 81.0,
+   "strict": 47.2
+  },
+  {
+   "id": "codex-gpt-6.1-sol-low",
+   "lenient": 78.8,
+   "strict": 42.3
+  },
+  {
+   "id": "claude-sonnet-xhigh",
+   "lenient": 75.3,
+   "strict": 44.1
+  },
+  {
+   "id": "claude-opus-low",
+   "lenient": 61.9,
+   "strict": 42.2
+  },
+  {
+   "id": "claude-sonnet-high",
+   "lenient": 60.0,
+   "strict": 34.5
+  },
+  {
+   "id": "codex-gpt-6.1-terra-high",
+   "lenient": 57.7,
+   "strict": 32.2
+  },
+  {
+   "id": "codex-gpt-6.1-terra-medium",
+   "lenient": 57.6,
+   "strict": 32.0
+  },
+  {
+   "id": "claude-haiku-xhigh",
+   "lenient": 55.9,
+   "strict": 30.4
+  },
+  {
+   "id": "codex-gpt-6.1-terra-low",
+   "lenient": 54.5,
+   "strict": 28.5
+  },
+  {
+   "id": "claude-sonnet-medium",
+   "lenient": 46.8,
+   "strict": 26.7
+  },
+  {
+   "id": "claude-sonnet-low",
+   "lenient": 38.4,
+   "strict": 29.0
+  },
+  {
+   "id": "claude-haiku-high",
+   "lenient": 38.3,
+   "strict": 19.0
+  },
+  {
+   "id": "claude-haiku-low",
+   "lenient": 32.4,
+   "strict": 17.1
+  },
+  {
+   "id": "claude-haiku-medium",
+   "lenient": 30.4,
+   "strict": 17.6
+  }
+ ],
+ "corpus": [
+  {
+   "tier": "tier1",
+   "name": "Tier 1, scholarly and formulaic",
+   "records": 106,
+   "words": 511
+  },
+  {
+   "tier": "tier2",
+   "name": "Tier 2, back-projection",
+   "records": 109,
+   "words": 356
+  },
+  {
+   "tier": "tier3",
+   "name": "Tier 3, composed through the engine",
+   "records": 4755,
+   "words": 127896
+  },
+  {
+   "tier": "tier3b",
+   "name": "Tier 3b, everyday speech",
+   "records": 260,
+   "words": 5219
+  }
+ ],
+ "export": {
+  "commit": "5b754f0",
+  "train": 47088,
+  "eval": 713,
+  "by_kind": [
+   [
+    "translate_app",
+    15099
+   ],
+   [
+    "inflect",
+    6968
+   ],
+   [
+    "en_dialogue",
+    5058
+   ],
+   [
+    "gloss",
+    4550
+   ],
+   [
+    "translate_en_pie",
+    4541
+   ],
+   [
+    "translate_pie_en",
+    4541
+   ],
+   [
+    "paradigm",
+    1922
+   ],
+   [
+    "cognates_to_pie",
+    1760
+   ],
+   [
+    "pie_dialogue",
+    1135
+   ],
+   [
+    "continuation",
+    857
+   ],
+   [
+    "app_session",
+    615
+   ],
+   [
+    "demo_chat",
+    42
+   ]
+  ]
+ },
+ "lexicon": {
+  "entries": 8368,
+  "by_source": {
+   "liv2": 829,
+   "wiktionary": 7401,
+   "nil": 135,
+   "supplement": 3
+  },
+  "overrides": 367,
+  "confirmed_glosses": 119,
+  "derived_glosses": 3745,
+  "project_reconstructions": 16,
+  "neologisms": 46
+ },
+ "engine_classes": [
+  [
+   "thematic nouns",
+   1562,
+   1562
+  ],
+  [
+   "hysterokinetic nouns",
+   399,
+   399
+  ],
+  [
+   "proterokinetic nouns",
+   665,
+   666
+  ],
+  [
+   "acrostatic nouns",
+   321,
+   323
+  ],
+  [
+   "amphikinetic nouns",
+   862,
+   882
+  ],
+  [
+   "thematic adjectives",
+   1990,
+   2004
+  ],
+  [
+   "athematic adjectives",
+   482,
+   521
+  ]
+ ],
+ "sweep": [
+  [
+   "Dimuon 8e-3, r16",
+   0.28
+  ],
+  [
+   "AdamW 2e-4, r16",
+   0.285
+  ],
+  [
+   "Dimuon 4e-3, r16",
+   0.32
+  ],
+  [
+   "Dimuon 2e-3, r16",
+   0.429
+  ],
+  [
+   "Dimuon 2e-3, r32",
+   0.434
+  ],
+  [
+   "Dimuon 1e-3, r16",
+   0.607
+  ]
+ ],
+ "epochs": [
+  {
+   "epoch": 1,
+   "nll": 0.235,
+   "train_nll": 0.2,
+   "lenient": 87.1,
+   "strict": 84.2
+  },
+  {
+   "epoch": 2,
+   "nll": 0.25,
+   "train_nll": 0.04,
+   "lenient": 86.1,
+   "strict": 83.9
+  },
+  {
+   "epoch": 3,
+   "nll": 0.31,
+   "train_nll": 0.006,
+   "lenient": 88.5,
+   "strict": 86.2
+  }
+ ],
+ "models": [
+  {
+   "name": "Qwen3.6-35B, e3",
+   "strict": 79.6,
+   "lenient": 81.1
+  },
+  {
+   "name": "35B, merged RL",
+   "strict": 82.4,
+   "lenient": 84.5
+  },
+  {
+   "name": "Nemotron, e1",
+   "strict": 84.2,
+   "lenient": 87.1
+  },
+  {
+   "name": "Nemotron, e2",
+   "strict": 83.9,
+   "lenient": 86.1
+  },
+  {
+   "name": "Nemotron, e3",
+   "strict": 86.2,
+   "lenient": 88.5
+  }
+ ],
+ "rl8_curve": [
+  [
+   5,
+   0.0015,
+   0.773
+  ],
+  [
+   10,
+   0.0025,
+   0.75
+  ],
+  [
+   15,
+   0.0078,
+   0.698
+  ],
+  [
+   20,
+   0.0157,
+   0.802
+  ],
+  [
+   25,
+   0.0192,
+   0.741
+  ],
+  [
+   30,
+   0.0211,
+   0.854
+  ],
+  [
+   35,
+   0.0647,
+   0.902
+  ],
+  [
+   40,
+   0.043,
+   0.869
+  ],
+  [
+   45,
+   0.0372,
+   0.835
+  ],
+  [
+   50,
+   0.0288,
+   0.861
+  ],
+  [
+   55,
+   0.0698,
+   0.794
+  ],
+  [
+   60,
+   0.0251,
+   0.746
+  ],
+  [
+   65,
+   0.0229,
+   0.806
+  ],
+  [
+   70,
+   0.013,
+   0.752
+  ],
+  [
+   75,
+   0.0159,
+   0.788
+  ],
+  [
+   80,
+   0.0304,
+   0.762
+  ],
+  [
+   85,
+   0.0186,
+   0.633
+  ],
+  [
+   90,
+   0.0218,
+   0.79
+  ],
+  [
+   95,
+   0.0147,
+   0.788
+  ],
+  [
+   100,
+   0.0202,
+   0.867
+  ],
+  [
+   105,
+   0.0255,
+   0.872
+  ],
+  [
+   110,
+   0.0315,
+   0.789
+  ],
+  [
+   115,
+   0.0194,
+   0.862
+  ],
+  [
+   120,
+   0.0217,
+   0.637
+  ],
+  [
+   125,
+   0.0163,
+   0.828
+  ],
+  [
+   130,
+   0.0248,
+   0.75
+  ],
+  [
+   135,
+   0.0132,
+   0.683
+  ],
+  [
+   140,
+   0.0245,
+   0.825
+  ],
+  [
+   145,
+   0.0278,
+   0.809
+  ],
+  [
+   150,
+   0.0199,
+   0.775
+  ]
+ ],
+ "stages": [
+  {
+   "name": "e3 (SFT)",
+   "chrF": 73.05,
+   "en_pie": 78.7,
+   "cells": 0.887,
+   "never": null
+  },
+  {
+   "name": "Stage 6 (rl6b)",
+   "chrF": 73.09,
+   "en_pie": 78.8,
+   "cells": 0.904,
+   "never": 78
+  },
+  {
+   "name": "Vocabulary pilot",
+   "chrF": 71.31,
+   "en_pie": 74.3,
+   "cells": 0.885,
+   "never": 2
+  },
+  {
+   "name": "Stage 8, step 100",
+   "chrF": 71.82,
+   "en_pie": 76.8,
+   "cells": 0.885,
+   "never": 3
+  },
+  {
+   "name": "Stage 8, final",
+   "chrF": 71.99,
+   "en_pie": 78.6,
+   "cells": 0.889,
+   "never": 3
+  }
+ ]
+}

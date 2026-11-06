@@ -3,4 +3,5 @@
   <url><loc>https://wekwos.com/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
   <url><loc>https://wekwos.com/dictionary</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://wekwos.com/voices</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://wekwos.com/model</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

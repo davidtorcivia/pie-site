@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
-<!-- the share images (tools/build_og.mjs): 1200 x 630, one per page, from the site's own art and type. ?page=home|dictionary|voices -->
+<!-- the share images (tools/build_og.mjs): 1200 x 630, one per page, from the site's own art and type. ?page=home|dictionary|voices|model -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=block&family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800">
 <style>
   * { box-sizing: border-box; margin: 0; }
@@ -26,6 +26,13 @@
   .dict .gl { position: absolute; left: 304px; top: 392px; font-size: 48px; }
   .dict .meta { position: absolute; left: 306px; top: 470px; font-size: 16px; opacity: .8; }
   .dict p { position: absolute; left: 56px; bottom: 44px; font-size: 30px; }
+  /* model */
+  .model h1 { position: absolute; left: 56px; top: 56px; font-size: 168px; }
+  .model .row { position: absolute; left: 60px; top: 262px; display: flex; gap: 44px; }
+  .model .row div b { display: block; font-family: 'Archivo'; font-weight: 900; font-variation-settings: 'wdth' 110; font-size: 92px; line-height: .9; letter-spacing: -.03em; }
+  .model .row div span { display: block; font-family: 'JetBrains Mono'; font-weight: 700; font-size: 17px; letter-spacing: .14em; text-transform: uppercase; margin-top: 12px; }
+  .model .row .ours b { color: #b81d0e; }
+  .model p { position: absolute; left: 56px; bottom: 44px; width: 640px; font-size: 30px; line-height: 1.2; }
   /* voices */
   .voices h1 { position: absolute; left: 56px; top: 56px; font-size: 168px; }
   .voices .spec { position: absolute; left: 56px; top: 270px; height: 150px; width: 680px; object-fit: fill; mix-blend-mode: multiply; }
@@ -49,6 +56,12 @@ if (page === 'home') {
   B.innerHTML = `<h1 class="display">Dictionary</h1><img class="cap" src="../art/initials/dict/50.webp">
     <div class="hw">*${T('ph₂tḗr')}</div><div class="gl serif">father</div><div class="meta data">noun · masculine · [pə.téːr]</div>
     <p class="serif">8,434 entries, with inflection, descendants and spoken forms</p><span class="data url">wekwos.com/dictionary</span>`;
+} else if (page === 'model') {
+  B.className = 'yellow model';
+  B.innerHTML = `<img class="garden" src="../art/garden-model.webp" style="object-position: right top; width: 33%"><h1 class="display">Model</h1>
+    <div class="row"><div class="ours"><b>86.2</b><span>ours, strict</span></div><div><b>50.0</b><span>Claude Opus 5.5</span></div><div><b>47.0</b><span>GPT-6.1 Sol</span></div></div>
+    <p class="serif">A language model trained to read and write reconstructed Proto-Indo-European, in the scholars' own notation</p>
+    <span class="data url">wekwos.com/model</span>`;
 } else {
   B.className = 'yellow voices';
   B.innerHTML = `<img class="garden" src="../art/garden-voices.webp" style="object-position: right top; width: 42%"><h1 class="display">Voices</h1>

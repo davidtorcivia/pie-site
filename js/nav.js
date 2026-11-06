@@ -6,6 +6,7 @@
 const PAGES = [
   ['index', '*PIE', 'index.html'],   // the mark stands for home
   ['voices', 'Voices', 'voices.html'],
+  ['model', 'Model', 'model.html'],
   ['dictionary', 'Dictionary', 'dictionary.html'],
 ];
 const here = location.pathname.replace(/\/$/, '/index.html');
