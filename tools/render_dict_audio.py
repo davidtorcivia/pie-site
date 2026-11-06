@@ -1,8 +1,12 @@
 """Spoken headwords for the dictionary, in both of the project's Kokoro PIE voices (pie_m, pie_f; see
 tools/render_hymn_kokoro.py for the model and why its own model code is used).
 
-Each word is said as a citation form (the headword with a closing full stop, so it falls as a word said alone), its
-silence trimmed. The clips are packed one file per detail shard and voice (audio/dict/NN-<m|f>.mp3), so the whole
+Each word is said as a citation form, inside a carrier: "nu. WORD. nu." (each its own sentence, so the word still falls
+as a word said alone) and cut out of it in the middle of the pauses either side. Said alone, the model adds a stray
+vowel before or after a short word and holds stop closures for half a second; mid-phrase it does neither (2026-11-06
+test on the 30 worst words: stray sounds 15 -> 0 of 60 clips, silences over 300 ms 16 -> 0). Every clip is set to the
+same speech loudness (-18 dBFS RMS over its voiced frames) with its peak held under -3 dBFS, carried as 32-bit float
+to the encoder (LAME, highest quality, 96 kbps CBR at the model's own 24 kHz), so nothing clips after decoding. The clips are packed one file per detail shard and voice (audio/dict/NN-<m|f>.mp3), so the whole
 dictionary stays 128 files on Cloudflare; data/dict/audio/NN.json gives each entry's start and length in its shard's
 file, and data/dict/audio/index.json lists the shards that have audio.
 
@@ -13,7 +17,7 @@ Two halves, so the renderer needs neither the PIE repo nor the site:
 OUT gets audio/dict/*.mp3 and data/dict/audio/*.json, laid out as in the site. The full set was rendered on tr-desktop's
 GPU (WSL, ~/kokoro-ft); the 46-word demo on the Mac's CPU.
 """
-import argparse, time, json, re, subprocess, sys, types, wave, zlib
+import argparse, time, json, re, subprocess, sys, types, zlib
 from collections import defaultdict
 from pathlib import Path
 
@@ -22,7 +26,10 @@ ap.add_argument("mode", choices=["labels", "render"]); ap.add_argument("labels",
 ap.add_argument("-o", "--out", required=True); ap.add_argument("--demo", action="store_true")
 ap.add_argument("--device", default="cpu"); ap.add_argument("--pie", default="/Users/david/AI/PIE")
 ap.add_argument("--kokoro", default="/Users/david/AI/pie-runs/tts/kokoro-final"); ap.add_argument("--kikiri", default="/Users/david/AI/pie-runs/tts/kikiri")
-ap.add_argument("--kbps", default="48k")
+ap.add_argument("--kbps", default="96k")
+ap.add_argument("--alone", action="store_true", help="say each word alone, as before 2026-11-06 (no carrier)")
+ap.add_argument("--rms", type=float, default=-18.0, help="speech loudness, dBFS RMS over the voiced frames")
+ap.add_argument("--peak", type=float, default=-3.0, help="sample-peak ceiling, dBFS")
 a = ap.parse_args()
 SITE = Path(__file__).resolve().parents[1]
 WHEELS = ["pie-lex-ph2texr", "pie-lex-h1ekjwos", "pie-lex-h2owis", "pie-lex-meh2texr", "pie-lex-dyexws", "pie-lex-wlkwos",
@@ -71,27 +78,80 @@ from kokoro.model import KModel  # noqa: E402
 K, OUT = Path(a.kokoro), Path(a.out)
 SR, GAP = 24000, 0.3
 torch.set_num_threads(4)
+if a.device.startswith("cuda"):
+    torch.cuda.set_per_process_memory_fraction(0.25, 0)                  # the whole card stays under the owner's 0.82
 model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval().to(a.device)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True).to(a.device) for n in ("m", "f")}
 labels = json.loads(Path(a.labels).read_text("utf-8"))
 
 
-def clip(label, voice):
-    ids_ = [model.vocab[c] for c in label if c in model.vocab]
-    if not ids_:
-        return None
+ids = lambda text: [model.vocab[c] for c in text if c in model.vocab]
+PRE, POST = ids("nu. "), ids(" nu.")
+F10 = SR // 100                                                          # 10 ms frames
+FLAGS = defaultdict(int)
+
+
+def say(tokens, style):
     with torch.no_grad():
-        wav, _ = model.forward_with_tokens(torch.LongTensor([[0, *ids_, 0]]).to(a.device), packs[voice][min(len(label), 509) - 1], 1.0)
-    y = wav.float().cpu().numpy().ravel()
-    env = np.convolve(np.abs(y), np.ones(240) / 240, "same")              # trim the silence either side, keep 60 ms
-    on = np.where(env > env.max() * 0.03)[0]
-    if len(on):
-        y = y[max(0, on[0] - 1440): on[-1] + 1440].copy()
+        wav, dur = model.forward_with_tokens(torch.LongTensor([[0, *tokens, 0]]).to(a.device), style, 1.0)
+    return wav.float().cpu().numpy().ravel().astype(np.float64), dur.cpu().numpy().ravel()
+
+
+def frames(y):
+    n = len(y) // F10
+    return np.abs(y[:n * F10].reshape(n, F10)).max(1)
+
+
+def pause(sil, lo, hi):
+    """the longest run of silent frames between frames lo and hi: (length, start, end)"""
+    lo, hi = max(0, lo), min(len(sil), hi); best, i = (0, lo, lo), lo
+    while i < hi:
+        if sil[i]:
+            j = i
+            while j < hi and sil[j]:
+                j += 1
+            if j - i > best[0]:
+                best = (j - i, i, j)
+            i = j
+        else:
+            i += 1
+    return best
+
+
+def clip(label, voice):
+    core = ids(label.rstrip("."))
+    if not core:
+        return None
+    if a.alone:
+        y, _ = say(ids(label), packs[voice][min(len(label), 509) - 1])
+        e = frames(y); on = np.where(e > e.max() * 0.03)[0]
+        y = y[max(0, on[0] * F10 - 1440): (on[-1] + 1) * F10 + 1440] if len(on) else y
+    else:
+        y, dur = say(PRE + core + ids(".") + POST, packs[voice][min(len("nu. " + label + " nu."), 509) - 1])
+        cum = np.concatenate([[0], np.cumsum(dur)]) * 600                # a duration frame is 600 samples
+        ws, we = cum[1 + len(PRE)] / F10, cum[1 + len(PRE) + len(core) + 1] / F10   # the word, and its full stop
+        e = frames(y); sil = e < e.max() * 0.03
+        n0, _, s1 = pause(sil, int(ws - 40), int(ws + 12))               # the pause after "nu.", the one before " nu."
+        n1, e0, _ = pause(sil, int(we - 15), int(we + 40))
+        if n0 < 4 or n1 < 4:                                             # no clear pause: cut on the model's own timings
+            FLAGS["no pause"] += 1
+            s1, e0 = int(ws) - 2, int(we) + 4
+        y = y[max(0, s1 - 4) * F10: (e0 + 6) * F10]
+        e = frames(y); on = np.where(e > e.max() * 0.03)[0]              # then down to the word itself: 50 ms before, 80 after
+        if len(on):
+            y = y[max(0, on[0] * F10 - 1200): (on[-1] + 1) * F10 + 1920]
     if len(y) < 960:
         return None
-    fade = np.linspace(0, 1, 240, dtype=np.float32)
-    y[:240] *= fade; y[-240:] *= fade[::-1]
-    return y / max(1e-9, np.abs(y).max()) * 0.89
+    # loudness: RMS over the voiced frames (those within 30 dB of the clip's loudest), then the peak ceiling
+    e = frames(y); act = e > e.max() * 10 ** (-30 / 20)
+    rms = np.sqrt(np.mean(np.concatenate([y[k * F10:(k + 1) * F10] for k in np.where(act)[0]]) ** 2))
+    g = min(10 ** (a.rms / 20) / max(rms, 1e-9), 10 ** (a.peak / 20) / max(np.abs(y).max(), 1e-9))
+    if g < 10 ** (a.rms / 20) / max(rms, 1e-9) - 1e-9:
+        FLAGS["held by the peak ceiling"] += 1
+    y = y * g
+    n = 240; f = np.linspace(0, 1, n)                                     # 10 ms fades: no clicks at the cuts
+    y[:n] *= f; y[-n:] *= f[::-1]
+    return y.astype(np.float32)
 
 
 by = defaultdict(list)
@@ -111,13 +171,12 @@ for s, group in sorted(by.items()):
                 continue
             offs[i][v] = [round(t, 3), round(len(y) / SR, 3)]
             parts += [y, np.zeros(int(SR * GAP), np.float32)]; t += len(y) / SR + GAP
-        wavp = OUT / f"audio/dict/{s:02d}-{v}.wav"
-        with wave.open(str(wavp), "wb") as wf:
-            wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SR); wf.writeframes((np.concatenate(parts) * 32767).astype(np.int16).tobytes())
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(wavp), "-codec:a", "libmp3lame", "-b:a", a.kbps, str(wavp.with_suffix(".mp3"))], check=True)
-        wavp.unlink()
+        mp3 = OUT / f"audio/dict/{s:02d}-{v}.mp3"
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
+                        "-codec:a", "libmp3lame", "-b:a", a.kbps, "-compression_level", "0", "-ar", str(SR), str(mp3)],
+                       input=np.concatenate(parts).astype("<f4").tobytes(), check=True)
     (OUT / f"data/dict/audio/{s:02d}.json").write_text(json.dumps(offs, ensure_ascii=False, separators=(",", ":")))
     total += len(offs)
     print(f"shard {s:02d}: {len(offs)} words", flush=True)
 (OUT / "data/dict/audio/index.json").write_text(json.dumps({"v": int(time.time()), "shards": sorted(by)}))   # v: js/dict.js cache-busts with it
-print(total, "words in", len(by), "shards")
+print(total, "words in", len(by), "shards;", dict(FLAGS))
