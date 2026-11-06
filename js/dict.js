@@ -5,6 +5,7 @@
 import { initType, typeset } from './type.js';
 import { nav } from './nav.js';
 import { brushStroke } from './brush.js';
+import { ART_V } from './initials.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -238,7 +239,7 @@ function initialFor(form) {
   const m = src.slice(at).match(/^([a-z])([̀-ͯ]*)/i), letter = (m[1].toUpperCase() + m[2]).normalize('NFC');
   return { letter, pre: src.slice(0, at), rest: src.slice(at + m[0].length).normalize('NFC') };
 }
-const initialSrc = L => `art/initials/dict/${[...L.normalize('NFD')].map(c => c.codePointAt(0).toString(16)).join('-')}.webp`;
+const initialSrc = L => `art/initials/dict/${[...L.normalize('NFD')].map(c => c.codePointAt(0).toString(16)).join('-')}.webp?v=${ART_V}`;
 
 async function openEntry(id, { push = true, scroll = true } = {}) {
   const d = await detail(id); if (!d) return;

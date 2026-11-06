@@ -4,6 +4,8 @@
 // margin and band width, so the coloured square sits CAP.pad of the image inside every edge. Pages place an initial by
 // that square (css: --cap-pad), and the horses hang outside the text they sit beside.
 export const CAP = { margin: 40, gap: 100 };
+// bump when the initials are rebuilt: their file names stay the same and browsers cache art
+export const ART_V = '2';
 CAP.pad = (CAP.margin + CAP.gap) / 1000;
 const framed = (P, perSide) => ({ ...P, frame: 'rect', fRules: 2, fMargin: CAP.margin, fGap: CAP.gap, fW1: 0, fW2: 0, fBand: 'horses', fHorseN: perSide });
 export const heroP = lib => framed({ ...lib.random(4242), text: 'P', paper: '#ffd21a', inkA: '#1d1a16', inkB: '#a8361f', inkC: '#1d1a16',

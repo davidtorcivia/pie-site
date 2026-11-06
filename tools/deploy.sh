@@ -16,5 +16,7 @@ if [[ -n "${HOLD_VOICES:-}" ]]; then
 fi
 echo "$(find "$STAGE" -type f | wc -l | tr -d ' ') files, $(du -sh "$STAGE" | cut -f1)"
 rsync -a --delete "$STAGE"/ erebus:/nvme-mirror/apps/wekwos/public/
+# Pages Functions (the translator's /api), from the same commit, beside public/ where wrangler looks for them
+FN=$(mktemp -d); git archive HEAD functions | tar -x -C "$FN"; rsync -a --delete "$FN"/functions/ erebus:/nvme-mirror/apps/wekwos/functions/; rm -rf "$FN"
 rm -rf "$STAGE"
 ssh erebus 'cd /nvme-mirror/apps/wekwos && /nvme-mirror/apps/sref-viewer-cf/node_modules/.bin/wrangler pages deploy public --project-name wekwos --branch main --commit-dirty=true 2>&1 | tail -2'

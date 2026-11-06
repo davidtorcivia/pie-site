@@ -5,7 +5,7 @@ import { ramp, cord, wheel as sunWheel } from './illum.js';
 import { mapPlate } from './map.js';
 import { brushGround, brushStroke } from './brush.js';
 import { nav } from './nav.js';
-import { CAP } from './initials.js';
+import { CAP, ART_V } from './initials.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -49,7 +49,7 @@ async function overture() {
   // the P's coloured square spans the title (a third of the width on phones); the horses round it hang outside
   const sq = innerWidth >= 700 ? size : Math.round(innerWidth * .30), pad = CAP.pad, S = sq / (1 - 2 * pad);
   $('.hero-cap').style.setProperty('--hs', S + 'px'); $('.hero-cap').style.setProperty('--hm', `${-S * pad}px ${-S * pad * .6}px ${-S * pad}px ${-S * pad}px`);   // the right-hand horses sit in the gap before the title
-  $('.hero-cap').innerHTML = '<img src="art/initials/hero.webp" alt="" width="100%" height="100%" decoding="async">';
+  $('.hero-cap').innerHTML = `<img src="art/initials/hero.webp?v=${ART_V}" alt="" width="100%" height="100%" decoding="async">`;
   const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
   place(); addEventListener('repaint', place);
   // the title arrives by CSS alone (html.arrived), so a busy main thread never leaves the header blank
@@ -265,22 +265,25 @@ function wheel(words) {
   // horizontal drag spins it and a vertical one still scrolls the page.
   const spin = svg.querySelector('.spin');
   svg.classList.add('grabbable'); svg.style.touchAction = matchMedia('(pointer: coarse)').matches ? 'pan-y' : 'none';
-  let drag = null, vel = 0, coast = 0;
+  let drag = null, vel = 0, coast = 0, acc = 0;
+  // turning it moves through the words: every 40 degrees clockwise is the next word, anticlockwise the one before
+  const STEP = 40, pick = i => { i = (i + words.length) % words.length; set(i); nav.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i)); };
+  const turned = d => { acc += d; while (acc >= STEP) { acc -= STEP; pick(cur + 1); } while (acc <= -STEP) { acc += STEP; pick(cur - 1); } };
   const angle = e => { const b = svg.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)) * 180 / Math.PI; };
   svg.addEventListener('pointerdown', e => {
     cancelAnimationFrame(coast); gsap.killTweensOf(spin);
-    drag = { a: angle(e), r: +gsap.getProperty(spin, 'rotation') || 0, t: performance.now() }; vel = 0;
+    drag = { a: angle(e), r: +gsap.getProperty(spin, 'rotation') || 0, t: performance.now() }; vel = 0; acc = 0;
     svg.setPointerCapture(e.pointerId); svg.classList.add('grabbing');
   });
   svg.addEventListener('pointermove', e => {
     if (!drag) return;
     let a = angle(e), d = a - drag.a; if (d > 180) d -= 360; if (d < -180) d += 360;
     const now = performance.now(); vel = d / Math.max(1, now - drag.t) * 16.7; drag.a = a; drag.t = now; drag.r += d;
-    gsap.set(spin, { rotation: drag.r, svgOrigin: '0 0' });
+    gsap.set(spin, { rotation: drag.r, svgOrigin: '0 0' }); turned(d);
   });
   const release = () => {
     if (!drag) return; drag = null; svg.classList.remove('grabbing');
-    const step = () => { if (Math.abs(vel) < .04 || reduce) return; vel *= .955; gsap.set(spin, { rotation: '+=' + vel, svgOrigin: '0 0' }); coast = requestAnimationFrame(step); };
+    const step = () => { if (Math.abs(vel) < .04 || reduce) return; vel *= .955; gsap.set(spin, { rotation: '+=' + vel, svgOrigin: '0 0' }); turned(vel); coast = requestAnimationFrame(step); };
     step();
   };
   svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
@@ -445,7 +448,7 @@ async function specimens(list) {
     const fs = parseFloat(getComputedStyle(el.querySelector('.p')).fontSize), size = Math.round(fs * 1.28 * 3.4);
     // our own illumination: a cord or a frieze of horses round the frame, an incised ground, sun-wheel corners,
     // tulips for the growing ornament, all in the leaf's inks on its paper
-    ini.innerHTML = `<img src="art/initials/leaf-${i}.webp" alt="" decoding="async" loading="lazy" style="width:100%;height:100%">`;
+    ini.innerHTML = `<img src="art/initials/leaf-${i}.webp?v=${ART_V}" alt="" decoding="async" loading="lazy" style="width:100%;height:100%">`;
   };
   leaves.forEach(build);
   // readings: one player for all the leaves; the words light up as they are spoken
@@ -591,7 +594,7 @@ async function boot() {
   overture(); mark('overture();');
   // the header's art first: the initial and the garden, then the page arrives (at most 2.5 s)
   const ready = src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; });
-  await Promise.race([ready('art/initials/hero.webp'), new Promise(r => setTimeout(r, 1200))]);
+  await Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]);
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
   nav();

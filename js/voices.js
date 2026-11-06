@@ -2,6 +2,7 @@
 // live section, the header's garden and horses. Figure data: data/voices-figs.json (tools/build_voices_figures.py);
 // settings and links: data/voices.json.
 import { initType, typeset, typesetAll } from './type.js';
+import { ART_V } from './initials.js';
 import { nav } from './nav.js';
 import { brushStroke } from './brush.js';
 
@@ -43,7 +44,7 @@ function dropCaps() {
     const t = node.textContent, i = t.search(/\S/), L = t[i];
     node.textContent = t.slice(i + 1);
     const cap = document.createElement('span'); cap.className = 'v-cap';
-    cap.innerHTML = `<img src="art/initials/voices/${L.toUpperCase()}.webp" alt="" onerror="this.parentNode.classList.add('plain')"><span class="v-cap-l">${esc(L)}</span>`;
+    cap.innerHTML = `<img src="art/initials/voices/${L.toUpperCase()}.webp?v=${ART_V}" alt="" onerror="this.parentNode.classList.add('plain')"><span class="v-cap-l">${esc(L)}</span>`;
     p.prepend(cap);
   });
 }
