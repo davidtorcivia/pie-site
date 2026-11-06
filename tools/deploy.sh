@@ -14,8 +14,6 @@ if [[ -n "${HOLD_VOICES:-}" ]]; then
     "$STAGE"/art/initials/voices "$STAGE"/art/garden-voices.webp "$STAGE"/art/growth-voices.webm "$STAGE"/art/growth-voices
   sed -i '' "/'voices', 'Voices', 'voices.html'/d" "$STAGE"/js/nav.js
 fi
-# the build stamp in each page's footer: the commit, so a phone shows which version it has
-B=$(git rev-parse --short HEAD); for f in "$STAGE"/*.html; do sed -i '' "s#data-build></p>#data-build>build $B</p>#" "$f"; done
 echo "$(find "$STAGE" -type f | wc -l | tr -d ' ') files, $(du -sh "$STAGE" | cut -f1)"
 rsync -a --delete "$STAGE"/ erebus:/nvme-mirror/apps/wekwos/public/
 rm -rf "$STAGE"
