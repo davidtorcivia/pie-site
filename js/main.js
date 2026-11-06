@@ -4,6 +4,7 @@ import { loadMask, paintSilhouette } from './painter.js';
 import { ramp, cord, wheel as sunWheel } from './illum.js';
 import { mapPlate } from './map.js';
 import { brushGround, brushStroke } from './brush.js';
+import { nav } from './nav.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -559,6 +560,7 @@ async function boot() {
   await Promise.race([ready('art/initials/hero.webp'), new Promise(r => setTimeout(r, 1200))]);
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
+  nav();
   gardens();
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
   await mapPlate($('#s-mig')); mark("await mapPlate($('#s-mig'));");      // first: its pin spacing must exist before later sections measure
@@ -573,6 +575,7 @@ async function boot() {
 
 
   ScrollTrigger.refresh();
+  dispatchEvent(new Event('pie:ready'));
   addEventListener('typechange', () => { typesetAll(); ScrollTrigger.refresh(); });
   let rw; addEventListener('resize', () => { clearTimeout(rw); rw = setTimeout(() => dispatchEvent(new Event('repaint')), 250); });
 }

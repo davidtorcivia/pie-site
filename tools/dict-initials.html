@@ -1,0 +1,18 @@
+<!doctype html><meta charset=utf-8><body>
+<script type=module>
+// the dictionary's initials, one per first letter of a headword (tools/build_dict_initials.mjs): the leaves' settings
+// in each palette in turn, on the page's own paper
+import { use, draw, random } from '../vendor/initialis/lib/initialis.js';
+import { leafP } from '../js/initials.js';
+await use(new URL('../js/kinds/steppe.js', location.href).href);
+const [ix, pal] = await Promise.all([fetch('../data/dict/index.json').then(r => r.json()), fetch('palette.json').then(r => r.json())]);
+const letters = new Set();
+for (const r of ix) { const src = r[1].normalize('NFD'), at = src.search(/[a-z]/i); if (at < 0) continue; const m = src.slice(at).match(/^([a-z])([̀-ͯ]*)/i); letters.add((m[1].toUpperCase() + m[2]).normalize('NFC')); }
+const out = {}; let i = 0;
+for (const L of letters) {
+  const k = pal[i % pal.length], c = document.createElement('canvas');
+  await draw(c, { ...leafP({ random }, i + 40, { ...k, paper: '#efe7d6' }, L) }, { size: 360 });
+  out[[...L.normalize('NFD')].map(ch => ch.codePointAt(0).toString(16)).join('-')] = c.toDataURL('image/webp', .9); i++;
+}
+window.OUT = out; document.title = 'done';
+</script>

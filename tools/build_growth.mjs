@@ -14,13 +14,17 @@ const ROOT = new URL('..', import.meta.url).pathname, FL = ROOT + 'vendor/floril
 const names = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SECTIONS);
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', args: ['--disable-gpu'] });
 const pg = await b.newPage(); await pg.setViewport(PHONE ? { width: 390, height: 844, isMobile: true, hasTouch: true } : { width: 1440, height: 900 });
-await pg.goto('http://localhost:4747/?nogarden', { waitUntil: 'networkidle2' }); await new Promise(r => setTimeout(r, 6000));
+let at = null;
 for (const name of names) {
   const S = SECTIONS[name];
+  // each garden is measured on its own page (the index, or the dictionary)
+  if (at !== (S.page || '')) { at = S.page || ''; await pg.goto(`http://localhost:4747/${at}?nogarden`, { waitUntil: 'networkidle2' }); await new Promise(r => setTimeout(r, 6000)); }
   const m = await pg.evaluate(S => {
     const box = document.querySelector(S.box); if (!box) return null;
     const B = box.getBoundingClientRect(), rects = [];
     for (const sel of S.avoid) document.querySelectorAll(sel).forEach(el => { const r = el.getBoundingClientRect(); if (r.width && r.height) rects.push([r.left - B.left, r.top - B.top, r.right - B.left, r.bottom - B.top]); });
+    // and the strip above these, up to the top of the box (nothing grows over a title from above)
+    for (const sel of S.above || []) document.querySelectorAll(sel).forEach(el => { const r = el.getBoundingClientRect(); rects.push([r.left - B.left, 0, r.right - B.left, r.top - B.top]); });
     return { w: B.width, h: B.height, rects };
   }, S);
   if (!m) continue;
@@ -31,15 +35,15 @@ for (const name of names) {
   const dir = ROOT + `art/growth-${name}${SFX}`; mkdirSync(dir, { recursive: true });
   // one working seed per layer, found on the final frame and kept for every frame
   const seeds = S.seeds.map((seed, k) => {
-    for (let tr = 0; tr < 8; tr++) { try { lua(seed + tr * 1000, k, N, '/tmp/pie-probe.svg'); return seed + tr * 1000; } catch {} }
+    for (let tr = 0; tr < 8; tr++) { try { lua(seed + tr * 1000, k, N, "/tmp/pie-probe.svg"); return seed + tr * 1000; } catch (e) { if (process.env.DEBUG) console.log(String(e.stderr || e).slice(0, 300)); } }
     return null;
   }).filter(x => x !== null);
   function lua(seed, k, f, out) {
     const geo = field ? ['--left', `${(W - 4).toFixed(1)}mm`, '--right', '2mm', '--top', '5mm', '--bottom', '4mm', '--density', '.8']
       : ['--left', `${(W * (S.side === 'both' ? .24 : COL)).toFixed(1)}mm`, '--right', '15mm', '--top', '10mm', '--bottom', '8mm', '--density', S.side === 'both' ? '1' : k ? '.55' : '1'];
     execFileSync('lua', ['../../tools/steppe-svg.lua', '--seed', String(seed), '--paper', `${W.toFixed(1)}x${H.toFixed(1)}`, ...geo,
-      '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(S.seeds[k] + k) % 3], '--nohead', ...(S.turn ? ['--novisitors'] : []), ...(k ? ['--novisitors'] : []), '-o', out],
-      { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', PIE_FRAME: `${f}/${N}`, ...(field ? { PIE_OBSTACLES: obstacles } : {}) }, stdio: 'pipe' });
+      '--ink', S.ink, '--accent', S.accent, '--season', ['summer', 'spring', 'autumn'][(S.seeds[k] + k) % 3], '--nohead', ...(S.turn || S.novisitors || k ? ['--novisitors'] : []), '-o', out],
+      { cwd: FL, env: { ...process.env, PIE_NOFOOTER: '1', PIE_FRAME: `${f}/${N}`, ...(field ? { PIE_OBSTACLES: obstacles } : {}), ...(S.stemx ? { PIE_STEMX: String(S.stemx) } : {}) }, stdio: 'pipe' });
   }
   const CW = Math.round(m.w * SC) & ~1, CH = Math.round(m.h * SC) & ~1;
   const p2 = await b.newPage();

@@ -63,6 +63,15 @@ do
       "    local _, bi = layout.best(free, #gx, 0.85, 1.15, sdist, REACH)\n    for __k = 1, 60 do\n      if not bi then break end\n      local S0, dd = nearest_stem(gx[bi], gy[bi])\n      if not S0 or dd < 1000 then break end\n      free[bi] = 0\n      local __u; __u, bi = layout.best(free, #gx, 0.85, 1.15, sdist, REACH)\n    end\n", 1)
     assert(n == 1, "steppe-svg: the branch loop moved")
   end
+  -- PIE_STEMX: where across the page the main stems root and sway (a fraction of the width; default the grower's own)
+  if os.getenv("PIE_STEMX") then
+    src, n = src:gsub("local root = %{ layout%.range%(1%.0, 1%.6%), 0%.75 %}",
+      "local root = { g.colright * tonumber(os.getenv('PIE_STEMX')) - 1.3 + layout.range(1.0, 1.6), 0.75 }")
+    assert(n == 1, "steppe-svg: the stem root moved")
+    src, n = src:gsub("local midx = g%.colright %* 0%.47", "local midx = g.colright * tonumber(os.getenv('PIE_STEMX'))")
+    assert(n == 1, "steppe-svg: the stem sway moved")
+    src, n = src:gsub("local amp = g%.colright %* 0%.2\n", "local amp = g.colright * 0.08\n")
+  end
   package.preload["florilegium-grow"] = function(...) return assert(load(src, "@florilegium-grow.lua"))(...) end
 end
 local SPC = require("florilegium-species")
