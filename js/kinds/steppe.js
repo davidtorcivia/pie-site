@@ -63,7 +63,43 @@ export function horse(x, y, h, a = 0, flip = false, k = 0) {
 
 const TAU = Math.PI * 2;
 
+
+// Symmetric bands: the pieces are spaced evenly along each side, the same number on opposite sides, centred on the
+// side's midpoint, with one piece of their own at every corner, so the border reads as even and balanced
+// (initialis's own bands step round the loop from one corner and close with whatever gap is left).
+const circle = (x, y, r, n = 20) => Array.from({ length: n }, (_, i) => [x + Math.cos(i / n * Math.PI * 2) * r, y + Math.sin(i / n * Math.PI * 2) * r]);
+const box = (x, y, along, across, a) => { const c = Math.cos(a), s = Math.sin(a), u = along / 2, v = across / 2;
+  return [[-u, -v], [u, -v], [u, v], [-u, v]].map(([p, q]) => [x + c * p - s * q, y + s * p + c * q]); };
+function evenly(path, w, spacing, piece, corner) {
+  const xs = path.map(p => p[0]), ys = path.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const c = w * .62;                                       // the corner's own room
+  const sides = [[x0, y0, x1, y0], [x1, y0, x1, y1], [x1, y1, x0, y1], [x0, y1, x0, y0]];
+  const kH = Math.max(1, Math.round((x1 - x0 - 2 * c) / spacing)), kV = Math.max(1, Math.round((y1 - y0 - 2 * c) / spacing));
+  sides.forEach(([ax, ay, bx, by], si) => {
+    const k = si % 2 ? kV : kH, len = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / len, uy = (by - ay) / len, a = Math.atan2(uy, ux);
+    for (let j = 0; j < k; j++) { const d = c + (len - 2 * c) * (j + .5) / k; piece(ax + ux * d, ay + uy * d, a, j, k); }
+    corner(ax, ay, a);
+  });
+}
+
 export default [
+  {
+    family: 'band', name: 'even-beads',
+    draw({ out, path, w }) { evenly(path, w, w * .62, (x, y) => out.polys.push(circle(x, y, w * .2)), (x, y) => out.polys.push(circle(x, y, w * .27))); },
+  },
+  {
+    family: 'band', name: 'even-pearls',
+    // large and small in turn, an odd count so every side starts, centres and ends on a large one
+    draw({ out, path, w }) {
+      const xs = path.map(p => p[0]), side = Math.max(...xs) - Math.min(...xs), n = Math.round((side - w * 1.24) / (w * .42)), sp = (side - w * 1.24) / (n % 2 ? n : n + 1);
+      evenly(path, w, sp, (x, y, a, j) => out.polys.push(circle(x, y, j % 2 ? w * .1 : w * .21)), (x, y) => out.polys.push(circle(x, y, w * .27)));
+    },
+  },
+  {
+    family: 'band', name: 'even-dentil',
+    draw({ out, path, w }) { evenly(path, w, w * .56, (x, y, a) => out.polys.push(box(x, y, w * .28, w * .66, a)), (x, y, a) => out.polys.push(box(x, y, w * .66, w * .66, a))); },
+  },
   {
     family: 'band', name: 'horses',
     // a procession round the frame along its inner edge: each horse turned to the band's direction, its hooves on

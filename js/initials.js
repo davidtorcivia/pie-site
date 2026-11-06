@@ -5,12 +5,12 @@
 // that square (css: --cap-pad), and the horses hang outside the text they sit beside.
 export const CAP = { margin: 40, gap: 100 };
 // bump when the initials are rebuilt: their file names stay the same and browsers cache art
-export const ART_V = '3';
+export const ART_V = '4';
 CAP.pad = (CAP.margin + CAP.gap) / 1000;
 const framed = (P, band = 'horses', perSide = 3) => ({ ...P, frame: 'rect', fRules: 2, fMargin: CAP.margin, fGap: CAP.gap, fW1: 0, fW2: 0, fBand: band, fHorseN: perSide });
-// the borders, in turn: horses on about one initial in three, the others a band of ornament (beads, laurel, dentils,
-// pearls); never a hairline (no rules, no zigzag), and no band that crosses itself at the corners (cord, rope)
-const BANDS = ['beads', 'laurel', 'horses', 'dentil', 'pearls', 'laurel', 'horses', 'beads'];
+// the borders, in turn: horses on about one initial in three, the others beads, pearls or dentils, all laid evenly
+// and symmetrically (js/kinds/steppe.js even-*); never a hairline, a zigzag or a band that crosses at the corners
+const BANDS = ['even-beads', 'even-dentil', 'horses', 'even-pearls', 'even-beads', 'horses', 'even-dentil', 'even-pearls'];
 export const heroP = lib => framed({ ...lib.random(4242), text: 'P', paper: '#ffd21a', inkA: '#1d1a16', inkB: '#a8361f', inkC: '#1d1a16',
   frame: 'rect', fMargin: 6, fRules: 2, fW1: 5, fGap: 96, fW2: 3, fBand: 'horses', fField: 'A', fPattern: 'herd', fPatColor: 'B', fPatScale: 10,
   fCorner: 'sunwheel', fCornerSize: 70, oFlower: 'tulip', oLeaf: 'willow', lFill: 'paper' }, 'horses', 4);
