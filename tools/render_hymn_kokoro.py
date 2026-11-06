@@ -20,7 +20,7 @@ sys.modules["kokoro"] = _pkg
 from kokoro.model import KModel
 
 SITE = Path(__file__).resolve().parents[1]
-K = Path(os.environ.get("PIE_KOKORO", "/Users/david/AI/pie-runs/tts/kokoro-final"))   # model folder: config.json, kokoro_pie_*.pth, voices/
+K = Path(os.environ.get("PIE_KOKORO", "/Users/david/AI/pie-runs/tts/kokoro-final-v2"))   # model folder: config.json, kokoro_pie_*.pth, voices/
 torch.set_num_threads(4)
 model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval()
 data = json.loads((SITE / "data/site.json").read_text())
