@@ -167,3 +167,21 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
 @media (prefers-reduced-motion: reduce) { .dict-entry { transition: none; } html.arrived .dh-inner > * { animation: none; } }
 /* painted backings sit behind their own element, not behind the paper */
 .r, .e-play, .e-back, .dh-letters button { isolation: isolate; }
+
+/* a sentence in the search is translated: the translation above the matches, word by word, each word an entry */
+.trc { position: relative; isolation: isolate; margin: 0 0 30px; padding: 22px 22px 20px; }
+.trc::before { content: ''; position: absolute; inset: 0 -6px; z-index: -1; background: var(--yellow);
+  -webkit-mask: url(../art/brush/44.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/44.webp) 0 0 / 100% 100% no-repeat; }
+.trc .r-head { margin-left: 0; color: #8e2a17; opacity: 1; }
+.trc-main { margin: .2em 0 .5em; font-size: clamp(22px, 1.9vw, 30px); line-height: 1.2; }
+.trc-main.serif { font-size: clamp(22px, 1.7vw, 28px); }
+.trc-words { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.tw { display: inline-flex; flex-direction: column; }
+.tw a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: rgba(14,13,11,.4); }
+.tw a:hover { text-decoration-color: #b81d0e; }
+.tw-f { font-size: 19px; }
+.tw-g { font-size: 10px; letter-spacing: .08em; opacity: .7; margin-top: 2px; }
+.trc-ipa { font-size: 13px; opacity: .7; margin: .8em 0 0; }
+.trc-wait { opacity: .7; margin: .2em 0 0; }
+.trc.busy .trc-wait { animation: trcPulse 1.2s ease-in-out infinite; }
+@keyframes trcPulse { 50% { opacity: .35; } }

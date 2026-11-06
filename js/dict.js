@@ -123,10 +123,58 @@ function row(o) {
     <span class="r-g serif">${esc(e.g) || '<span class="none">no gloss</span>'}${e.g && e.fl.includes('a') ? '<span class="approx" title="composed from the root and suffix">≈</span>' : ''}</span>
     <span class="r-c data">${esc(cls)}${o.why ? ` · ${esc(o.why)}` : ''}</span></a>`;
 }
+// ------------------------------------------------------------------------------------------------ translation
+// a sentence typed into the search is also translated by the project's engine (/api, the translator on erebus): the
+// translation sits above the dictionary's matches, word by word, each word linked to its entry
+let trHTML = '', trSeq = 0, trTimer = 0;
+const PIE_CHARS = /[₁₂₃ʰʷḱǵ̥áéíóúāēīōūḗṓŕ̥ĺ̥]|h[123]/i;
+function looksPie(q) {
+  if (PIE_CHARS.test(q)) return true;
+  const ws = q.toLowerCase().split(/\s+/).filter(Boolean);
+  return ws.filter(w => IX.some(e => e.f === fold(w) && e.c !== 'A')).length >= Math.ceil(ws.length * .6) && !ws.some(w => /^(the|a|an|is|and|of|to|i|you|he|she|we|they)$/.test(w));
+}
+const post = (path, text) => fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }).then(r => r.ok ? r.json() : Promise.reject(r.status));
+const lexOf = an => (an?.analyses || []).find(x => x.lex_id && BYID.has(x.lex_id))?.lex_id;
+function wordCell(form, gloss, id) {
+  const f = `<span class="tw-f pie">${ts(form)}</span>`;
+  return `<span class="tw">${id ? `<a href="?e=${encodeURIComponent(id)}" data-id="${esc(id)}">${f}</a>` : f}<span class="tw-g data">${esc((gloss || '').replace(/_/g, ' '))}</span></span>`;
+}
+function translate(q) {
+  clearTimeout(trTimer);
+  const words = q.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || q.startsWith('letter:')) { if (trHTML) { trHTML = ''; paintResults(); } return; }
+  trTimer = setTimeout(async () => {
+    const my = ++trSeq, pie = looksPie(q);
+    trHTML = `<section class="trc busy"><h2 class="r-head data">Translation</h2><p class="trc-wait serif">Translating…</p></section>`; paintResults();
+    try {
+      let html;
+      if (pie) {
+        const d = await post('pie2en', q); if (my !== trSeq) return;
+        html = `<p class="trc-main serif">${esc(d.rough_english || '—')}</p><div class="trc-words">${d.words.map(w => wordCell(w.word, (w.analyses || [])[0]?.gloss || 'not found', lexOf(w))).join('')}</div>`;
+      } else {
+        const out = await post('en2pie', q); if (my !== trSeq) return;
+        const parts = await Promise.all(out.map(sn => post('pie2en', sn.pie).catch(() => null)));
+        if (my !== trSeq) return;
+        html = out.map((sn, k) => { const an = parts[k]?.words || [];
+          return `<p class="trc-main pie">${ts(sn.pie)}</p><div class="trc-words">${sn.words.map((w, i) => wordCell(w.form, w.gloss, lexOf(an[i]))).join('')}</div><p class="trc-ipa data">[${esc(sn.ipa || '')}]</p>`; }).join('');
+      }
+      trHTML = `<section class="trc"><h2 class="r-head data">Translation · ${pie ? 'PIE to English' : 'English to PIE'}</h2>${html}</section>`;
+      // a sentence matches no single entry: the list below becomes the entries of the words in the translation
+      if (!shown.length) {
+        const ids = [...new Set([...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('a[data-id]')].map(a => a.dataset.id))];
+        shown = ids.map(id => ({ k: BYID.get(id), s: 0 })).filter(o => o.k !== undefined); heading = 'The words in the translation';
+      }
+    } catch (e) {
+      trHTML = `<section class="trc"><h2 class="r-head data">Translation</h2><p class="trc-wait serif">The translator is not reachable right now.</p></section>`;
+    }
+    if (my === trSeq) paintResults();
+  }, 550);
+}
+
 function paintResults() {
   const list = shown.slice(0, limit);
-  res.innerHTML = (heading ? `<h2 class="r-head data">${heading}</h2>` : '') +
-    (list.length ? list.map(row).join('') : `<p class="r-none serif">Nothing found. Try an English word, a PIE form without accents, or a word in a daughter language.</p>`) +
+  res.innerHTML = trHTML + (heading ? `<h2 class="r-head data">${heading}</h2>` : '') +
+    (list.length ? list.map(row).join('') : trHTML ? '' : `<p class="r-none serif">Nothing found. Try an English word, a PIE form without accents, or a word in a daughter language.</p>`) +
     (shown.length > limit ? `<button class="r-more data">Show more (${(shown.length - limit).toLocaleString()})</button>` : '');
   $('.r-more', res)?.addEventListener('click', () => { limit += 120; paintResults(); });
   if (!reduce && window.gsap) gsap.from(res.querySelectorAll('.r'), { y: 10, opacity: 0, duration: .45, stagger: .012, ease: 'power3.out', clearProps: 'all' });
@@ -147,6 +195,7 @@ function setQuery(q, { push = false } = {}) {
   document.querySelectorAll('#letters button').forEach(b => b.classList.toggle('on', b.dataset.l === L));
   $('#count').textContent = q.trim() && !L ? shown.length.toLocaleString() : '';
   paintResults();
+  translate(L ? '' : q);
   state({ q }, push);
 }
 function state(patch, push) {
