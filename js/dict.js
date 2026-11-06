@@ -155,9 +155,10 @@ function translate(q) {
         html = `<p class="trc-main serif">${esc(d.rough_english || '—')}</p><div class="trc-words">${d.words.map(w => wordCell(w.word, (w.analyses || [])[0]?.gloss || 'not found', lexOf(w))).join('')}</div>`;
       } else {
         const out = await post('en2pie', q); if (my !== trSeq) return;
-        const parts = await Promise.all(out.map(sn => post('pie2en', sn.pie).catch(() => null)));
+        const parts = await Promise.all(out.map(sn => sn.pie ? post('pie2en', sn.pie).catch(() => null) : null));
         if (my !== trSeq) return;
-        html = out.map((sn, k) => { const an = parts[k]?.words || [];
+        html = out.map((sn, k) => { const an = parts[k]?.words || [], u = sn.unknown || [];
+          if (!sn.pie) return `<p class="trc-wait serif">${u.length ? `No reconstructed PIE word for ${u.map(x => `“${esc(x)}”`).join(u.length > 2 ? ', ' : ' or ').replace(/, ([^,]*)$/, ', or $1')}, so there is nothing to translate.` : 'Nothing here the engine could translate.'}</p>`;
           return `<p class="trc-main pie">${ts(sn.pie)}</p><div class="trc-words">${sn.words.map((w, i) => wordCell(w.form, w.gloss, lexOf(an[i]))).join('')}</div><p class="trc-ipa data">[${esc(sn.ipa || '')}]</p>`; }).join('');
       }
       trHTML = `<section class="trc"><h2 class="r-head data">Translation · ${pie ? 'PIE to English' : 'English to PIE'}</h2>${html}</section>`;
