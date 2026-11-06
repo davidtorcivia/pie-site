@@ -4,6 +4,7 @@
 import { initType, typeset, typesetAll } from './type.js';
 import { ART_V } from './initials.js';
 import { nav } from './nav.js';
+import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -130,7 +131,7 @@ function materials(cfg) {
 }
 
 async function boot() {
-  initType(); nav(); typesetAll(); dropCaps();
+  initType(); nav(); colophon(); typesetAll(); dropCaps();
   const F = await fetch('data/model-figs.json').then(r => r.json());
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');

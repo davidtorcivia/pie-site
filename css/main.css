@@ -571,3 +571,31 @@ html, body { overflow-x: clip; }
 /* the wheel can be grabbed and spun */
 #wheel.grabbable { cursor: grab; user-select: none; -webkit-user-select: none; }
 #wheel.grabbable.grabbing { cursor: grabbing; }
+
+/* the inner pages' foot (js/colophon.js): the homepage's footer garden behind a centred column; the garden covers the
+   footer (cropped, never stretched) */
+footer.colo { position: relative; overflow: hidden; min-height: 86svh; padding: 15vh 27vw 11vh; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+footer.colo > .colo-garden { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.colo-garden > * { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+footer.colo > :not(.colo-garden) { position: relative; z-index: 1; }
+.colo-pie { font-size: clamp(54px, 7.6vw, 150px); line-height: .92; letter-spacing: -.02em; margin: 0 auto; }
+.colo-pie a { color: inherit; text-decoration: none; display: inline-block; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.colo-pie a:hover, .colo-pie a:focus-visible { transform: translateY(-.04em); text-decoration: underline; text-decoration-thickness: .04em; text-underline-offset: .12em; }
+.colo-gloss { font-family: var(--f-data); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; margin: 1.6em 0 0; opacity: .8; }
+.colo-en { font-size: clamp(19px, 1.7vw, 27px); line-height: 1.3; max-width: 34ch; margin: .9em auto 0; font-style: italic; }
+.colo-en i { font-style: normal; }
+.colo-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .4em 0; margin: 2.6em auto 0; font-family: var(--f-data); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; }
+.colo-nav a { color: inherit; text-decoration: none; padding: .35em .9em; border-left: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); }
+.colo-nav a:first-child { border-left: 0; font-weight: 800; letter-spacing: .06em; }
+.colo-nav a:hover, .colo-nav a:focus-visible { text-decoration: underline; text-underline-offset: .3em; }
+.colo-nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: #b81d0e; text-decoration-thickness: 2px; text-underline-offset: .3em; }
+footer.colo .foot-by { margin: 2.2em auto 0; }
+footer.colo .colo-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.4em; margin: 3.2em auto 0; max-width: 820px; text-align: left; font-size: 14px; line-height: 1.45; opacity: .85; }
+footer.colo .colo-notes p { margin: 0; }
+@media (max-width: 1100px) { footer.colo { padding-left: 20vw; padding-right: 20vw; } }
+@media (max-width: 700px) {
+  footer.colo { padding: 16vh var(--gut) 102vw; min-height: 0; }     /* the phone garden's bouquet fills its lowest ~37%: the words sit above it */
+  footer.colo .colo-garden > * { top: auto; bottom: 0; height: auto; object-fit: fill; }
+  .colo-pie { font-size: 13vw; }
+  footer.colo .colo-notes { grid-template-columns: 1fr; gap: 1em; }
+}

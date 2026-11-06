@@ -4,6 +4,7 @@
 import { initType, typeset, typesetAll } from './type.js';
 import { ART_V } from './initials.js';
 import { nav } from './nav.js';
+import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -197,7 +198,7 @@ async function herd() {
 
 // ------------------------------------------------------------------------------------------------ boot
 async function boot() {
-  initType(); nav(); typesetAll(); dropCaps();
+  initType(); nav(); colophon(); typesetAll(); dropCaps();
   const [F, cfg] = await Promise.all([fetch('data/voices-figs.json').then(r => r.json()), fetch('data/voices.json', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))]);
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');

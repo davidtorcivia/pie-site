@@ -4,6 +4,7 @@
 // or an entry can be linked to, and Back steps through what was opened.
 import { initType, typeset } from './type.js';
 import { nav } from './nav.js';
+import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
 import { ART_V } from './initials.js';
 
@@ -365,7 +366,7 @@ function closeEntry() {
 // ------------------------------------------------------------------------------------------------ boot
 async function boot() {
   initType();
-  nav();
+  nav(); colophon();
   const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json').then(r => r.ok ? r.json() : []).catch(() => [])]);
   AUDIO = new Set(au);
   IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u, f: fold(form), l: loose(form), w: words(g), s: senses(g), L: letterOf(form) }));
