@@ -5,6 +5,7 @@
 import { initType, typeset } from './type.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
+import { api, failText } from './translate-api.js';
 import { brushStroke } from './brush.js';
 import { ART_V } from './initials.js';
 
@@ -134,7 +135,7 @@ function looksPie(q) {
   const ws = q.toLowerCase().split(/\s+/).filter(Boolean);
   return ws.filter(w => IX.some(e => e.f === fold(w) && e.c !== 'A')).length >= Math.ceil(ws.length * .6) && !ws.some(w => /^(the|a|an|is|and|of|to|i|you|he|she|we|they)$/.test(w));
 }
-const post = (path, text) => fetch('/api/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }).then(r => r.ok ? r.json() : Promise.reject(r.status));
+const post = (path, text) => api(path, text);
 const lexOf = an => (an?.analyses || []).find(x => x.lex_id && BYID.has(x.lex_id))?.lex_id;
 function wordCell(form, gloss, id) {
   const f = `<span class="tw-f pie">${ts(form)}</span>`;
@@ -166,7 +167,7 @@ function translate(q) {
         shown = ids.map(id => ({ k: BYID.get(id), s: 0 })).filter(o => o.k !== undefined); heading = 'The words in the translation';
       }
     } catch (e) {
-      trHTML = `<section class="trc"><h2 class="r-head data">Translation</h2><p class="trc-wait serif">The translator is not reachable right now.</p></section>`;
+      trHTML = `<section class="trc"><h2 class="r-head data">Translation</h2><p class="trc-wait serif">${failText(e)}</p></section>`;
     }
     if (my === trSeq) paintResults();
   }, 550);

@@ -1,3 +1,4 @@
+import { api, failText } from './translate-api.js';
 import { initType, typeset, typesetAll } from './type.js';
 import { noise2, rng, fit, field, draw, speckle, hatchRect } from './hatch.js';
 import { loadMask, paintSilhouette } from './painter.js';
@@ -495,10 +496,8 @@ function translator() {
     if (!text) { out.innerHTML = ''; return; }
     out.classList.add('busy');
     try {
-      const r = await fetch('/api/' + dir, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
-      const js = await r.json();
+      const js = await api(dir, text);
       if (my !== seq) return;
-      if (js.error) throw new Error(js.error);
       if (dir === 'en2pie') {
         // substitutions the engine made ("'brown' ≈ 'grey' (no PIE word for 'brown' …)"): the stand-in word is marked
         const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
@@ -515,7 +514,7 @@ function translator() {
       }
       gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .5, stagger: .035, ease: 'power3.out' });
     } catch (e) {
-      out.innerHTML = `<div class="err">The translator runs on the project's machine and is not reachable from here.</div>`;
+      if (my === seq) out.innerHTML = `<div class="err">${failText(e)}</div>`;
     } finally { out.classList.remove('busy'); }
   };
   document.querySelectorAll('.tr-dir button').forEach(b => b.onclick = () => {
