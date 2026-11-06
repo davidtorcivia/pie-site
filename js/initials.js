@@ -5,16 +5,19 @@
 // that square (css: --cap-pad), and the horses hang outside the text they sit beside.
 export const CAP = { margin: 40, gap: 100 };
 // bump when the initials are rebuilt: their file names stay the same and browsers cache art
-export const ART_V = '2';
+export const ART_V = '3';
 CAP.pad = (CAP.margin + CAP.gap) / 1000;
-const framed = (P, perSide) => ({ ...P, frame: 'rect', fRules: 2, fMargin: CAP.margin, fGap: CAP.gap, fW1: 0, fW2: 0, fBand: 'horses', fHorseN: perSide });
+const framed = (P, band = 'horses', perSide = 3) => ({ ...P, frame: 'rect', fRules: 2, fMargin: CAP.margin, fGap: CAP.gap, fW1: 0, fW2: 0, fBand: band, fHorseN: perSide });
+// the borders, in turn: horses on about one initial in three, the others a band of ornament (beads, laurel, dentils,
+// pearls); never a hairline (no rules, no zigzag), and no band that crosses itself at the corners (cord, rope)
+const BANDS = ['beads', 'laurel', 'horses', 'dentil', 'pearls', 'laurel', 'horses', 'beads'];
 export const heroP = lib => framed({ ...lib.random(4242), text: 'P', paper: '#ffd21a', inkA: '#1d1a16', inkB: '#a8361f', inkC: '#1d1a16',
   frame: 'rect', fMargin: 6, fRules: 2, fW1: 5, fGap: 96, fW2: 3, fBand: 'horses', fField: 'A', fPattern: 'herd', fPatColor: 'B', fPatScale: 10,
-  fCorner: 'sunwheel', fCornerSize: 70, oFlower: 'tulip', oLeaf: 'willow', lFill: 'paper' }, 4);
+  fCorner: 'sunwheel', fCornerSize: 70, oFlower: 'tulip', oLeaf: 'willow', lFill: 'paper' }, 'horses', 4);
 export const leafP = (lib, i, k, letter) => framed({ ...lib.random(7000 + i * 131), text: letter, paper: k.paper, inkA: k.ink, inkB: k.accent, inkC: k.ink,
   frame: 'rect', fRules: 2, fW1: 5, fGap: i % 2 ? 120 : 80, fW2: 2.5, fBand: i % 2 ? 'horses' : 'cord', fField: ['A', 'paper', 'A', 'B'][i % 4],
   fPattern: ['herringbone', 'steps', 'pitcomb', 'herd'][i % 4], fPatColor: ['paper', 'A', 'paper', 'paper'][i % 4], fPatScale: 12,
-  fCorner: 'sunwheel', fCornerSize: 46, oFlower: 'tulip', oLeaf: 'willow', lFill: ['paper', 'A', 'paper', 'paper'][i % 4] }, 3);
+  fCorner: 'sunwheel', fCornerSize: 46, oFlower: 'tulip', oLeaf: 'willow', lFill: ['paper', 'A', 'paper', 'paper'][i % 4] }, BANDS[i % BANDS.length], 3);
 // the first letter of a text (with its accent) for its initial, and the rest of the text
 export function splitInitial(pie) {
   const src = pie.normalize('NFD'), at = src.search(/[a-z]/i);
