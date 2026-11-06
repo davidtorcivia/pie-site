@@ -56,7 +56,7 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
 .e-back { display: none; }
 .e-head { position: relative; }
 .e-head::after { content: ''; display: block; clear: both; }
-.e-cap { float: left; width: clamp(120px, 13vw, 210px); aspect-ratio: 1; margin: 0 clamp(18px, 2vw, 34px) 12px 0; opacity: 0; transform: scale(.96); transition: opacity .7s ease, transform .9s cubic-bezier(.2, .7, .1, 1); }
+.e-cap { --sq: clamp(96px, 10.5vw, 168px); --s: calc(var(--sq) / (1 - 2 * var(--cap-pad))); float: left; width: var(--s); height: var(--s); margin: calc(var(--s) * var(--cap-pad) * -1 + .9vw) clamp(14px, 1.6vw, 28px) 12px calc(var(--s) * var(--cap-pad) * -1); opacity: 0; transform: scale(.96); transition: opacity .7s ease, transform .9s cubic-bezier(.2, .7, .1, 1); }
 .e-head.has-cap .e-cap { transform: none; }
 .e-star { font-size: .62em; vertical-align: .32em; margin-right: .04em; opacity: .8; }
 .e-head.has-cap .e-cap { opacity: 1; }
@@ -154,7 +154,7 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
   .e-in { padding: 78px 0 90px; }
   .e-back { display: inline-block; position: relative; border: 0; background: none; cursor: pointer; color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 8px 22px 8px 14px; margin: 0 0 26px -14px; }
   .e-back::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--yellow); -webkit-mask: url(../art/brush/17.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/17.webp) 0 0 / 100% 100% no-repeat; }
-  .e-cap { width: 92px; }
+  .e-cap { --sq: 76px; }
   .e-form { font-size: clamp(42px, 12vw, 64px); }
   .refl { columns: 1; }
   .df-cols { grid-template-columns: 1fr; gap: 1.2em; }

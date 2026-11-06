@@ -163,7 +163,16 @@ button { font: inherit; color: inherit; }
 .leaf .rh { position: absolute; left: 31.25%; right: 7.5%; top: 6.4%; padding-bottom: 6px; border: 0; display: flex; justify-content: space-between; align-items: baseline;
   font-family: var(--f-data); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--lf-ink); }
 .leaf .txt { position: absolute; left: 31.25%; right: 7.5%; top: 11.5%; bottom: 10.6%; display: flex; flex-direction: column; }
-.leaf .ini { float: left; margin: .1em .45em 0 -.1em; display: block; }
+.leaf .ini { --lines: 3; display: block; }
+/* every illuminated initial is placed by its coloured square, which sits --cap-pad inside the image on every side
+   (js/initials.js CAP); the horse band round it hangs outside. A drop cap (.leaf .ini, .v-cap) is --lines deep: the
+   square's top on the first line's capitals, its foot on the last line's baseline. */
+:root { --cap-pad: .14; }
+.leaf .ini, .v-cap { --capH: .66em; --h: calc((var(--lines) - 1) * 1lh + var(--capH)); --s: calc(var(--h) / (1 - 2 * var(--cap-pad)));
+  float: left; width: var(--s); height: var(--s);
+  margin: calc((1lh - 1em) / 2 + .25em - var(--s) * var(--cap-pad)) .45em calc(var(--s) * var(--cap-pad) * -1) calc(var(--s) * var(--cap-pad) * -1); }
+/* the header's P: its square spans the title (js/main.js sets --hs, the image size, and --hm, the negative margin) */
+html .hero-title .hero-cap { width: var(--hs) !important; height: var(--hs) !important; margin: var(--hm) !important; }
 .leaf .ini initialis-cap { display: block; width: 100%; height: 100%; }
 .leaf .p { font-family: var(--f-book); font-weight: var(--w-book); font-variation-settings: var(--v-book); font-size: clamp(17px, 2.9svh, 28px); line-height: 1.28;
   margin: 0; text-align: left; text-wrap: pretty; color: var(--lf-ink); }
@@ -355,7 +364,7 @@ footer .foot-pie { margin: 0 auto; }
 footer .foot-en, footer .foot-by { margin-left: auto; margin-right: auto; }
 footer .foot-cols { justify-content: center; text-align: left; }
 
-.leaf .txt { overflow: hidden; }
+.leaf .txt { overflow-x: visible; overflow-y: clip; z-index: 2; }   /* the initial's horses may hang over the left edge */
 footer .foot-pie { font-size: clamp(56px, 8.5vw, 170px); }
 
 /* growth: the frames stack; each fades in over the one before */

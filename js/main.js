@@ -5,6 +5,7 @@ import { ramp, cord, wheel as sunWheel } from './illum.js';
 import { mapPlate } from './map.js';
 import { brushGround, brushStroke } from './brush.js';
 import { nav } from './nav.js';
+import { CAP } from './initials.js';
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -45,7 +46,9 @@ function tooth() {
 async function overture() {
   // the P spans the whole title: its top on the first line's top, its foot on the last line's foot (pre-rendered)
   const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
-  if (innerWidth >= 700) $('.hero-cap').style.width = $('.hero-cap').style.height = size + 'px';
+  // the P's coloured square spans the title (a third of the width on phones); the horses round it hang outside
+  const sq = innerWidth >= 700 ? size : Math.round(innerWidth * .30), pad = CAP.pad, S = sq / (1 - 2 * pad);
+  $('.hero-cap').style.setProperty('--hs', S + 'px'); $('.hero-cap').style.setProperty('--hm', `${-S * pad}px ${-S * pad * .6}px ${-S * pad}px ${-S * pad}px`);   // the right-hand horses sit in the gap before the title
   $('.hero-cap').innerHTML = '<img src="art/initials/hero.webp" alt="" width="100%" height="100%" decoding="async">';
   const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
   place(); addEventListener('repaint', place);
@@ -420,7 +423,6 @@ async function specimens(list) {
     // our own illumination: a cord or a frieze of horses round the frame, an incised ground, sun-wheel corners,
     // tulips for the growing ornament, all in the leaf's inks on its paper
     ini.innerHTML = `<img src="art/initials/leaf-${i}.webp" alt="" decoding="async" loading="lazy" style="width:100%;height:100%">`;
-    ini.style.width = ini.style.height = size + 'px';
   };
   leaves.forEach(build);
   // readings: one player for all the leaves; the words light up as they are spoken
