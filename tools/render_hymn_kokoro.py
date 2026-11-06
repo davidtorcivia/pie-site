@@ -5,7 +5,7 @@ data/texts-timing.json.
 
     /Users/david/AI/PIE/.venv-kokoro/bin/python tools/render_hymn_kokoro.py
 """
-import json, subprocess, sys
+import json, os, subprocess, sys
 from pathlib import Path
 import wave
 import numpy as np, torch
@@ -20,9 +20,9 @@ sys.modules["kokoro"] = _pkg
 from kokoro.model import KModel
 
 SITE = Path(__file__).resolve().parents[1]
-K = Path("/Users/david/AI/pie-runs/tts/kokoro-final")
+K = Path(os.environ.get("PIE_KOKORO", "/Users/david/AI/pie-runs/tts/kokoro-final"))   # model folder: config.json, kokoro_pie_*.pth, voices/
 torch.set_num_threads(4)
-model = KModel(config=str(K / "config.json"), model=str(K / "kokoro_pie_stage2_e10.pth")).eval()
+model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval()
 data = json.loads((SITE / "data/site.json").read_text())
 SR, FPS, GAP = 24000, 40, 0.42                       # Kokoro: a duration frame is 600 samples (40 a second)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True) for n in ("m", "f")}

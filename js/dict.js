@@ -47,20 +47,20 @@ async function detail(id) {
 // ------------------------------------------------------------------------------------------------ voices
 // spoken headwords (tools/render_dict_audio.py): one file per shard and voice, each entry a slice of it, played
 // through Web Audio so the slice starts and stops exactly
-let AUDIO = new Set(), actx = null, voice = 'm';
+let AUDIO = new Set(), AV = '', actx = null, voice = 'm';   // AV: the render's stamp, so a re-render never pairs new offsets with cached audio
 try { voice = localStorage.getItem('pie-voice') || 'm'; } catch {}
 const offs = new Map(), bufs = new Map();
 const shardOf = id => String(crc32(id) % 64).padStart(2, '0');
 async function spoken(id) {
   const s = shardOf(id); if (!AUDIO.has(+s)) return null;
-  if (!offs.has(s)) offs.set(s, fetch(`data/dict/audio/${s}.json`).then(r => r.json()).catch(() => ({})));
+  if (!offs.has(s)) offs.set(s, fetch(`data/dict/audio/${s}.json${AV}`).then(r => r.json()).catch(() => ({})));
   return (await offs.get(s))[id] || null;
 }
 async function say(id, v, btn) {
   const o = await spoken(id); if (!o?.[v]) return;
   actx ||= new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') await actx.resume();
   const key = shardOf(id) + v;
-  if (!bufs.has(key)) bufs.set(key, fetch(`audio/dict/${key.slice(0, 2)}-${v}.mp3`).then(r => r.arrayBuffer()).then(b => actx.decodeAudioData(b)));
+  if (!bufs.has(key)) bufs.set(key, fetch(`audio/dict/${key.slice(0, 2)}-${v}.mp3${AV}`).then(r => r.arrayBuffer()).then(b => actx.decodeAudioData(b)));
   const buf = await bufs.get(key), src = actx.createBufferSource(); src.buffer = buf; src.connect(actx.destination);
   const [t, d] = o[v]; src.start(0, t, d);
   btn?.classList.add('playing'); src.onended = () => btn?.classList.remove('playing');
@@ -367,8 +367,9 @@ function closeEntry() {
 async function boot() {
   initType();
   nav(); colophon();
-  const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json').then(r => r.ok ? r.json() : []).catch(() => [])]);
-  AUDIO = new Set(au);
+  const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])]);
+  const ai = Array.isArray(au) ? { shards: au } : au;   // index.json: {v, shards} (a bare list before the v2 voices)
+  AUDIO = new Set(ai.shards || []); AV = ai.v ? `?v=${ai.v}` : '';
   IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u, f: fold(form), l: loose(form), w: words(g), s: senses(g), L: letterOf(form) }));
   IX.forEach((e, k) => BYID.set(e.id, k));
   $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${IX.length.toLocaleString()} entries.</span>`);

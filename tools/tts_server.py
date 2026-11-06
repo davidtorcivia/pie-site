@@ -33,7 +33,7 @@ from kokoro.model import KModel  # noqa: E402
 torch.set_num_threads(4)
 K = Path(a.kokoro)
 DEV = "cpu"
-model = KModel(config=str(K / "config.json"), model=str(K / "kokoro_pie_stage2_e10.pth")).eval().to(DEV)
+model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval().to(DEV)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True, map_location=DEV) for n in ("m", "f")}
 SR, FPS, GAP, MAXCH = 24000, 40, 0.38, 360
 

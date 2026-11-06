@@ -14,6 +14,7 @@ Writes audio/voices/*.mp3, art/voices/spec-*.webp (spectrograms on the page's pa
 
     /Users/david/AI/PIE/tts/vc/.venv-eval/bin/python tools/build_voices_figures.py
 """
+import hashlib
 import json, subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -113,7 +114,9 @@ for cid, f, label in CLIPS:
     y = y[int(LEAD * SR):] if cid in CHAIN else trim(y, lead=0.08)
     mp3(y, OUT_A / f"fame-{cid}.mp3")
     w, h = spectrogram(y, OUT_S / f"spec-{cid}.webp")
-    out["clips"].append({"id": cid, "label": label, "audio": f"audio/voices/fame-{cid}.mp3", "spec": f"art/voices/spec-{cid}.webp",
+    stamp = lambda p: hashlib.md5(p.read_bytes()).hexdigest()[:8]   # ?v=: audio and art are cached a day (_headers)
+    out["clips"].append({"id": cid, "label": label, "audio": f"audio/voices/fame-{cid}.mp3?v={stamp(OUT_A / f'fame-{cid}.mp3')}",
+                         "spec": f"art/voices/spec-{cid}.webp?v={stamp(OUT_S / f'spec-{cid}.webp')}",
                          "dur": round(len(y) / SR, 3), "w": w, "h": h})
     print(cid, round(len(y) / SR, 2), "s")
 print("shared lead cut from the male chain:", round(LEAD, 3), "s")

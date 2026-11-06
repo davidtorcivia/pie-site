@@ -13,7 +13,7 @@ Two halves, so the renderer needs neither the PIE repo nor the site:
 OUT gets audio/dict/*.mp3 and data/dict/audio/*.json, laid out as in the site. The full set was rendered on tr-desktop's
 GPU (WSL, ~/kokoro-ft); the 46-word demo on the Mac's CPU.
 """
-import argparse, json, re, subprocess, sys, types, wave, zlib
+import argparse, time, json, re, subprocess, sys, types, wave, zlib
 from collections import defaultdict
 from pathlib import Path
 
@@ -71,7 +71,7 @@ from kokoro.model import KModel  # noqa: E402
 K, OUT = Path(a.kokoro), Path(a.out)
 SR, GAP = 24000, 0.3
 torch.set_num_threads(4)
-model = KModel(config=str(K / "config.json"), model=str(K / "kokoro_pie_stage2_e10.pth")).eval().to(a.device)
+model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval().to(a.device)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True).to(a.device) for n in ("m", "f")}
 labels = json.loads(Path(a.labels).read_text("utf-8"))
 
@@ -119,5 +119,5 @@ for s, group in sorted(by.items()):
     (OUT / f"data/dict/audio/{s:02d}.json").write_text(json.dumps(offs, ensure_ascii=False, separators=(",", ":")))
     total += len(offs)
     print(f"shard {s:02d}: {len(offs)} words", flush=True)
-(OUT / "data/dict/audio/index.json").write_text(json.dumps(sorted(by)))
+(OUT / "data/dict/audio/index.json").write_text(json.dumps({"v": int(time.time()), "shards": sorted(by)}))   # v: js/dict.js cache-busts with it
 print(total, "words in", len(by), "shards")
