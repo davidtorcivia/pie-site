@@ -34,7 +34,10 @@ export async function mapPlate(root) {
   // Miller cylindrical (tools/build_map.py)
   const xy = (lon, lat) => [(lon - P.lon0) * P.pxd, (P.y1 - 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * lat * Math.PI / 180))) * P.r];
   const stage = root.querySelector('.plate'), svg = root.querySelector('.plate svg');
-  const paintCv = document.createElement('canvas'), SC = .75;
+  // phones paint the plate at a lower scale: four plate-sized canvases at .75 are ~250 MB, more than a phone browser
+  // will give a page; at .3 they are ~40 MB. Phones also load half-size images (map/*-m.webp).
+  const PHONE = innerWidth < 900, SC = PHONE ? .3 : .75, M = PHONE ? '-m' : '';
+  const paintCv = document.createElement('canvas');
   paintCv.className = 'paint'; paintCv.width = Math.round(P.w * SC); paintCv.height = Math.round(P.h * SC);
   svg.before(paintCv);
   svg.setAttribute('viewBox', `0 0 ${P.w} ${P.h}`);
@@ -162,7 +165,7 @@ export async function mapPlate(root) {
     window.__ARROWS = painted.toDataURL('image/webp', .9);
   } else {
     // pre-painted (tools/build_static.mjs)
-    const im = new Image(); im.src = 'map/arrows.webp';
+    const im = new Image(); im.src = `map/arrows${M}.webp`;
     await im.decode().catch(() => {});
     painted.getContext('2d').drawImage(im, 0, 0, painted.width, painted.height);
   }
@@ -173,7 +176,7 @@ export async function mapPlate(root) {
     const g = homeCv.getContext('2d'); g.scale(SC, SC);
     const pts = HOME.map(([a, b]) => xy(a, b)), path = new Path2D(`M${pts.map(p => p.join(',')).join('L')}Z`);
     let s = 7; const r = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
-    g.save(); g.filter = 'blur(34px)'; g.fillStyle = 'rgba(178,40,18,.3)'; g.fill(path); g.restore();
+    g.save(); g.filter = `blur(${34 * SC / .75}px)`; g.fillStyle = 'rgba(178,40,18,.3)'; g.fill(path); g.restore();
     // the brush marks, laid over a wider area, then feathered out through a soft mask of the region (no hard edge)
     const marks = document.createElement('canvas'); marks.width = homeCv.width; marks.height = homeCv.height;
     const mk = marks.getContext('2d'); mk.scale(SC, SC); mk.lineCap = 'round';
@@ -184,6 +187,7 @@ export async function mapPlate(root) {
     mk.setTransform(1, 0, 0, 1, 0, 0); mk.globalCompositeOperation = 'destination-in'; mk.filter = `blur(${48 * SC}px)`; mk.scale(SC, SC);
     mk.fillStyle = '#000'; mk.fill(path);
     g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(marks, 0, 0);
+    marks.width = marks.height = 0;                 // free it
   }
   const pc = paintCv.getContext('2d');
   const paintArrows = ks => {

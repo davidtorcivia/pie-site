@@ -539,3 +539,9 @@ html, body { overflow-x: clip; }
 
 /* phones: the header starts below the navigation stroke */
 @media (max-width: 700px) { .hero-title { top: 84px !important; } }
+
+/* phones: the half-size map images (js/map.js paints the plate smaller there too) */
+@media (max-width: 899px) {
+  .relief { -webkit-mask-image: url(../map/relief-l-m.webp); mask-image: url(../map/relief-l-m.webp); }
+  .wash { background-image: url(../map/wash-m.webp); }
+}
