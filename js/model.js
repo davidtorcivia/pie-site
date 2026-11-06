@@ -120,12 +120,22 @@ async function herd() {
   }
 }
 
+// links to the published model, corpus and benchmark (data/model.json; null = not yet)
+function materials(cfg) {
+  document.querySelectorAll('.m-item').forEach(it => {
+    const url = cfg.links?.[it.dataset.link], h = it.querySelector('h3');
+    if (url) { const a = document.createElement('a'); a.href = url; a.rel = 'noopener'; a.textContent = h.textContent; h.replaceChildren(a); }
+    else it.insertAdjacentHTML('beforeend', '<p class="m-soon data">Publishing soon</p>');
+  });
+}
+
 async function boot() {
   initType(); nav(); typesetAll(); dropCaps();
   const F = await fetch('data/model-figs.json').then(r => r.json());
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
   bench(F); engine(F); corpus(F); exportMix(F); sweep(F); curve(F); stages(F);
+  fetch('data/model.json').then(r => r.json()).then(materials).catch(() => materials({}));
   { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
   document.querySelectorAll('.v-art .v-h2 span').forEach((s, i) => s.style.setProperty('--stroke', `url(${new URL(`art/brush/${String((i * 7 + 13) % 64).padStart(2, '0')}.webp`, location.href).href})`));
   garden(); herd();
