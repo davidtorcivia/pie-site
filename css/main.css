@@ -600,3 +600,15 @@ footer.colo .colo-notes p { margin: 0; }
   footer.colo .colo-notes { grid-template-columns: 1fr; gap: 1em; }
 }
 .nobr { white-space: nowrap; }
+/* the hero paragraph: a wider column on desktop, so the longer intro stays above the garden's lower vines */
+@media (min-width: 901px) { .open-p { max-width: 76ch; } }
+@media (min-width: 901px) {
+  /* a soft halo of the page's yellow, so the vines behind the wider columns never cut through the type */
+  .open-p, .wheel-copy p { text-shadow: 0 0 3px var(--yellow), 0 0 7px var(--yellow), 0 0 14px var(--yellow), 0 0 22px var(--yellow); }
+  /* the reconstruction text: a wider column, the wheel a little narrower */
+  #s-wheel .wheel-pin.ms-left { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); }
+  .wheel-copy p { max-width: 46ch; }
+}
+/* the homepage footer's garden fills the footer edge to edge (cropped top and bottom on wide windows, never stretched) */
+@media (min-width: 701px) { footer .garden .gv, footer .garden .gf { object-fit: cover !important; object-position: 50% 50% !important; } }
+@media (max-width: 700px) { footer.foot .foot-cols { margin-bottom: 110px !important; } }   /* the phone bouquet sits below the credits */
