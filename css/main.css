@@ -540,8 +540,22 @@ html, body { overflow-x: clip; }
 /* phones: the header starts below the navigation stroke */
 @media (max-width: 700px) { .hero-title { top: 84px !important; } }
 
-/* phones: the half-size map images (js/map.js paints the plate smaller there too) */
+/* phones: the map as few, small layers. The wash and the relief come baked into one flat image (map/plate-m.webp,
+   tools/build_map_phone.mjs) instead of a background under a luminance-masked layer; no paper-tooth or multiply blends
+   (each forces another plate-sized surface); the plate is not pinned to its own layer. js/map.js paints it smaller. */
 @media (max-width: 899px) {
-  .relief { -webkit-mask-image: url(../map/relief-l-m.webp); mask-image: url(../map/relief-l-m.webp); }
-  .wash { background-image: url(../map/wash-m.webp); }
+  html.map-wc .wash { display: block; background-image: url(../map/plate-m.webp); }
+  .relief { display: none; }
+  .plate-inner { will-change: auto; }
+  .plate-inner::after { display: none; }
+  .plate canvas.paint { mix-blend-mode: normal; }
 }
+
+/* phones: gardens are not each pinned to a GPU layer (each is a section-sized surface at the screen's pixel density),
+   and the arrival has no blur filter (a full-screen blur is the costliest first frame) */
+@media (max-width: 899px) {
+  .garden, .garden .gv, .leaf .leaf-garden { will-change: auto; transform: none; backface-visibility: visible; }
+  @keyframes arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+}
+.build { font-size: 10px; letter-spacing: .12em; opacity: .45; margin: 3em 0 0; text-transform: uppercase; }
+.build:empty { display: none; }

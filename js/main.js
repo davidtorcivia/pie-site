@@ -15,7 +15,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 // smooth scroll, driven by GSAP's ticker so ScrollTrigger stays in step
 let lenis = null;
-if (!reduce && window.Lenis) {
+// not on touch screens: native scrolling is already smooth there, and Lenis would add work to every frame
+if (!reduce && window.Lenis && !matchMedia('(pointer: coarse)').matches && innerWidth >= 900) {
   lenis = new Lenis({ lerp: .09, wheelMultiplier: .9 });
   lenis.on('scroll', ScrollTrigger.update);
   window.lenis = lenis;
@@ -48,7 +49,7 @@ async function overture() {
   $('.hero-cap').innerHTML = '<img src="art/initials/hero.webp" alt="" width="100%" height="100%" decoding="async">';
   const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
   place(); addEventListener('repaint', place);
-  if (!reduce) gsap.from('.open-h .line', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power4.out', stagger: .1, delay: .2 });
+  // the title arrives by CSS alone (html.arrived), so a busy main thread never leaves the header blank
 }
 
 // ---------------------------------------------------------------------------------------------------- migration
@@ -524,19 +525,27 @@ function gardens() {
   // resting on the finished garden. Browsers without VP9 alpha (Safari) show the finished garden as an image.
   const probe = document.createElement('video');
   const phone = innerWidth < 700, sfx = phone ? '-m' : '';
+  let busy = false; const waiting = [];
+  const queue = job => { if (!phone) return job(() => {}); waiting.push(job); next(); };
+  function next() { if (busy || !waiting.length) return; busy = true; waiting.shift()(() => { busy = false; next(); }); }
   const alphaVideo = !!probe.canPlayType && probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   for (const [name, sel] of [['open', '#s-open'], ['opentop', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
-    const start = () => {
-      if (alphaVideo && !reduce) {
-        const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
-        v.src = `art/growth-${name}${sfx}.webm`; g.append(v);
-        v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true });
-        v.addEventListener('error', () => { v.remove(); still(); }, { once: true });
-      } else still();
+    // one growth at a time on a phone (each alpha video is a software decoder there); when a growth ends, its video
+    // gives way to the finished garden as an image, so no decoder stays open
+    const play = done => {
+      const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
+      v.src = `art/growth-${name}${sfx}.webm`; g.append(v);
+      const finish = () => { if (v._done) return; v._done = true; still(() => { v.removeAttribute('src'); v.load(); v.remove(); }); done(); };
+      v.addEventListener('canplay', () => v.play().catch(finish), { once: true });
+      v.addEventListener('ended', finish, { once: true });
+      v.addEventListener('error', finish, { once: true });
+      setTimeout(finish, 20000);                     // a growth that never arrives does not hold up the next
     };
-    const still = () => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`; g.append(im); };
+    const start = () => (alphaVideo && !reduce) ? queue(play) : still();
+    const still = then => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`;
+      im.decode().catch(() => {}).then(() => { g.append(im); then?.(); }); };
     if (name.startsWith('open')) { start(); continue; }
     // start when the garden's part of the section comes into view: on a phone that is the foot of the section
     const target = phone ? (() => { const s = document.createElement('div'); s.className = 'g-sentinel'; host.append(s); return s; })() : host;

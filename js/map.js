@@ -200,7 +200,8 @@ export async function mapPlate(root) {
   // the painted gallop: 11 Muybridge frames, painted at build time (tools/build_horses.mjs); one horse per route
   const horses = [...svg.querySelectorAll('.horse')];
   const frames = Array.from({ length: 11 }, (_, k) => `art/horse/paint-ochre-${String(k + 1).padStart(2, '0')}.webp`);
-  frames.forEach(f => { const im = new Image(); im.src = f; });
+  // fetched when the plate is a screen away, not at load
+  new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { frames.forEach(f => { const im = new Image(); im.src = f; }); o.disconnect(); } }, { rootMargin: '100% 0px' }).observe(root);
   let frame = 0, last = 0;
   // the camera: close on the steppe at first, pulling back as the branches spread
   const cam = { x: hx, y: hy, s: 2.6 };
@@ -216,7 +217,11 @@ export async function mapPlate(root) {
     const s = tall ? Math.exp(Math.log(cover * 2.6) + (Math.log(Math.max(vh / P.h, vw / (EXT.w * 1.08))) - Math.log(cover * 2.6)) * out) : cover * cam.s, cx = cam.x, cy = cam.y;
     const tx = vw / 2 - cx * s, ty = vh / 2 - cy * s;
     const lim = (v, lo, hi) => lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v));
-    root.querySelector('.plate-inner').style.transform = `translate(${lim(tx, vw - P.w * s, 0)}px, ${lim(ty, vh - P.h * s, 0)}px) scale(${s})`;
+    // the plate is laid out at the largest size it is ever shown (B of its pixel size) and only ever scaled down from
+    // there: laid out at full size and scaled to a third, a phone rasterizes a 4400-px-wide layer at its pixel density
+    const B = Math.min(1, cover * 2.6 * 1.05);
+    if (B !== place.B) { place.B = B; stage.style.setProperty('--pw', P.w * B); stage.style.setProperty('--ph', P.h * B); }
+    root.querySelector('.plate-inner').style.transform = `translate(${lim(tx, vw - P.w * s, 0)}px, ${lim(ty, vh - P.h * s, 0)}px) scale(${s / B})`;
   };
   const yearEl = root.querySelector('.mig-year');
   const update = p => {
