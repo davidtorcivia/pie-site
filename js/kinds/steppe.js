@@ -68,9 +68,24 @@ export default [
     family: 'band', name: 'horses',
     // a procession round the frame along its inner edge: each horse turned to the band's direction, its hooves on
     // the inner rule (so the bottom run is upside down, as on a carved border read by turning the panel)
-    draw({ out, along, w, L }) {
+    draw({ out, along, w, L, path, settings }) {
+      const Q = Math.PI / 2;
+      // fHorseN: a set number of horses on every side, evenly spaced and centred on it (a grid, no gaps at corners)
+      if (settings && settings.fHorseN) {
+        const k = settings.fHorseN, xs = path.map(p => p[0]), ys = path.map(p => p[1]);
+        const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+        const fine = along(L / 400), dirAt = (x, y) => { let b = fine[0], d = Infinity; for (const p of fine) { const e = (p.x - x) ** 2 + (p.y - y) ** 2; if (e < d) { d = e; b = p; } } return Math.round(b.a / Q) * Q; };
+        const sides = [[x0, y0, x1, y0], [x1, y0, x1, y1], [x1, y1, x0, y1], [x0, y1, x0, y0]];
+        let i = 0;
+        for (const [ax, ay, bx, by] of sides) {
+          const a = dirAt((ax + bx) / 2, (ay + by) / 2), nx = -Math.sin(a), ny = Math.cos(a), h = w * 0.62;
+          for (let j = 0; j < k; j++) { const t = (j + .5) / k, x = ax + (bx - ax) * t, y = ay + (by - ay) * t;
+            out.polys.push(horse(x + nx * w * 0.4, y + ny * w * 0.4, h, a, false, i++)); }
+        }
+        return;
+      }
       // only quarter turns: each horse square to its side of the frame, none on a corner (where the band turns)
-      const n = Math.max(4, Math.round(L / (w * 1.75))), pts = along(L / n), Q = Math.PI / 2;
+      const n = Math.max(4, Math.round(L / (w * 1.75))), pts = along(L / n);
       pts.slice(0, n).forEach((p, i) => {
         const a = Math.round(p.a / Q) * Q, off = Math.abs(Math.atan2(Math.sin(p.a - a), Math.cos(p.a - a)));
         if (off > .05) return;

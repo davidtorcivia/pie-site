@@ -9,7 +9,8 @@ const pal = await fetch('palette.json').then(r => r.json());
 const out = {};
 for (const [i, L] of ['S', 'T', 'V', 'A', 'K', 'W'].entries()) {
   const c = document.createElement('canvas');
-  await draw(c, leafP({ random }, i + 90, { ...pal[(i + 2) % pal.length], paper: '#efe7d6' }, L), { size: 360 });
+  // a horse on every side in a 3 x 3 rhythm (three per side, centred), and no rule lines: the band and the panel only
+  await draw(c, { ...leafP({ random }, i + 90, { ...pal[(i + 2) % pal.length], paper: '#efe7d6' }, L), fBand: 'horses', fHorseN: 3, fW1: 0, fW2: 0 }, { size: 360 });
   out[L] = c.toDataURL('image/webp', .9);
 }
 window.OUT = out; document.title = 'done';
