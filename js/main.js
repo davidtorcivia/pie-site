@@ -288,7 +288,7 @@ function results(bench) {
   const box = $('#bars');
   box.innerHTML = rows.map(r => `<div class="bar ${r.family === 'ours' ? 'ours' : ''}"><div class="who">${r.name}<div class="nums"><span class="sv">${r.strict.toFixed(1)}</span><span class="lv">/ ${r.lenient.toFixed(1)} lenient</span></div></div><div class="track"><canvas></canvas>
 </div></div>`).join('')
-    + `<div class="legend data small"><span><i style="background:${C.yellow}"></i>strict</span><span><i style="background:repeating-linear-gradient(45deg,${C.yellow} 0 2px,transparent 2px 6px)"></i>lenient</span><span>0 — 100</span></div>`;
+    + `<div class="legend data small"><span><i style="background:${C.yellow}"></i>strict</span><span><i style="background:repeating-linear-gradient(45deg,rgba(255,210,26,.62) 0 1.5px,transparent 1.5px 7px)"></i>lenient</span><span>0 — 100</span></div>`;
   const draws = [...box.querySelectorAll('.bar')].map((el, i) => {
     const r = rows[i], cv = el.querySelector('canvas');
     const paint = k => {
@@ -297,7 +297,7 @@ function results(bench) {
       ctx.strokeStyle = 'rgba(246,241,228,.18)'; ctx.lineWidth = 1;
       
       const L = w * r.lenient / 100 * k, S = w * r.strict / 100 * k;
-      hatchRect(ctx, 0, 2, L, h - 4, { color: C.yellow, gap: 6, lw: 1.3 });
+      ctx.globalAlpha = .62; hatchRect(ctx, 0, 2, L, h - 4, { color: C.yellow, gap: 7.5, lw: 1.1 }); ctx.globalAlpha = 1;   // lenient: a lighter hatch
       ctx.fillStyle = r.family === 'ours' ? C.yellow : C.deep; ctx.fillRect(0, 2, S, h - 4);
       
     };
