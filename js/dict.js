@@ -63,9 +63,9 @@ async function say(id, v, btn) {
   const key = shardOf(id) + v;
   if (!bufs.has(key)) bufs.set(key, fetch(`audio/dict/${key.slice(0, 2)}-${v}.mp3${AV}`).then(r => r.arrayBuffer()).then(b => actx.decodeAudioData(b)));
   const buf = await bufs.get(key), src = actx.createBufferSource(); src.buffer = buf;
-  // the recordings peak near full scale, too loud for single words: played 6 dB down, with a 12 ms fade in and a
-  // 30 ms fade out so a slice never starts or stops on a click
-  const [t, d] = o[v], g = actx.createGain(), at = actx.currentTime + .01, LV = .5;
+  // the recordings are levelled when rendered (-18 dBFS speech RMS, peaks under -3 dBFS): played as they are, with a
+  // 12 ms fade in and a 30 ms fade out so a slice never starts or stops on a click
+  const [t, d] = o[v], g = actx.createGain(), at = actx.currentTime + .01, LV = 1;
   g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(LV, at + .012);
   g.gain.setValueAtTime(LV, at + Math.max(.012, d - .03)); g.gain.linearRampToValueAtTime(0, at + d);
   src.connect(g); g.connect(actx.destination); src.start(at, t, d);
