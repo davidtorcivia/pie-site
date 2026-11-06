@@ -68,7 +68,7 @@ function sweep(F) {
   $('#chSweep').innerHTML = `<div class="m-two"><div><h4 class="m-h data">Held-out loss after 100 steps</h4>${barRows(F.sweep.map(([n, v]) => [n.replace(/r(\d+)$/, 'rank $1'), v]), .65, 3)}</div>
     <div><h4 class="m-h data">Held-out loss by epoch</h4>${dotRows(E.map(e => [`epoch ${e.epoch}`, e.nll]), .2, .35, 3)}
       <h4 class="m-h data m-h2">Benchmark, strict ● and lenient ○</h4>
-      <div class="dr">${E.map(e => `<div class="dr-row" title="epoch ${e.epoch}: ${fmt(e.strict)} strict, ${fmt(e.lenient)} lenient"><span class="dr-l serif">epoch ${e.epoch}</span><span class="dr-track"><i style="left:${pct(e.strict, 82, 90)}%;background:${C[0]}"></i><i class="o" style="left:${pct(e.lenient, 82, 90)}%;border-color:${C[0]}"></i></span><span class="dr-v data">${fmt(e.strict)} / ${fmt(e.lenient)}</span></div>`).join('')}
+      <div class="dr">${E.map(e => `<div class="dr-row" title="epoch ${e.epoch}: ${fmt(e.strict)} strict, ${fmt(e.lenient)} lenient"><span class="dr-l serif">epoch ${e.epoch}</span><span class="dr-track"><i style="left:${pct(e.strict, 82, 90)}%;background:${C[0]}"></i><i class="o" style="left:${pct(e.lenient, 82, 90)}%;border-color:${C[0]}"></i></span><span class="dr-v data">${fmt(e.strict)}/${fmt(e.lenient)}</span></div>`).join('')}
       <div class="dr-axis data"><span></span><span class="dr-ends"><em>82</em><em>90</em></span><span></span></div></div></div></div>`;
 }
 

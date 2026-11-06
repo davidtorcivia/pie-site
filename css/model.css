@@ -64,6 +64,6 @@
 }
 @media (max-width: 700px) {
   .nums b { font-size: 9vw; }
-  .dr-v, .br-v, .mb-val { font-size: 11px; }
+  .chart .dr-v.data, .chart .br-v.data, .chart .mb-val.data { font-size: 11.5px; letter-spacing: 0; }
   .dr-row, .dr-axis { grid-template-columns: 30% 1fr 88px; }
 }
