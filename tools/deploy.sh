@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 STAGE=$(mktemp -d)
 git archive HEAD index.html dictionary.html $(git ls-files --error-unmatch voices.html >/dev/null 2>&1 && echo voices.html) \
-  _headers css js fonts art map data audio gardens tools/palette.json | tar -x -C "$STAGE"
+  _headers 404.html robots.txt sitemap.xml site.webmanifest css js fonts art map data audio gardens tools/palette.json | tar -x -C "$STAGE"
 # HOLD_VOICES=1 publishes without the voices page (and without its nav link) until it is approved
 if [[ -n "${HOLD_VOICES:-}" ]]; then
   rm -rf "$STAGE"/voices.html "$STAGE"/css/voices.css "$STAGE"/js/voices.js "$STAGE"/data/voices*.json "$STAGE"/audio/voices "$STAGE"/art/voices \

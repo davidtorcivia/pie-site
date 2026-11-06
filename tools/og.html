@@ -1,0 +1,63 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- the share images (tools/build_og.mjs): 1200 x 630, one per page, from the site's own art and type. ?page=home|dictionary|voices -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=block&family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body { position: relative; font-family: 'Newsreader', serif; color: #0e0d0b; }
+  .yellow { background: #ffd21a; } .paper { background: #efe7d6; }
+  .garden { position: absolute; top: 0; right: 0; height: 100%; width: 36%; object-fit: cover; object-position: left top; opacity: .95; -webkit-mask-image: linear-gradient(to right, transparent, #000 22%); mask-image: linear-gradient(to right, transparent, #000 22%); }   /* clear of the text, no cut edge */
+  .display { font-family: 'Archivo'; font-weight: 900; font-variation-settings: 'wdth' 125; letter-spacing: -.035em; line-height: .86; }
+  .serif { font-family: 'Instrument Serif'; font-style: italic; }
+  .data { font-family: 'JetBrains Mono'; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: 18px; }
+  .lar { font-size: .52em; vertical-align: -.14em; } .mod { font-size: .58em; vertical-align: .7em; line-height: 0; }
+  .url { position: absolute; right: 56px; bottom: 44px; background: #ffd21a; padding: 6px 10px; }
+  .paper .url { background: none; }
+  /* home */
+  .home .cap { position: absolute; left: 32px; top: 40px; width: 404px; height: 404px; }
+  .home h1 { position: absolute; left: 444px; top: 86px; font-size: 104px; }
+  .home h1 span { display: block; } .home h1 span:nth-child(2) { margin-left: .35em; } .home h1 span:nth-child(3) { margin-left: .7em; }
+  .home p { position: absolute; left: 88px; bottom: 44px; width: 640px; font-size: 31px; line-height: 1.2; }
+  /* dictionary */
+  .dict h1 { position: absolute; left: 56px; top: 50px; font-size: 150px; }
+  .dict .cap { position: absolute; left: 34px; top: 252px; width: 252px; height: 252px; }
+  .dict .hw { position: absolute; left: 300px; top: 262px; font-family: 'Newsreader'; font-weight: 500; font-size: 104px; line-height: 1; }
+  .dict .gl { position: absolute; left: 304px; top: 392px; font-size: 48px; }
+  .dict .meta { position: absolute; left: 306px; top: 470px; font-size: 16px; opacity: .8; }
+  .dict p { position: absolute; left: 56px; bottom: 44px; font-size: 30px; }
+  /* voices */
+  .voices h1 { position: absolute; left: 56px; top: 56px; font-size: 168px; }
+  .voices .spec { position: absolute; left: 56px; top: 270px; height: 150px; width: 680px; object-fit: fill; mix-blend-mode: multiply; }
+  .voices .horse { position: absolute; left: 790px; top: 60px; height: 120px; }
+  .voices .line { position: absolute; left: 60px; top: 432px; font-family: 'Newsreader'; font-weight: 500; font-size: 34px; }
+  .voices p { position: absolute; left: 56px; bottom: 44px; width: 640px; font-size: 30px; line-height: 1.2; }
+</style></head>
+<body>
+<script type="module">
+import { typeset } from '../js/type.js';
+const page = new URLSearchParams(location.search).get('page') || 'home';
+const B = document.body, T = s => typeset(s, { words: false });
+if (page === 'home') {
+  B.className = 'yellow home';
+  B.innerHTML = `<img class="garden" src="../art/garden-open.webp"><img class="cap" src="../art/initials/hero.webp">
+    <h1 class="display"><span>roto-</span><span>Indo-</span><span>European</span></h1>
+    <p class="serif">A lexicon, a grammar engine, a corpus, a language model and a voice for the ancestor of most languages of Europe, Iran and northern India.</p>
+    <span class="data url">wekwos.com</span>`;
+} else if (page === 'dictionary') {
+  B.className = 'paper dict';
+  B.innerHTML = `<h1 class="display">Dictionary</h1><img class="cap" src="../art/initials/dict/50.webp">
+    <div class="hw">*${T('ph₂tḗr')}</div><div class="gl serif">father</div><div class="meta data">noun · masculine · [pə.téːr]</div>
+    <p class="serif">8,434 entries, with inflection, descendants and spoken forms</p><span class="data url">wekwos.com/dictionary</span>`;
+} else {
+  B.className = 'yellow voices';
+  B.innerHTML = `<img class="garden" src="../art/garden-voices.webp" style="object-position: right top; width: 42%"><h1 class="display">Voices</h1>
+    <img class="horse" src="../art/horse/paint-dark-05.webp"><img class="spec" src="../art/voices/spec-ours-m.webp">
+    <div class="line">${T('n̥sméy ń̥dʰgʷʰitom ḱléwos h₂yéwi dʰedʰh₁dʰí')}</div>
+    <p class="serif">Proto-Indo-European, spoken: sounds built in a simulated vocal tract and a speech model trained on them</p>
+    <span class="data url">wekwos.com/voices</span>`;
+}
+await document.fonts.ready; await Promise.all([...document.images].map(i => i.decode().catch(() => {})));
+document.title = 'ready';
+</script>
+</body></html>
