@@ -97,34 +97,47 @@ def trim(y, lead=0.1, tail=0.15):
     return y if not len(on) else y[max(0, on[0] - int(lead * SR)): on[-1] + int(tail * SR)]
 
 
+def onset(y):
+    env = np.convolve(np.abs(y), np.ones(240) / 240, "same")
+    on = np.where(env > env.max() * 0.03)[0]
+    return on[0] / SR if len(on) else 0.0
+
+
+# no clip starts with a gap. The male VocalTractLab chain (rendered, converted, repaired) shares one timing with the
+# gestural score and the phone labels, so those clips lose one shared lead (LEAD) and every time in the figures moves
+# by the same amount; every other clip is trimmed at its own onset.
+LEAD = max(0.0, onset(load("renders-JD3-PIE.wav")) - 0.08)
+CHAIN = {"vtl-m", "conv-m", "final-m"}
 for cid, f, label in CLIPS:
     y = load(f)
-    if cid == "stock" or cid.startswith("ours"):
-        y = trim(y)
+    y = y[int(LEAD * SR):] if cid in CHAIN else trim(y, lead=0.08)
     mp3(y, OUT_A / f"fame-{cid}.mp3")
     w, h = spectrogram(y, OUT_S / f"spec-{cid}.webp")
     out["clips"].append({"id": cid, "label": label, "audio": f"audio/voices/fame-{cid}.mp3", "spec": f"art/voices/spec-{cid}.webp",
                          "dur": round(len(y) / SR, 3), "w": w, "h": h})
     print(cid, round(len(y) / SR, 2), "s")
+print("shared lead cut from the male chain:", round(LEAD, 3), "s")
 
 ph = json.loads((SRC / "renders-JD3-PIE.json").read_text("utf-8"))
-out["words"] = [{"w": w["word"], "ipa": w["ipa"], "s": w["start"], "e": w["end"],
-                 "phones": [{"p": p["phone"], "s": round(p["start"], 4), "e": round(p["end"], 4), "k": p["kind"]} for p in w["phones"]]}
+sh = lambda t: round(max(0.0, t - LEAD), 4)
+out["words"] = [{"w": w["word"], "ipa": w["ipa"], "s": sh(w["start"]), "e": sh(w["end"]),
+                 "phones": [{"p": p["phone"], "s": sh(p["start"]), "e": sh(p["end"]), "k": p["kind"]} for p in w["phones"]]}
                 for w in ph["words"]]
-out["duration"] = ph["duration"]
-out["ges"] = gestures(SRC / "renders-JD3-PIE.ges")
+out["duration"] = round(ph["duration"] - LEAD, 4)
+out["ges"] = {tier: [{**g, "s": sh(g["s"]), "e": sh(g["e"])} for g in segs if g["e"] - LEAD > 0]
+              for tier, segs in gestures(SRC / "renders-JD3-PIE.ges").items()}
 # F0 of the VocalTractLab render, 10 ms frames, voiced only
-y = load("renders-JD3-PIE.wav")
+y = load("renders-JD3-PIE.wav")[int(LEAD * SR):]
 f0, vflag, _ = librosa.pyin(y, fmin=60, fmax=300, sr=SR, frame_length=1024, hop_length=240)
 out["f0"] = [[round(i * 0.01, 2), round(float(x), 1)] for i, (x, v) in enumerate(zip(f0, vflag)) if v and np.isfinite(x)]
 # the laryngeals of this line through the conversion and the repair (male voice)
-conv, fin = load("eleven-JD3-PIE.wav"), load("murmured-JD3-PIE.wav")
+conv, fin = (load(f)[int(LEAD * SR):] for f in ("eleven-JD3-PIE.wav", "murmured-JD3-PIE.wav"))
 lar = []
 for w in ph["words"]:
     for p in w["phones"]:
         if p["phone"] in ("χ", "h"):
-            lar.append({"word": w["word"], "phone": p["phone"], "vtl": share(y, p["start"], p["end"]),
-                        "converted": share(conv, p["start"], p["end"]), "repaired": share(fin, p["start"], p["end"])})
+            lar.append({"word": w["word"], "phone": p["phone"], "vtl": share(y, sh(p["start"]), sh(p["end"])),
+                        "converted": share(conv, sh(p["start"]), sh(p["end"])), "repaired": share(fin, sh(p["start"]), sh(p["end"]))})
 out["laryngeals"] = lar
 print(json.dumps(lar, ensure_ascii=False))
 (SITE / "data/voices-figs.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), "utf-8")
