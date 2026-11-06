@@ -3,7 +3,7 @@ t2-fame-002, n̥sméy ń̥dʰgʷʰitom ḱléwos h₂yéwi dʰedʰh₁dʰí, "Pl
 
 Sources (tools/voices-src/, copied read-only from the corpus build on tr-desktop and rendered on the Mac's CPU):
   espeak.wav           the custom eSpeak-NG voice (pie.speak, backend espeak, tone)
-  kokoro-stock.wav     stock Kokoro-82M, Hindi voice hf_alpha, pitch-patched (pie.speak, backend kokoro)
+  kokoro-stock.wav     stock Kokoro-82M, Hindi voice hm_omega (male, as the page defaults to), pitch-patched (pie.speak, backend kokoro)
   renders-*.wav/.json/.ges   VocalTractLab v10.1 render, its phone timings and gestural score
   eleven-*.wav         the speech-to-speech conversion of that render
   murmured-*.wav       after restore.py, retrill.py and murmur.py: the training audio
@@ -90,8 +90,17 @@ def gestures(path):
 
 
 out = {"pie": PIE, "en": EN, "clips": [], "spec": {}}
+def trim(y, lead=0.1, tail=0.15):
+    """Kokoro pads its output with silence; cut it to a short lead and tail, so the comparison starts together"""
+    env = np.convolve(np.abs(y), np.ones(240) / 240, "same")
+    on = np.where(env > env.max() * 0.03)[0]
+    return y if not len(on) else y[max(0, on[0] - int(lead * SR)): on[-1] + int(tail * SR)]
+
+
 for cid, f, label in CLIPS:
     y = load(f)
+    if cid == "stock" or cid.startswith("ours"):
+        y = trim(y)
     mp3(y, OUT_A / f"fame-{cid}.mp3")
     w, h = spectrogram(y, OUT_S / f"spec-{cid}.webp")
     out["clips"].append({"id": cid, "label": label, "audio": f"audio/voices/fame-{cid}.mp3", "spec": f"art/voices/spec-{cid}.webp",
