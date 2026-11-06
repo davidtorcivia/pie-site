@@ -15,6 +15,8 @@ export const SECTIONS = {
   apps: { box: '#s-apps', side: 'right', avoid: [], ink: 'D9CFB4', accent: 'FFD21A', seeds: [61, 113] },
   // the dictionary's header (dictionary.html): a field round the title, search and alphabet
   dict: { page: 'dictionary.html', box: '.dict-head', side: 'field', avoid: ['.dh-title', '.dh-p', '.dh-search', '.dh-hint', '.dh-letters button', '.nav-bar'], ink: '2A1F12', accent: 'A8361F', seeds: [47, 88], stemx: .84, novisitors: true, above: ['.dh-title'] },
+  // the voices page's header (voices.html): a field round the title and lede, the horses gallop along its foot
+  voices: { page: 'voices.html', box: '.v-head', side: 'field', avoid: ['.v-title', '.v-lede', '.nav-bar'], ink: '2A1F12', accent: 'A8361F', seeds: [63, 151], stemx: .8, novisitors: true, above: ['.v-title'] },
   foot: { box: 'footer', side: 'both', avoid: [], ink: '2A1F12', accent: 'A8361F', seeds: [31, 177] },
 };
 export const MM = 420 / 1440;                    // mm per CSS px: one scale for every garden on the page

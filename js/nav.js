@@ -5,6 +5,7 @@
 // links with a garden at its foot. A new page is one more line in PAGES.
 const PAGES = [
   ['index', 'Home', 'index.html'],
+  ['voices', 'Voices', 'voices.html'],
   ['dictionary', 'Dictionary', 'dictionary.html'],
 ];
 const here = location.pathname.replace(/\/$/, '/index.html');

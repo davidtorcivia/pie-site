@@ -1,0 +1,12 @@
+{
+  "_about": "Settings for voices.html. links: null means not published yet (the page names the item without a link). live: the 'speak it yourself' section shows only when enabled is true AND endpoint answers GET <endpoint>/health; on a static host it stays hidden.",
+  "links": {
+    "models": null,
+    "corpus": null,
+    "code": null
+  },
+  "live": {
+    "enabled": true,
+    "endpoint": "/api/tts"
+  }
+}

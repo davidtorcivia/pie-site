@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" class="arriving">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>*PIE — Voices</title>
+<meta name="description" content="How the project built a voice for Proto-Indo-European: sounds made in a simulated vocal tract, carried into two natural voices, and learned by a fine-tuned Kokoro speech model.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffd21a'/%3E%3Ctext x='50' y='92' font-size='110' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900'%3E*%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/voices.css">
+</head>
+<body class="v-page">
+
+<header class="v-head yellow" data-tone="yellow">
+  <div class="v-garden" aria-hidden="true"></div>
+  <div class="v-inner">
+    <h1 class="display v-title">Voices</h1>
+    <p class="serif v-lede">Nobody has heard Proto-Indo-European for six thousand years. This is how the project built a voice for it: each sound assembled from the movements of a simulated vocal tract, carried into two natural voices, and taught to a speech model that now reads any line of PIE aloud.</p>
+  </div>
+  <canvas class="v-herd" aria-hidden="true"></canvas>
+</header>
+
+<!-- the live section: shown only when data/voices.json says live.enabled and its endpoint answers -->
+<section id="v-live" class="v-live ink" data-tone="ink" hidden>
+  <div class="vl-inner">
+    <h2 class="display v-h2">Speak it</h2>
+    <p class="serif vl-p">Write a line of PIE in the standard notation, or on a keyboard: h1 h2 h3 for the laryngeals, k' g' for the palatals, kw gw for the labiovelars, a slash after an accented vowel (h2o/wis). The model on the project's machine reads it aloud.</p>
+    <div class="vl-box">
+      <textarea id="vlIn" class="pie" rows="2" spellcheck="false" aria-label="PIE text to speak">h₂ówis h₁éḱwōs-kʷe</textarea>
+      <button class="vl-go display" id="vlGo">Speak</button>
+    </div>
+    <div class="vl-row serif">
+      <span class="vl-voices" role="group" aria-label="Voice"><button data-v="m" class="on">male voice</button> · <button data-v="f">female voice</button></span>
+      <span class="vl-ex" id="vlEx"></span>
+    </div>
+    <div class="vl-out" id="vlOut" aria-live="polite"></div>
+  </div>
+</section>
+
+<main class="v-art paper" data-tone="paper">
+
+  <section class="sec" id="sounds">
+    <h2 class="display v-h2"><span>Sounds no language kept</span></h2>
+    <p class="lead book">Six thousand years of sound change scattered Proto-Indo-European's consonants across its daughters, and no living language holds the whole set. The reconstruction asks for three laryngeals: h₁, here a plain [h]; h₂, a voiceless uvular fricative [χ], the scrape at the back of German <i>Bach</i>; and h₃, its voiced and rounded partner [ɣʷ]. It asks for three rows of dorsal stops, palatal [c ɟ], plain [k ɡ] and labiovelar [kʷ ɡʷ], each a single sound, the lips rounding into the release of the last. It asks for breathy-voiced stops [bʱ dʱ ɡʱ]; for resonants that carry a syllable on their own, like the end of English <i>bottle</i>; for a vowel that appears only where a laryngeal stands between consonants, so that <span class="pie" data-pie>ph₂tḗr</span> “father” is said [pə.téːr]; and for a pitch accent, in which the accented syllable is sung higher, not struck harder.</p>
+    <p class="book">Hindi keeps the breathy stops. Arabic keeps the uvular fricatives. Czech says syllabic r and l, Hungarian has the palatal stops, and Swedish tells words apart by pitch. A speech engine trained on any one of these languages knows part of the set and fills the rest with its nearest guess.</p>
+    <p class="book">Every value comes from the handbooks (Fortson, Ringe, Beekes, Clackson, Byrd). Where they disagree, the project chose one reading and recorded the others in its pronunciation notes. A converter turns written PIE into IPA by rule, the same way every time, and everything below starts from that IPA.</p>
+
+    <figure class="fig fig-matrix" id="fig1">
+      <table class="mx">
+        <thead><tr><th></th><th class="data"><b>eSpeak-NG</b><span>custom PIE voice</span><em>eSpeak</em></th><th class="data"><b>Kokoro-82M</b><span>stock voices</span><em>Kokoro</em></th><th class="data"><b>Piper</b><span>IPA input</span><em>Piper</em></th><th class="data mx-us"><b>VocalTractLab</b><span>this project</span><em>VTL</em></th></tr></thead>
+        <tbody>
+          <tr><th><b class="pie">χ</b><span class="serif">h₂, uvular</span></th><td class="y">●<i>native</i></td><td class="p">◐<i>in the symbol set, faint</i></td><td class="y">●<i>native</i></td><td class="y">●<i>built</i></td></tr>
+          <tr><th><b class="pie">ɣʷ</b><span class="serif">h₃, rounded</span></th><td class="p">◐<i>ɣ, then w</i></td><td class="p">◐<i>ɣ, no rounding</i></td><td class="p">◐<i>ɣ, no rounding</i></td><td class="y">●<i>built</i></td></tr>
+          <tr><th><b class="pie">c ɟ</b><span class="serif">palatal stops</span></th><td class="y">●<i>native</i></td><td class="p">◐<i>as Hindi affricates</i></td><td class="y">●<i>native</i></td><td class="y">●<i>built</i></td></tr>
+          <tr><th><b class="pie">kʷ ɡʷ</b><span class="serif">labiovelars</span></th><td class="p">◐<i>k, then w</i></td><td class="p">◐<i>k, then w</i></td><td class="p">◐<i>k, then w</i></td><td class="y">●<i>one sound</i></td></tr>
+          <tr><th><b class="pie">bʱ dʱ ɡʱ</b><span class="serif">breathy stops</span></th><td class="y">●<i>Hindi table</i></td><td class="p">◐<i>as aspirates</i></td><td class="n">○<i>missing</i></td><td class="y">●<i>built</i></td></tr>
+          <tr><th><b class="pie">r̩ l̩ m̩ n̩</b><span class="serif">syllabic</span></th><td class="y">●<i>native</i></td><td class="p">◐<i>ə before the resonant</i></td><td class="y">●<i>native</i></td><td class="y">●<i>built</i></td></tr>
+          <tr><th><b class="pie">é</b><span class="serif">pitch accent</span></th><td class="y">●<i>level tones</i></td><td class="p">◐<i>pitch patched in</i></td><td class="n">○<i>stress only</i></td><td class="y">●<i>pitch tier</i></td></tr>
+        </tbody>
+      </table>
+      <figcaption class="serif"><b>Figure 1.</b> What each system could say before any training. ● said as written, ◐ approximated, ○ missing. From the project's survey of speech engines.</figcaption>
+    </figure>
+  </section>
+
+  <section class="sec" id="shelf">
+    <h2 class="display v-h2"><span>Off the shelf</span></h2>
+    <p class="lead book">The first voice was eSpeak-NG, a formant synthesizer, which builds speech from a few resonances by rule and can be taught new phonemes. The project assembled a PIE voice from its Hindi phoneme table, Arabic's pharyngeals and a pair of level tones, and measured the result: on <span class="pie" data-pie>h₂ówis</span> the accented syllable sits at 98 Hz and the next at 82. Every sound came out where it belonged, in a voice no one would take for a person.</p>
+    <p class="book">eSpeak also fails quietly. Given a phoneme name it does not know, it drops the rest of the word and reports nothing. So every rendering was read back through eSpeak's own transcriber and compared, symbol by symbol, with the IPA it had been sent.</p>
+    <p class="book">The natural-sounding models were the opposite: fluent, and deaf to half the inventory. Kokoro-82M, the best open model that reads IPA directly, has no symbol for breathy voice, lip rounding, a syllabic resonant or a high tone, and silently drops what it does not know. A bake-off put 19 of its voices and eSpeak through the hard sounds in several spellings, 634 clips in all. Its Hindi voices came closest, because Hindi taught them breathy stops, and they still said the palatals as the affricates of Hindi च and ज. Commercial speech services accept IPA only within the sounds of each voice's own language.</p>
+    <p class="book">A third route kept eSpeak's correct sounds and re-voiced them with a voice converter, which changes who seems to be speaking and leaves what is said. The open converters kept the melody or the laryngeals, rarely both.</p>
+  </section>
+
+  <section class="sec" id="tract">
+    <h2 class="display v-h2"><span>Building the sounds</span></h2>
+    <p class="lead book">VocalTractLab stores no sounds at all. It is an articulatory synthesizer, developed by Peter Birkholz: a three-dimensional model of a human vocal tract whose tongue, lips, jaw and velum move toward target positions, with a model of the vocal folds below them and lungs below that. At every instant the shape of the tract becomes a branching tube of air, and the sound is computed from pressure and flow, the way a throat makes it. Whatever a vocal tract can say, VocalTractLab can say, whether or not any living language still uses it.</p>
+    <p class="book">Speech is written for it as a gestural score: parallel tiers for the vowel, the lips, the tongue tip, the tongue body, the velum, the glottis, the pitch and the lungs. Each tier is a row of gestures, each a target approached with a time constant and held, so that neighbouring sounds overlap and blend as they do in a mouth. VocalTractLab ships with a converter for German. The project wrote its own compiler, <span class="data">pie_vtl</span>, which turns PIE IPA straight into a gestural score, and taught it each sound.</p>
+
+    <dl class="recipes">
+      <div><dt class="pie">p t k</dt><dd class="book">A closure, with the glottis set for short-lag voicing: unaspirated, as the reconstruction requires.</dd></div>
+      <div><dt class="pie">c ɟ</dt><dd class="book">The tongue body raised against the hard palate, a closure shape added to each voice and tuned on its own anatomy.</dd></div>
+      <div><dt class="pie">kʷ ɡʷ</dt><dd class="book">The velar closure, with the lips rounding into the release.</dd></div>
+      <div><dt class="pie">bʱ dʱ ɡʱ</dt><dd class="book">A voiced closure released into murmur: the vocal folds vibrating with a gap left open behind them. The size of the gap was found by bisection, until a held murmured vowel sat a few decibels below the modal one.</dd></div>
+      <div><dt class="pie">χ</dt><dd class="book">The tongue body at the uvula and the glottis wide, with a layer of noise shaped to a uvular fricative's spectrum laid over it, since the simulation alone makes little friction that far back.</dd></div>
+      <div><dt class="pie">h</dt><dd class="book">An open glottis and breath, the noise filtered through VocalTractLab's own transfer function for the neighbouring vowel, so every h takes its vowel's colour.</dd></div>
+      <div><dt class="pie">r̩ l̩</dt><dd class="book">A schwa held under the tongue-tip shape of [ɹ] or [l], long enough to carry the accent.</dd></div>
+      <div><dt class="pie">r</dt><dd class="book">VocalTractLab's tongue goes where it is sent and cannot be blown into a trill, so a trilled r is built from contacts 40 ms apart, twenty-five a second, the rate of a real trill.</dd></div>
+    </dl>
+
+    <p class="book">Then the timing and the tune. The simulated articulators lag behind the score, and stop releases landed 30 ms late until the oral tiers were moved 30 ms ahead. The accent is a rise on the pitch tier, about three semitones as measured, with a slow fall across each line, a two-semitone fall at its end and a three-semitone rise on a question. The male voice is VocalTractLab's JD3 speaker; the female voice is W02, from VocalTractLab 2.4, with its newer model of the vocal folds.</p>
+    <p class="book">Each of ten versions was measured before anyone listened. A gate checks every render: the accent lifts at least 2.5 semitones, at least 97 percent of syllable nuclei are voiced, no vowel falls more than 8 dB below the clip's median, and every χ and h carries its share of energy between 2 and 8 kHz.</p>
+
+    <figure class="fig fig-score" id="fig2">
+      <div class="score-scroll"><div class="score" id="score"></div></div>
+      <figcaption class="serif"><b>Figure 2.</b> The gestural score of <span class="pie" data-pie>n̥sméy ń̥dʰgʷʰitom ḱléwos h₂yéwi dʰedʰh₁dʰí</span>, “Place imperishable fame on us for a lifetime!”, as <span class="data">pie_vtl</span> wrote it for the male voice, over the spectrogram of what VocalTractLab made of it. The red line is the measured pitch. <button class="fig-play data" data-clip="vtl-m">Play</button></figcaption>
+    </figure>
+  </section>
+
+  <section class="sec" id="human">
+    <h2 class="display v-h2"><span>Two human voices</span></h2>
+    <p class="lead book">A simulated voice is exact and a little glassy. To give it a human timbre, each render went through a speech-to-speech model that re-voices a recording in another speaker's voice and keeps its timing to the millisecond, once into a male voice and once into a female one. Some sounds did not survive the crossing. Converters treat a short burst of voiceless noise as background and remove it, so a word-final h, and sometimes a χ, could vanish, and the converter smoothed away the flutter of the trill and the breath after bʰ dʰ gʰ.</p>
+    <p class="book">Because the timing survives, the repairs can be exact: the compiler records where every phone begins and ends. <span class="data">restore.py</span> finds each h and χ the converter weakened and rebuilds it from noise shaped by the converted voice's own neighbouring vowel. In the Dawn hymn, the h at the end of the middle <span class="pie" data-pie>túH</span> came back from 0.00 to 0.57 of its energy in the 2–8 kHz band. <span class="data">retrill.py</span> re-cuts the trill's contacts on the timings of each r, and <span class="data">murmur.py</span> lays the breath back onto the release of every breathy stop.</p>
+    <p class="book">A last gate set aside every clip with a weak h or χ, a voiceless nucleus or a flat accent: 746 of them. What remained became the training set, 3,369 clips with 123 more held out for validation: 3.8 hours in the male voice and 4.3 in the female, at 24 kHz.</p>
+
+    <figure class="fig fig-stages" id="fig3">
+      <div class="stages" id="stages"></div>
+      <figcaption class="serif"><b>Figure 3.</b> One line at three stages, male voice: rendered by VocalTractLab, converted, and repaired. The dark horizontal bands are the vowels' resonances; the grey cloud before the vowel of <span class="pie" data-pie>h₂yéwi</span> is its χ.</figcaption>
+    </figure>
+  </section>
+
+  <section class="sec" id="kokoro">
+    <h2 class="display v-h2"><span>Teaching Kokoro</span></h2>
+    <p class="lead book">Kokoro-82M is an open text-to-speech model of 82 million parameters, released under the Apache licence and descended from StyleTTS 2. It reads phonemes, not letters, which is why it could learn a language with no living speakers. Its symbol table had room: four unused places became breathy voice ʱ, rounding ʷ, the syllabic mark and the acute accent, so the pitch accent is a symbol the model reads like any other. Every training label is the converter's IPA for its clip, character for character, and the model learned exactly the alphabet it is now sent.</p>
+    <p class="book">Training followed the kikiri-tts recipe in two stages of ten epochs each, on one GPU. The first stage teaches the model to rebuild the corpus audio; its best epoch by validation loss began the second, which trains duration, pitch and style, the parts that make speech sound spoken. Each candidate epoch of the second stage read the held-out lines and was scored against the real clips on spectral distance, pitch error and duration, then heard. The tenth became the voices, <span class="data">pie_m</span> and <span class="data">pie_f</span>, each a voice pack drawn from 200 of its speaker's clips.</p>
+
+    <figure class="fig fig-ladder" id="fig5">
+      <div class="ladder-top serif"><span class="lad-voices" role="group" aria-label="Voice"><button data-v="m" class="on">male voice</button> · <button data-v="f">female voice</button></span></div>
+      <ol class="ladder" id="ladder"></ol>
+      <figcaption class="serif"><b>Figure 4.</b> The same line through every system, from the first experiment to the voices the site uses. The first two have one voice each.</figcaption>
+    </figure>
+  </section>
+
+  <section class="sec" id="instrument">
+    <h2 class="display v-h2"><span>The instrument</span></h2>
+    <p class="lead book">What runs now is small. A line of PIE goes through the converter to IPA, then into Kokoro, which returns the audio and the length of every phoneme. Those lengths place each word in time, which is how the Dawn hymn on the front page lights each word as it is sung. It runs on an ordinary processor, and every entry in the dictionary has been read aloud in both voices.</p>
+
+    <figure class="fig fig-pipe" id="fig6">
+      <div class="pipe">
+        <p class="pipe-h data">Making the voices</p>
+        <ol class="pipe-row">
+          <li class="pie">PIE text</li><li>IPA<span>by rule</span></li><li>gestural score<span>pie_vtl</span></li><li>VocalTractLab</li><li>conversion<span>two voices</span></li><li>repair<span>h, χ, r, murmur; a gate</span></li><li>Kokoro<span>fine-tuned</span></li>
+        </ol>
+        <p class="pipe-h data">Speaking</p>
+        <ol class="pipe-row pipe-now">
+          <li class="pie">PIE text</li><li>IPA<span>by rule</span></li><li>PIE Kokoro<span>pie_m, pie_f</span></li><li>speech<span>and word timings</span></li>
+        </ol>
+      </div>
+      <figcaption class="serif"><b>Figure 5.</b> The long road that made the voices, and the short one they now take.</figcaption>
+    </figure>
+    <p class="book v-go"><a href="index.html#s-voice">Hear the hymn to Dawn</a> <a href="dictionary.html">Open the dictionary</a></p>
+  </section>
+</main>
+
+<section class="v-mat ink" data-tone="ink" id="materials">
+  <h2 class="display v-h2">Models, corpus and code</h2>
+  <div class="mat" id="mat">
+    <div class="m-item" data-link="models"><h3 class="display">The voices</h3><p class="serif">The fine-tuned Kokoro checkpoint and the two voice packs, <span class="data">pie_m</span> and <span class="data">pie_f</span>.</p></div>
+    <div class="m-item" data-link="corpus"><h3 class="display">The speech corpus</h3><p class="serif">3,492 clips in two voices with their IPA labels and phone timings, the training and validation lists, and the texts.</p></div>
+    <div class="m-item" data-link="code"><h3 class="display">The code</h3><p class="serif">The IPA converter, the VocalTractLab compiler and its speakers, the repairs, the gate, the training scripts and the live server.</p></div>
+  </div>
+  <p class="serif mat-credit">VocalTractLab by Peter Birkholz. Kokoro-82M by hexgrad, Apache-2.0. The kikiri-tts fine-tuning recipe. StyleTTS 2 by Yinghao Aaron Li and colleagues. eSpeak-NG. The phonetic values follow the handbooks of Fortson, Ringe, Beekes, Clackson and Byrd.</p>
+</section>
+
+<footer class="v-foot yellow" data-tone="yellow">
+  <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by <a href="https://davidtorcivia.com">David Torcivia</a>.</p>
+</footer>
+
+<audio id="vAudio" preload="none"></audio>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="module" src="js/voices.js"></script>
+</body>
+</html>
