@@ -45,3 +45,4 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
 @keyframes sheetIn { from { opacity: 0; transform: translateX(-18px); } }
 .nav-sheet-garden { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; height: 46vh; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { .nav, .nav-sheet, .nav a::after { transition: none; } .nav-sheet.on .nav-sheet-links a { animation: none; } }
+.nav-sheet-links a { isolation: isolate; }

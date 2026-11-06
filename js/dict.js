@@ -42,6 +42,28 @@ async function detail(id) {
   return (await shards.get(s))[id];
 }
 
+// ------------------------------------------------------------------------------------------------ voices
+// spoken headwords (tools/render_dict_audio.py): one file per shard and voice, each entry a slice of it, played
+// through Web Audio so the slice starts and stops exactly
+let AUDIO = new Set(), actx = null, voice = 'm';
+try { voice = localStorage.getItem('pie-voice') || 'm'; } catch {}
+const offs = new Map(), bufs = new Map();
+const shardOf = id => String(crc32(id) % 64).padStart(2, '0');
+async function spoken(id) {
+  const s = shardOf(id); if (!AUDIO.has(+s)) return null;
+  if (!offs.has(s)) offs.set(s, fetch(`data/dict/audio/${s}.json`).then(r => r.json()).catch(() => ({})));
+  return (await offs.get(s))[id] || null;
+}
+async function say(id, v, btn) {
+  const o = await spoken(id); if (!o?.[v]) return;
+  actx ||= new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') await actx.resume();
+  const key = shardOf(id) + v;
+  if (!bufs.has(key)) bufs.set(key, fetch(`audio/dict/${key.slice(0, 2)}-${v}.mp3`).then(r => r.arrayBuffer()).then(b => actx.decodeAudioData(b)));
+  const buf = await bufs.get(key), src = actx.createBufferSource(); src.buffer = buf; src.connect(actx.destination);
+  const [t, d] = o[v]; src.start(0, t, d);
+  btn?.classList.add('playing'); src.onended = () => btn?.classList.remove('playing');
+}
+
 // ------------------------------------------------------------------------------------------------ letters
 // the PIE alphabet in its usual order; an entry files under the first letter of its form
 const LETTERS = ['a', 'b', 'bʰ', 'd', 'dʰ', 'e', 'g', 'gʰ', 'ǵ', 'ǵʰ', 'gʷ', 'gʷʰ', 'h₁', 'h₂', 'h₃', 'H', 'i', 'k', 'ḱ', 'kʷ', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'y'];
@@ -246,6 +268,8 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
       ${ini ? `<img class="e-cap" src="${initialSrc(ini.letter)}" alt="" onerror="this.remove(); this.closest('.e-head')?.classList.add('no-cap')">` : ''}
       <h2 class="e-form pie">${star ? '<span class="e-star">*</span>' : ''}${ts(d.form)}</h2>
       <p class="e-meta data">${meta.map(esc).join(' · ')}${d.ipa ? `<span class="e-ipa">[${esc(d.ipa)}]</span>` : ''}</p>
+      <div class="e-say" hidden><button class="e-play data" aria-label="Listen"><span class="e-play-i" aria-hidden="true"></span>Listen</button>
+        <span class="e-voices serif" role="group" aria-label="Voice"><button data-v="m">male voice</button> · <button data-v="f">female voice</button></span></div>
       ${d.gloss ? `<p class="e-gloss serif">${esc(d.gloss)}</p>` : `<p class="e-gloss serif none">Wiktionary gives no meaning for this form.</p>`}
       ${d.senses?.length > 1 ? `<ol class="e-senses serif">${d.senses.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
     </header>
@@ -261,6 +285,14 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
   const cap = $('.e-cap', ent);
   if (cap) { const done = () => ent.querySelector('.e-head')?.classList.add('has-cap'); cap.complete && cap.naturalWidth ? done() : cap.addEventListener('load', done, { once: true }); }
   wireTabs(ent);
+  spoken(id).then(o => {
+    const box = ent.querySelector('.e-say'); if (!o || !box || current !== id) return;
+    box.hidden = false;
+    const mark = () => box.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === voice));
+    mark();
+    box.querySelector('.e-play').onclick = e => say(id, voice, e.currentTarget);
+    box.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { voice = b.dataset.v; try { localStorage.setItem('pie-voice', voice); } catch {} mark(); say(id, voice, box.querySelector('.e-play')); });
+  });
   ent.querySelector('.e-back').onclick = () => history.length > 1 && history.state?.dict ? history.back() : closeEntry();
   document.documentElement.classList.add('entry-open');
   if (!reduce && window.gsap) {
@@ -284,7 +316,8 @@ function closeEntry() {
 async function boot() {
   initType();
   nav();
-  const raw = await fetch('data/dict/index.json').then(r => r.json());
+  const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json').then(r => r.ok ? r.json() : []).catch(() => [])]);
+  AUDIO = new Set(au);
   IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u, f: fold(form), l: loose(form), w: words(g), s: senses(g), L: letterOf(form) }));
   IX.forEach((e, k) => BYID.set(e.id, k));
   $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${IX.length.toLocaleString()} entries.</span>`);

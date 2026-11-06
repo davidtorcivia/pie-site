@@ -536,3 +536,6 @@ html, body { overflow-x: clip; }
 /* the credit line on a red paint stroke, like the yellow ones */
 .foot-by { display: inline-block; padding: .45em 1.4em .55em 1.1em; background: var(--streak) 0 0 / 100% 100% no-repeat; color: #fff4dc; }
 .foot-by a { color: #fff4dc !important; text-decoration-color: rgba(255, 244, 220, .6); }
+
+/* phones: the header starts below the navigation stroke */
+@media (max-width: 700px) { .hero-title { top: 84px !important; } }
