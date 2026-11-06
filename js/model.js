@@ -90,8 +90,8 @@ function curve(F) {
 }
 
 function stages(F) {
-  const S = F.stages, col = (title, key, lo, hi, d, unit = '') => `<div><h4 class="m-h data">${title}</h4>${dotRows(S.filter(s => s[key] != null).map((s, i) => [s.name, s[key], s.name.startsWith('Stage 8') ? C[0] : C[1]]), lo, hi, d, unit)}</div>`;
-  $('#chStages').innerHTML = `<div class="m-grid2">${col('v1 chrF, all prompts', 'chrF', 70, 74, 2)}${col('English → PIE chrF', 'en_pie', 72, 80, 1)}${col('Paradigm cells, drills', 'cells', .87, .91, 3)}${col('Targeted words never right, of 83', 'never', 0, 80, 0)}</div>`;
+  const S = F.stages, col = (title, key, lo, hi, d, unit = '') => `<div><h4 class="m-h data">${title}</h4>${dotRows(S.filter(s => s[key] != null).map((s, i) => [s.name, s[key], s.name.startsWith('Final RL') ? C[0] : C[1]]), lo, hi, d, unit)}</div>`;
+  $('#chStages').innerHTML = `<div class="m-grid2">${col('chrF, all prompts', 'chrF', 70, 74, 2)}${col('English → PIE chrF', 'en_pie', 72, 80, 1)}${col('Paradigm cells', 'cells', .87, .91, 3)}${col('Targeted words never right, of 83', 'never', 0, 80, 0)}</div>`;
 }
 
 function garden() {

@@ -18,7 +18,7 @@ out = {}
 bench = {r["contestant"]: r for r in json.loads((PIE / "benchmarks/results/summary.json").read_text())}
 SEG = [("inflection", "Inflection", 20), ("paradigm", "Paradigm", 15), ("en_pie", "English → PIE", 30),
        ("pie_en", "PIE → English", 20), ("dialogue", "Dialogue", 15)]
-WHO = [("ours-nemotron35-e3-bf16", "Ours, Nemotron 3.5 Super, stage e3"), ("claude-opus-xhigh", "Claude Opus 5.5, xhigh"),
+WHO = [("ours-nemotron35-e3-bf16", "Ours, Nemotron 3.5 Super"), ("claude-opus-xhigh", "Claude Opus 5.5, xhigh"),
        ("codex-gpt-6.1-sol-high", "GPT-6.1 Sol, high")]
 out["bench"] = {"segments": [{"id": k, "name": n, "weight": w} for k, n, w in SEG],
                 "rows": [{"id": c, "name": name, "score": bench[c]["pie_score"],
@@ -69,8 +69,8 @@ out["epochs"] = [{"epoch": 1, "nll": 0.235, "train_nll": 0.20, **{k: bench["ours
                  {"epoch": 2, "nll": 0.25, "train_nll": 0.04, **{k: bench["ours-nemotron35-e2"]["pie_score"][k] for k in ("lenient", "strict")}},
                  {"epoch": 3, "nll": 0.31, "train_nll": 0.006, **{k: bench["ours-nemotron35-e3-bf16"]["pie_score"][k] for k in ("lenient", "strict")}}]
 # the line of models (summary.json): 35B epoch 3, the 35B merge, Nemotron epochs
-out["models"] = [{"name": n, **bench[c]["pie_score"]} for c, n in [("ours-e3", "Qwen3.6-35B, e3"), ("ours-merge-half", "35B, merged RL"),
-                 ("ours-nemotron35-e1-bf16", "Nemotron, e1"), ("ours-nemotron35-e2", "Nemotron, e2"), ("ours-nemotron35-e3-bf16", "Nemotron, e3")]]
+out["models"] = [{"name": n, **bench[c]["pie_score"]} for c, n in [("ours-e3", "Qwen3.6-35B"), ("ours-merge-half", "35B, merged RL"),
+                 ("ours-nemotron35-e1-bf16", "Nemotron, epoch 1"), ("ours-nemotron35-e2", "Nemotron, epoch 2"), ("ours-nemotron35-e3-bf16", "Nemotron, epoch 3")]]
 
 # stage 8's training curve (runs/rl8-nemotron-vocab/metrics.jsonl)
 m = [r for r in jl(RUNS / "rl8-nemotron-vocab/metrics.jsonl") if r.get("train_kl") is not None]
@@ -92,11 +92,11 @@ def drills(run, c):
 
 
 out["stages"] = [
-    {"name": "e3 (SFT)", **v1("rl8-nemotron-vocab", "base"), "cells": drills("rl6b-resume50", "base"), "never": None},
-    {"name": "Stage 6 (rl6b)", **v1("rl6b-resume50", "final"), "cells": drills("rl6b-resume50", "final"), "never": 78},
-    {"name": "Vocabulary pilot", **v1("vocab1-nemotron", "final"), "cells": drills("vocab1-nemotron", "final"), "never": 2},
-    {"name": "Stage 8, step 100", **v1("rl8-nemotron-vocab", "0000100"), "cells": drills("rl8-nemotron-vocab", "0000100"), "never": 3},
-    {"name": "Stage 8, final", **v1("rl8-nemotron-vocab", "final"), "cells": drills("rl8-nemotron-vocab", "final"), "never": 3},
+    {"name": "Fine-tuned", **v1("rl8-nemotron-vocab", "base"), "cells": drills("rl6b-resume50", "base"), "never": None},
+    {"name": "After the RL rounds", **v1("rl6b-resume50", "final"), "cells": drills("rl6b-resume50", "final"), "never": 78},
+    {"name": "Vocabulary fine-tune", **v1("vocab1-nemotron", "final"), "cells": drills("vocab1-nemotron", "final"), "never": 2},
+    {"name": "Final RL round, step 100", **v1("rl8-nemotron-vocab", "0000100"), "cells": drills("rl8-nemotron-vocab", "0000100"), "never": 3},
+    {"name": "Final RL round, end", **v1("rl8-nemotron-vocab", "final"), "cells": drills("rl8-nemotron-vocab", "final"), "never": 3},
 ]
 (SITE / "data/model-figs.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), "utf-8")
 print("written", {k: (len(v) if isinstance(v, list) else "") for k, v in out.items()})

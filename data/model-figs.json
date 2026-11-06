@@ -30,7 +30,7 @@
   "rows": [
    {
     "id": "ours-nemotron35-e3-bf16",
-    "name": "Ours, Nemotron 3.5 Super, stage e3",
+    "name": "Ours, Nemotron 3.5 Super",
     "score": {
      "strict": 86.2,
      "lenient": 88.5
@@ -470,7 +470,7 @@
  ],
  "models": [
   {
-   "name": "Qwen3.6-35B, e3",
+   "name": "Qwen3.6-35B",
    "strict": 79.6,
    "lenient": 81.1
   },
@@ -480,17 +480,17 @@
    "lenient": 84.5
   },
   {
-   "name": "Nemotron, e1",
+   "name": "Nemotron, epoch 1",
    "strict": 84.2,
    "lenient": 87.1
   },
   {
-   "name": "Nemotron, e2",
+   "name": "Nemotron, epoch 2",
    "strict": 83.9,
    "lenient": 86.1
   },
   {
-   "name": "Nemotron, e3",
+   "name": "Nemotron, epoch 3",
    "strict": 86.2,
    "lenient": 88.5
   }
@@ -649,35 +649,35 @@
  ],
  "stages": [
   {
-   "name": "e3 (SFT)",
+   "name": "Fine-tuned",
    "chrF": 73.05,
    "en_pie": 78.7,
    "cells": 0.887,
    "never": null
   },
   {
-   "name": "Stage 6 (rl6b)",
+   "name": "After the RL rounds",
    "chrF": 73.09,
    "en_pie": 78.8,
    "cells": 0.904,
    "never": 78
   },
   {
-   "name": "Vocabulary pilot",
+   "name": "Vocabulary fine-tune",
    "chrF": 71.31,
    "en_pie": 74.3,
    "cells": 0.885,
    "never": 2
   },
   {
-   "name": "Stage 8, step 100",
+   "name": "Final RL round, step 100",
    "chrF": 71.82,
    "en_pie": 76.8,
    "cells": 0.885,
    "never": 3
   },
   {
-   "name": "Stage 8, final",
+   "name": "Final RL round, end",
    "chrF": 71.99,
    "en_pie": 78.6,
    "cells": 0.889,
