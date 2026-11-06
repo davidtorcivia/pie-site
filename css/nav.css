@@ -46,3 +46,7 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
 .nav-sheet-garden { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; height: 46vh; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { .nav, .nav-sheet, .nav a::after { transition: none; } .nav-sheet.on .nav-sheet-links a { animation: none; } }
 .nav-sheet-links a { isolation: isolate; }
+
+/* home is the mark, *PIE, set in the display face */
+.nav a.mark { font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display); font-size: 18px; letter-spacing: -.02em; text-transform: none; opacity: 1; line-height: 1; padding: 2px 0 3px; }
+.nav-sheet-links a.mark { text-transform: none; }

@@ -4,7 +4,7 @@
 // When the row no longer fits (more pages, a narrow screen) it folds into one "Menu" stroke that opens a full page of
 // links with a garden at its foot. A new page is one more line in PAGES.
 const PAGES = [
-  ['index', 'Home', 'index.html'],
+  ['index', '*PIE', 'index.html'],   // the mark stands for home
   ['voices', 'Voices', 'voices.html'],
   ['dictionary', 'Dictionary', 'dictionary.html'],
 ];
@@ -12,7 +12,7 @@ const here = location.pathname.replace(/\/$/, '/index.html');
 const PAGE = (PAGES.find(([, , h]) => here.endsWith('/' + h) || here.endsWith('/' + h.replace(/\.html$/, ''))) || PAGES[0])[0];
 // absolute: a url() inside a custom property resolves against the stylesheet that uses it, not the page
 const stroke = k => new URL(`art/brush/${String(k % 64).padStart(2, '0')}.webp`, location.href).href;
-const links = cls => PAGES.map(([id, t, h], k) => `<a href="${h}" class="${cls} ${id === PAGE ? 'on' : ''}" ${id === PAGE ? 'aria-current="page"' : ''} style="--stroke:url(${stroke(k * 5 + 3)})">${t}</a>`).join('');
+const links = cls => PAGES.map(([id, t, h], k) => `<a href="${h}" class="${cls} ${id === 'index' ? 'mark' : ''} ${id === PAGE ? 'on' : ''}"${id === 'index' ? ' aria-label="Home"' : ''} ${id === PAGE ? 'aria-current="page"' : ''} style="--stroke:url(${stroke(k * 5 + 3)})">${t}</a>`).join('');
 
 export function nav() {
   const n = document.createElement('nav'); n.className = 'nav'; n.setAttribute('aria-label', 'Site');
