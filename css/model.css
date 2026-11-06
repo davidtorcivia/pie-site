@@ -2,7 +2,7 @@
 
 /* the headline numbers */
 .nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px clamp(20px, 3vw, 44px); max-width: 1180px; margin: clamp(30px, 4vw, 54px) auto clamp(40px, 5vw, 64px); }
-.nums b { display: block; white-space: nowrap; font-size: clamp(40px, 4.6vw, 76px); line-height: .9; letter-spacing: -.03em; color: #b81d0e; font-variant-numeric: tabular-nums; }
+.nums b { display: block; white-space: nowrap; font-size: clamp(36px, 3.9vw, 66px); line-height: .9; letter-spacing: -.03em; color: #b81d0e; font-variant-numeric: tabular-nums; }
 .nums span { display: block; font-size: clamp(15px, 1.1vw, 18px); line-height: 1.3; margin-top: .55em; }
 @media (max-width: 900px) { .nums { grid-template-columns: 1fr 1fr; } }
 
@@ -63,7 +63,7 @@
   .dr-l, .br-l { font-size: 14px; }
 }
 @media (max-width: 700px) {
-  .nums b { font-size: 9vw; }
+  .nums b { font-size: 7.4vw; }
   .chart .dr-v.data, .chart .br-v.data, .chart .mb-val.data { font-size: 11.5px; letter-spacing: 0; }
   .dr-row, .dr-axis { grid-template-columns: 30% 1fr 88px; }
 }
