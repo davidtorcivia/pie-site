@@ -566,3 +566,7 @@ html, body { overflow-x: clip; }
   .garden, .garden .gv, .leaf .leaf-garden { will-change: auto; transform: none; backface-visibility: visible; }
   @keyframes arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 }
+
+/* the wheel can be grabbed and spun */
+#wheel.grabbable { cursor: grab; user-select: none; -webkit-user-select: none; }
+#wheel.grabbable.grabbing { cursor: grabbing; }

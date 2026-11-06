@@ -261,6 +261,29 @@ function wheel(words) {
   nav.querySelector('.wn-prev').onclick = () => go(cur - 1); nav.querySelector('.wn-next').onclick = () => go(cur + 1);
   nav.querySelectorAll('.wn-w').forEach(b => b.onclick = () => go(+b.dataset.i));
   nav.querySelector('.wn-w').classList.add('on');
+  // grab it and it spins: dragged round its centre, a flick carries on and slows to rest. On touch screens a
+  // horizontal drag spins it and a vertical one still scrolls the page.
+  const spin = svg.querySelector('.spin');
+  svg.classList.add('grabbable'); svg.style.touchAction = matchMedia('(pointer: coarse)').matches ? 'pan-y' : 'none';
+  let drag = null, vel = 0, coast = 0;
+  const angle = e => { const b = svg.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)) * 180 / Math.PI; };
+  svg.addEventListener('pointerdown', e => {
+    cancelAnimationFrame(coast); gsap.killTweensOf(spin);
+    drag = { a: angle(e), r: +gsap.getProperty(spin, 'rotation') || 0, t: performance.now() }; vel = 0;
+    svg.setPointerCapture(e.pointerId); svg.classList.add('grabbing');
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!drag) return;
+    let a = angle(e), d = a - drag.a; if (d > 180) d -= 360; if (d < -180) d += 360;
+    const now = performance.now(); vel = d / Math.max(1, now - drag.t) * 16.7; drag.a = a; drag.t = now; drag.r += d;
+    gsap.set(spin, { rotation: drag.r, svgOrigin: '0 0' });
+  });
+  const release = () => {
+    if (!drag) return; drag = null; svg.classList.remove('grabbing');
+    const step = () => { if (Math.abs(vel) < .04 || reduce) return; vel *= .955; gsap.set(spin, { rotation: '+=' + vel, svgOrigin: '0 0' }); coast = requestAnimationFrame(step); };
+    step();
+  };
+  svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
 }
 
 // ---------------------------------------------------------------------------------------------------- machine
