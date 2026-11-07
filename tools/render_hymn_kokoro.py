@@ -49,6 +49,11 @@ def render(lines, name, out_mp3):
         audio.append(a); audio.append(np.zeros(int(SR * GAP), np.float32))
         t += len(a) / SR + GAP
     y = np.concatenate(audio); y = y / max(1e-9, np.abs(y).max()) * 0.89
+    if os.environ.get("PIE_WAV_OUT"):   # lossless 24 kHz float for the bandwidth extension (tools/encode_48k.sh): no mp3 here
+        d = Path(os.environ["PIE_WAV_OUT"]); d.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0", "-c:a", "pcm_f32le",
+                        str(d / out_mp3.with_suffix(".wav").name)], input=y.astype("<f4").tobytes(), check=True)
+        return words
     wavp = out_mp3.with_suffix(".wav")
     with wave.open(str(wavp), "wb") as wf:
         wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SR); wf.writeframes((y * 32767).astype(np.int16).tobytes())

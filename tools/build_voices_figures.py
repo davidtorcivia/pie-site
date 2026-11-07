@@ -29,7 +29,8 @@ SRC = SITE / "tools/voices-src"
 OUT_A, OUT_S = SITE / "audio/voices", SITE / "art/voices"
 OUT_A.mkdir(parents=True, exist_ok=True)
 PAPER, INK = np.array([239, 231, 214]), np.array([14, 13, 11])
-SR = 24000
+SR = 48000     # the clips: the recordings are 44.1 kHz; the PIE Kokoro clips are bandwidth-extended (pie-bwe-v1)
+SR_SPEC = 24000   # the spectrograms are drawn from a 24 kHz copy, as before (they show 0-7 kHz)
 PIE = "n̥sméy ń̥dʰgʷʰitom ḱléwos h₂yéwi dʰedʰh₁dʰí."
 EN = "Place imperishable fame on us for a lifetime!"
 
@@ -42,26 +43,27 @@ CLIPS = [  # id, file, stage label
     ("conv-f", "eleven-W02-PIE.wav", "converted, female"),
     ("final-m", "murmured-JD3-PIE.wav", "repaired, male"),
     ("final-f", "murmured-W02-PIE.wav", "repaired, female"),
-    ("ours-m", "kokoro-pie-m.wav", "PIE Kokoro, male"),
-    ("ours-f", "kokoro-pie-f.wav", "PIE Kokoro, female"),
+    ("ours-m", "kokoro-pie-m-48k.wav", "PIE Kokoro, male"),
+    ("ours-f", "kokoro-pie-f-48k.wav", "PIE Kokoro, female"),
 ]
 
 
 def load(f):
     y, sr = librosa.load(SRC / f, sr=SR, mono=True)
-    return y / max(1e-9, np.abs(y).max()) * 0.9
+    return y / max(1e-9, np.abs(y).max()) * 0.84      # -1.5 dBFS: headroom for the encoder
 
 
 def mp3(y, path):
-    tmp = path.with_suffix(".wav"); sf.write(tmp, y, SR, subtype="PCM_16")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-codec:a", "libmp3lame", "-b:a", "112k", str(path)], check=True)
+    tmp = path.with_suffix(".wav"); sf.write(tmp, y, SR, subtype="FLOAT")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-codec:a", "libmp3lame", "-b:a", "160k", "-compression_level", "0", str(path)], check=True)
     tmp.unlink()
 
 
 def spectrogram(y, path, pps=360, h=300, fmax=7000):
     """log-magnitude STFT, 0..fmax Hz, 70 dB range: ink whose opacity is the energy, so it sits on any paper"""
-    hop = int(SR / pps); S = np.abs(librosa.stft(y, n_fft=1024, hop_length=hop, win_length=768))
-    S = S[: int(fmax / (SR / 1024))]
+    y = librosa.resample(y, orig_sr=SR, target_sr=SR_SPEC)
+    hop = int(SR_SPEC / pps); S = np.abs(librosa.stft(y, n_fft=1024, hop_length=hop, win_length=768))
+    S = S[: int(fmax / (SR_SPEC / 1024))]
     db = librosa.amplitude_to_db(S, ref=np.max); v = np.clip((db + 70) / 70, 0, 1) ** 1.35
     rgba = np.zeros(v.shape + (4,), np.uint8); rgba[..., :3] = INK; rgba[..., 3] = (v * 255).astype(np.uint8)
     im = Image.fromarray(rgba[::-1], "RGBA").resize((S.shape[1], h), Image.LANCZOS)
@@ -71,10 +73,10 @@ def spectrogram(y, path, pps=360, h=300, fmax=7000):
 
 def share(y, t0, t1):
     """2-8 kHz share of the energy in [t0, t1] (the measure qc.py and restore.py gate h and χ on)"""
-    seg = y[int(t0 * SR): int(t1 * SR)]
+    seg = y[int(t0 * SR_SPEC): int(t1 * SR_SPEC)]          # measured on the 24 kHz copies, as published
     if len(seg) < 256:
         return None
-    P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2; f = np.fft.rfftfreq(len(seg), 1 / SR)
+    P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2; f = np.fft.rfftfreq(len(seg), 1 / SR_SPEC)
     return float(P[(f >= 2000) & (f <= 8000)].sum() / max(1e-12, P[f >= 60].sum()))
 
 
@@ -130,11 +132,12 @@ out["duration"] = round(ph["duration"] - LEAD, 4)
 out["ges"] = {tier: [{**g, "s": sh(g["s"]), "e": sh(g["e"])} for g in segs if g["e"] - LEAD > 0]
               for tier, segs in gestures(SRC / "renders-JD3-PIE.ges").items()}
 # F0 of the VocalTractLab render, 10 ms frames, voiced only
-y = load("renders-JD3-PIE.wav")[int(LEAD * SR):]
-f0, vflag, _ = librosa.pyin(y, fmin=60, fmax=300, sr=SR, frame_length=1024, hop_length=240)
+load24 = lambda f: librosa.resample(load(f), orig_sr=SR, target_sr=SR_SPEC)   # the figure's measures stay on 24 kHz
+y = load24("renders-JD3-PIE.wav")[int(LEAD * SR_SPEC):]
+f0, vflag, _ = librosa.pyin(y, fmin=60, fmax=300, sr=SR_SPEC, frame_length=1024, hop_length=240)
 out["f0"] = [[round(i * 0.01, 2), round(float(x), 1)] for i, (x, v) in enumerate(zip(f0, vflag)) if v and np.isfinite(x)]
 # the laryngeals of this line through the conversion and the repair (male voice)
-conv, fin = (load(f)[int(LEAD * SR):] for f in ("eleven-JD3-PIE.wav", "murmured-JD3-PIE.wav"))
+conv, fin = (load24(f)[int(LEAD * SR_SPEC):] for f in ("eleven-JD3-PIE.wav", "murmured-JD3-PIE.wav"))
 lar = []
 for w in ph["words"]:
     for p in w["phones"]:
