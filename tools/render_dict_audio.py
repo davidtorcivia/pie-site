@@ -30,6 +30,8 @@ ap.add_argument("--kbps", default="96k")
 ap.add_argument("--alone", action="store_true", help="say each word alone, as before 2026-11-06 (no carrier)")
 ap.add_argument("--rms", type=float, default=-18.0, help="speech loudness, dBFS RMS over the voiced frames")
 ap.add_argument("--peak", type=float, default=-3.0, help="sample-peak ceiling, dBFS")
+ap.add_argument("--bwe", help="folder of the voices' own bandwidth extension (pie-bwe-v1: bwe_common.py, g_pie_24kto48k): "
+                "each clip is taken from 24 to 48 kHz, its 12-16 kHz restored from the voices' 44.1 kHz recordings")
 a = ap.parse_args()
 SITE = Path(__file__).resolve().parents[1]
 WHEELS = ["pie-lex-ph2texr", "pie-lex-h1ekjwos", "pie-lex-h2owis", "pie-lex-meh2texr", "pie-lex-dyexws", "pie-lex-wlkwos",
@@ -68,6 +70,9 @@ if a.mode == "labels":
 
 # ---------------------------------------------------------------------------------------------------- render
 import numpy as np, torch  # noqa: E402
+if a.bwe:   # before the Kokoro code: AP-BWE's own modules (env, datasets, models) must win those names
+    sys.path.insert(0, a.bwe)
+    from bwe_common import load_model as bwe_load, apply as bwe_apply, up48  # noqa: E402
 _pkg = types.ModuleType("kokoro"); _pkg.__path__ = [a.kikiri]; sys.modules["kokoro"] = _pkg
 try:
     import loguru  # noqa: F401  (the model code logs through it; a quiet stand-in where it is not installed)
@@ -77,11 +82,14 @@ from kokoro.model import KModel  # noqa: E402
 
 K, OUT = Path(a.kokoro), Path(a.out)
 SR, GAP = 24000, 0.3
+SR_OUT = 48000 if a.bwe else SR
 torch.set_num_threads(4)
 if a.device.startswith("cuda"):
     torch.cuda.set_per_process_memory_fraction(0.25, 0)                  # the whole card stays under the owner's 0.82
 model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval().to(a.device)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True).to(a.device) for n in ("m", "f")}
+if a.bwe:
+    BWE = bwe_load(str(Path(a.bwe) / "g_pie_24kto48k"), a.device)
 labels = json.loads(Path(a.labels).read_text("utf-8"))
 
 
@@ -151,6 +159,12 @@ def clip(label, voice):
     y = y * g
     n = 240; f = np.linspace(0, 1, n)                                     # 10 ms fades: no clicks at the cuts
     y[:n] *= f; y[-n:] *= f[::-1]
+    if a.bwe:   # 24 -> 48 kHz, the band below 12 kHz kept as Kokoro made it; the peak ceiling checked again after
+        y = np.asarray(bwe_apply(BWE[0], BWE[1], up48(y.astype(np.float32), SR), a.device, splice_hz=12000), dtype=np.float64)
+        pk = np.abs(y).max()
+        if pk > 10 ** (a.peak / 20):
+            y *= 10 ** (a.peak / 20) / pk; FLAGS["held by the peak ceiling after bandwidth extension"] += 1
+        n = 480; f = np.linspace(0, 1, n); y[:n] *= f; y[-n:] *= f[::-1]
     return y.astype(np.float32)
 
 
@@ -169,11 +183,11 @@ for s, group in sorted(by.items()):
             y = clip(labels[i], v)
             if y is None:
                 continue
-            offs[i][v] = [round(t, 3), round(len(y) / SR, 3)]
-            parts += [y, np.zeros(int(SR * GAP), np.float32)]; t += len(y) / SR + GAP
+            offs[i][v] = [round(t, 3), round(len(y) / SR_OUT, 3)]
+            parts += [y, np.zeros(int(SR_OUT * GAP), np.float32)]; t += len(y) / SR_OUT + GAP
         mp3 = OUT / f"audio/dict/{s:02d}-{v}.mp3"
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "pipe:0",
-                        "-codec:a", "libmp3lame", "-b:a", a.kbps, "-compression_level", "0", "-ar", str(SR), str(mp3)],
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(SR_OUT), "-ac", "1", "-i", "pipe:0",
+                        "-codec:a", "libmp3lame", "-b:a", a.kbps, "-compression_level", "0", "-ar", str(SR_OUT), str(mp3)],
                        input=np.concatenate(parts).astype("<f4").tobytes(), check=True)
     (OUT / f"data/dict/audio/{s:02d}.json").write_text(json.dumps(offs, ensure_ascii=False, separators=(",", ":")))
     total += len(offs)
