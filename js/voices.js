@@ -2,7 +2,7 @@
 // live section, the header's garden and horses. Figure data: data/voices-figs.json (tools/build_voices_figures.py);
 // settings and links: data/voices.json.
 import { initType, typeset, typesetAll } from './type.js';
-import { ART_V } from './initials.js';
+import { rubric } from './rubric.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
@@ -37,18 +37,6 @@ function stop() {
 }
 audio.addEventListener('ended', stop);
 
-// ------------------------------------------------------------------------------------------------ drop caps
-// the first letter of each section's opening paragraph, illuminated (tools/build_voices_initials.mjs)
-function dropCaps() {
-  document.querySelectorAll('.sec > p.lead').forEach(p => {
-    const node = [...p.childNodes].find(n => n.nodeType === 3 && n.textContent.trim()); if (!node) return;
-    const t = node.textContent, i = t.search(/\S/), L = t[i];
-    node.textContent = t.slice(i + 1);
-    const cap = document.createElement('span'); cap.className = 'v-cap';
-    cap.innerHTML = `<img src="art/initials/voices/${L.toUpperCase()}.webp?v=${ART_V}" alt="" onerror="this.parentNode.classList.add('plain')"><span class="v-cap-l">${esc(L)}</span>`;
-    p.prepend(cap);
-  });
-}
 
 // ------------------------------------------------------------------------------------------------ figure 2
 const TIERS = [['vowel', 'vowel'], ['lip', 'lips'], ['tongue-tip', 'tongue tip'], ['tongue-body', 'tongue body'], ['velic', 'velum'], ['glottal-shape', 'glottis'], ['lung-pressure', 'lungs']];
@@ -203,7 +191,7 @@ async function herd() {
 
 // ------------------------------------------------------------------------------------------------ boot
 async function boot() {
-  initType(); nav(); colophon(); typesetAll(); dropCaps();
+  initType(); nav(); colophon(); typesetAll(); rubric();
   const [F, cfg] = await Promise.all([fetch('data/voices-figs.json').then(r => r.json()), fetch('data/voices.json', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))]);
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');

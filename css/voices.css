@@ -51,16 +51,6 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 .sec .pie, .fig .pie { font-family: var(--f-pie); }
 .sec .data { font-size: .82em; letter-spacing: .01em; }
 
-/* illuminated drop caps */
-.v-cap { /* a drop cap exactly four lines deep: the horse band's top on the first line's capital height, its bottom on
-             the fourth line's baseline. Measured on the coloured square, which sits 14.7% inside the image on every
-             side (--pad); the horse band round it hangs outside the text block. */
-  --lines: 4; }
-.v-cap img { display: block; width: 100%; height: 100%; }
-.v-cap .v-cap-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-.v-cap.plain { width: auto; aspect-ratio: auto; font-family: var(--f-display); font-weight: 900; font-size: 4.2em; line-height: .8; margin-top: .08em; }
-.v-cap.plain img { display: none; }
-.v-cap.plain .v-cap-l { position: static; width: auto; height: auto; clip: auto; }
 
 /* figures */
 .fig { margin: clamp(36px, 4vw, 60px) auto clamp(44px, 5vw, 76px); max-width: 1180px; }
@@ -164,7 +154,6 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
   .vl-box { flex-direction: column; gap: 12px; }
   .vl-go { align-self: flex-start; padding: .7em 1.4em; }
   .v-h2 { font-size: clamp(34px, 11vw, 52px); }
-  .v-cap { --lines: 3; }
   .mx thead th { padding: 0 6px 10px; font-size: 9.5px; letter-spacing: .08em; }
   .mx thead th span { display: none; }
   .mx tbody th { padding-right: 6px; white-space: normal; }
@@ -180,7 +169,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 }
 @media (prefers-reduced-motion: reduce) { html.arrived .v-inner > * { animation: none; } }
 /* images painted on paper take the page's own paper (it is darker in dark mode) */
-.st-spec img, .score-svg image, .v-cap img { mix-blend-mode: multiply; }
+.st-spec img, .score-svg image { mix-blend-mode: multiply; }
 
 
 .v-live .v-h2 { margin-left: 0; }
@@ -197,3 +186,13 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
   .pipe-row li + li { margin-left: 0; margin-top: 18px; }
   .pipe-row li + li::after { left: 26px; top: -15px; width: 2px; height: 12px; }
 }
+
+/* illum's rubrication (js/rubric.js). Only when it can run (html.illum): the drop letter is drawn by illum, while the
+   real letter stays in the text, invisible but read and selectable */
+html.illum .ini { color: transparent; }
+html.illum .ini.drop { float: left; line-height: 1; }
+main.v-art { position: relative; }
+/* the breaks: illum draws its sign or scene in the hr's own box, which must have height (at 0 it measures no room and
+   its figure comes out NaN wide); without illum, a quiet rule in the middle of that box */
+main.v-art hr { border: 0; height: clamp(64px, 8vw, 110px); margin: 0 auto; }
+html:not(.illum) main.v-art hr { max-width: 120px; background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent), color-mix(in srgb, var(--ink) 18%, transparent)) center / 100% 1px no-repeat; }

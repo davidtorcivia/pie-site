@@ -2,7 +2,7 @@
 // data/model-figs.json (tools/build_model_figures.py). Bars where the scale starts at zero; dots where a scale is
 // zoomed (a bar on a cut axis lies about size); one colour per contestant, the same in every figure.
 import { initType, typeset, typesetAll } from './type.js';
-import { ART_V } from './initials.js';
+import { rubric } from './rubric.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
@@ -14,16 +14,6 @@ const fmt = (v, d = 1) => v == null ? '–' : Number(v).toLocaleString('en-US', 
 const pct = (v, lo, hi) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
 const C = ['#b81d0e', '#2a2219', '#7a6a4f'];          // ours, then the two frontier runs
 
-function dropCaps() {
-  document.querySelectorAll('.sec > p.lead').forEach(p => {
-    const node = [...p.childNodes].find(n => n.nodeType === 3 && n.textContent.trim()); if (!node) return;
-    const t = node.textContent, i = t.search(/\S/), L = t[i];
-    node.textContent = t.slice(i + 1);
-    const cap = document.createElement('span'); cap.className = 'v-cap';
-    cap.innerHTML = `<img src="art/initials/model/${L.toUpperCase()}.webp?v=${ART_V}" alt="" onerror="this.parentNode.classList.add('plain')"><span class="v-cap-l">${esc(L)}</span>`;
-    p.prepend(cap);
-  });
-}
 
 // a horizontal bar: strict solid, lenient hatched beyond it (as on the home page's evaluation)
 const bar = (strict, lenient, color) => `<span class="mb-track"><span class="mb-len" style="width:${lenient}%;--c:${color}"></span><span class="mb-str" style="width:${strict}%;background:${color}"></span></span>`;
@@ -131,7 +121,7 @@ function materials(cfg) {
 }
 
 async function boot() {
-  initType(); nav(); colophon(); typesetAll(); dropCaps();
+  initType(); nav(); colophon(); typesetAll(); rubric();
   const F = await fetch('data/model-figs.json').then(r => r.json());
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
