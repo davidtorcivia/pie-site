@@ -1,0 +1,24 @@
+/* Dark mode's overrides (html.dark: the resolved theme, set before the first paint and by js/theme.js). The tokens
+   themselves are in css/main.css; this file holds what tokens alone cannot do. Yellow is the site's own colour and
+   stays yellow, so whatever sits on a yellow stroke keeps dark text. */
+
+/* text on the yellow brush strokes: section headings, play buttons, the pipeline's steps, links, the word being read */
+html.dark .v-art .v-h2 span, html.dark .fig-play, html.dark .st-play, html.dark .pipe-row li, html.dark .v-go a,
+html.dark .vw.on, html.dark .vl-go, html.dark .score-svg .g text { color: var(--night); --ink: var(--night); }
+html.dark .score-svg .g text { fill: var(--night); }
+
+/* the spectrograms are ink with an alpha (they sit on any paper by multiplying): on the night, inverted and screened */
+html.dark .st-spec img, html.dark .score-svg image { filter: invert(1); mix-blend-mode: screen; }
+
+/* Figure 1's rows: a fainter wash of yellow on the night */
+html.dark .mx tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .13), rgba(255, 210, 26, .04) 80%, transparent); }
+
+
+/* a heading that wraps: in light its stroke may cover only part of the words (the text reads on paper either way); on
+   the night the dark text needs the yellow under every word, so the span becomes one box and the stroke fills it */
+html.dark .v-art .v-h2 span { display: inline-block; }
+
+/* the dictionary: the same rule for what sits on yellow (the open entry in the list, a translation card, the word
+   marked in a corpus sentence, Listen, Back), and a fainter wash on the paradigm's rows */
+html.dark .r.on, html.dark .trc, html.dark .ex-pie mark, html.dark .e-play, html.dark .e-back { color: var(--night); --ink: var(--night); }
+html.dark .para tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .14), rgba(255, 210, 26, .05) 75%, rgba(255, 210, 26, 0)); }

@@ -50,3 +50,13 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
 /* home is the mark, *PIE, set in the display face */
 .nav a.mark { font-family: var(--f-display); font-weight: var(--w-display); font-variation-settings: var(--v-display); font-size: 18px; letter-spacing: -.02em; text-transform: none; opacity: 1; line-height: 1; padding: 2px 0 3px; }
 .nav-sheet-links a.mark { text-transform: none; }
+
+/* the theme toggle (js/theme.js): a small glyph closing the row, and one in the menu beside Close */
+.theme-toggle { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0 !important; margin-left: 18px;
+  color: var(--ink); opacity: .72; transition: opacity .25s ease, transform .4s cubic-bezier(.2, .7, .1, 1); }
+.theme-toggle svg { width: 15px; height: 15px; display: block; }
+.theme-toggle:hover, .theme-toggle:focus-visible { opacity: 1; transform: rotate(-18deg); }
+.nav.folded .theme-toggle { margin-left: 14px; }
+.theme-toggle.st { position: absolute; top: 22px; right: calc(var(--gut) + 74px); z-index: 2; width: 30px; height: 30px; background: none; border: 0; cursor: pointer; }
+.theme-toggle.st svg { width: 17px; height: 17px; }
+@media (prefers-reduced-motion: reduce) { .theme-toggle { transition: none; } .theme-toggle:hover { transform: none; } }

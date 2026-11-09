@@ -3,6 +3,7 @@
 // marks the page you are on with a red stroke, slips away while you scroll down and comes back when you scroll up.
 // When the row no longer fits (more pages, a narrow screen) it folds into one "Menu" stroke that opens a full page of
 // links with a garden at its foot. A new page is one more line in PAGES.
+import { themeButton } from './theme.js';
 const PAGES = [
   ['index', '*PIE', 'index.html'],   // the mark stands for home
   ['voices', 'Voices', 'voices.html'],
@@ -22,6 +23,9 @@ export function nav() {
   const sheet = document.createElement('div'); sheet.className = 'nav-sheet'; sheet.id = 'navSheet'; sheet.hidden = true;
   sheet.innerHTML = `<button class="nav-close data">Close</button><div class="nav-sheet-links display">${links('sl')}</div>
     <img class="nav-sheet-garden" src="art/garden-foot-m.webp" alt="" loading="lazy">`;
+  // light and dark: the toggle closes the row (and stays beside Menu when the row folds); a second one in the menu
+  n.querySelector('.nav-bar').append(themeButton('nt'));
+  sheet.prepend(themeButton('st'));
   document.body.prepend(sheet); document.body.prepend(n);
 
   // Home from the home page goes back to the top

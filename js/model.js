@@ -6,13 +6,16 @@ import { rubric } from './rubric.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
 import { brushStroke } from './brush.js';
+import { isDark } from './theme.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const fmt = (v, d = 1) => v == null ? '–' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const pct = (v, lo, hi) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
-const C = ['#b81d0e', '#2a2219', '#7a6a4f'];          // ours, then the two frontier runs
+// ours, then the two frontier runs; on the dark ground the near-black run turns to bone and the red brightens
+const LIGHT = ['#b81d0e', '#2a2219', '#7a6a4f'], DARK = ['#e0452a', '#cfc3a8', '#8a7a5c'];
+let C = LIGHT;
 
 
 // a horizontal bar: strict solid, lenient hatched beyond it (as on the home page's evaluation)
@@ -125,7 +128,8 @@ async function boot() {
   const F = await fetch('data/model-figs.json').then(r => r.json());
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
-  bench(F); engine(F); corpus(F); exportMix(F); sweep(F); curve(F); stages(F);
+  const figs = () => { C = isDark() ? DARK : LIGHT; bench(F); engine(F); corpus(F); exportMix(F); sweep(F); curve(F); stages(F); };
+  figs(); addEventListener('themechange', figs);
   fetch('data/model.json').then(r => r.json()).then(materials).catch(() => materials({}));
   { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
   document.querySelectorAll('.v-art .v-h2 span').forEach((s, i) => s.style.setProperty('--stroke', `url(${new URL(`art/brush/${String((i * 7 + 13) % 64).padStart(2, '0')}.webp`, location.href).href})`));
