@@ -33,6 +33,16 @@
 <link rel="stylesheet" href="css/voices.css">
 <link rel="stylesheet" href="css/model.css">
 <link rel="stylesheet" href="css/dark.css">
+<!-- the page's whole module graph at once (one round trip, not one per import level), and the type's Google Fonts
+     stylesheet before js/type.js asks for it (the same URL, so the browser hands over the preloaded copy) -->
+<link rel="modulepreload" href="js/model.js">
+<link rel="modulepreload" href="js/type.js">
+<link rel="modulepreload" href="js/rubric.js">
+<link rel="modulepreload" href="js/nav.js">
+<link rel="modulepreload" href="js/theme.js">
+<link rel="modulepreload" href="js/colophon.js">
+<link rel="modulepreload" href="js/brush.js">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Archivo:wdth,wght@62..125,100..900&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800">
 </head>
 <body class="v-page m-page">
 

@@ -87,7 +87,7 @@ function score(F) {
 // ------------------------------------------------------------------------------------------------ figures 3 and 4
 function strip(c, label, extra = '') {
   return `<li class="st"><button class="st-play" aria-label="Play: ${esc(label)}"><span class="st-i"></span></button>
-    <div class="st-body"><p class="st-l data">${esc(label)}${extra}</p><div class="st-spec"><img src="${c.spec}" alt=""><span class="st-head"></span></div></div></li>`;
+    <div class="st-body"><p class="st-l data">${esc(label)}${extra}</p><div class="st-spec"><img src="${c.spec}" alt="" loading="lazy" decoding="async"><span class="st-head"></span></div></div></li>`;
 }
 function wireStrips(root, clips) {
   root.querySelectorAll('.st').forEach((li, i) => {
@@ -171,7 +171,8 @@ function garden() {
     v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true }); v.addEventListener('error', () => { v.remove(); still(); }, { once: true }); }
   else still();
 }
-// Muybridge's horse, painted (art/horse/paint-dark-NN.webp), galloping along the foot of the header
+// Muybridge's horse, painted (art/horse/paint-dark-NN.webp, 300 px tall: the herd is at most 150 CSS px, so that covers
+// 2x screens; the map's ochre frames stay full size), galloping along the foot of the header
 async function herd() {
   const cv = $('.v-herd'); if (!cv || reduce) return;
   const frames = await Promise.all(Array.from({ length: 11 }, (_, k) => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = `art/horse/paint-dark-${String(k + 1).padStart(2, '0')}.webp`; })));
