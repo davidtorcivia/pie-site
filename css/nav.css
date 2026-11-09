@@ -1,5 +1,5 @@
 /* the site navigation (js/nav.js): the pages on one painted stroke at the top right; a menu when they do not fit */
-.nav { position: fixed; z-index: 60; top: 12px; right: max(8px, calc(var(--gut) - 16px)); pointer-events: none;
+.nav { position: fixed; z-index: 60; top: 12px; right: max(8px, calc(var(--gut) - 16px)); pointer-events: none; color: var(--ink);
   transition: transform .55s cubic-bezier(.2, .7, .1, 1), opacity .4s ease; --navbg: var(--yellow); }
 .nav.away { transform: translateY(calc(-100% - 20px)); opacity: 0; }
 .nav[data-tone="on-yellow"] { --navbg: var(--chalk); }

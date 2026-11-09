@@ -16,13 +16,11 @@
   --f-accent: 'Basteleur', Georgia, serif; --w-accent: 700; --v-accent: normal; --s-accent: normal;
   --gut: clamp(16px, 3.2vw, 48px);
 }
-/* Dark (js/theme.js: the system's scheme, or the nav's toggle). Paper and ink trade places: the paper sections turn to
-   a warm night with bone text; the ink bands stay as they are, a shade darker than the night around them. Yellow is
-   the site's own colour and does not change: a yellow section or an ink band keeps the light palette inside it (dark
-   text on yellow, its art as painted), and so do the nav's strokes. */
+/* Dark, only when the reader asks for it with the nav's toggle (js/theme.js): the site is light by default, whatever
+   the system's scheme. The paper sections turn to a warm night with bone text; the ink bands stay as they are, a
+   shade darker than the night around them. Yellow is the site's own colour and does not change: a yellow section or
+   an ink band keeps the light palette inside it (dark text on yellow, its art as painted), and so do the nav's strokes. */
 :root { color-scheme: light; --night: #0e0d0b; --bone: #efe7d6; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --paper: #1e1a14; --ink: #e9e0cc; --chalk: #f6f1e4; --dk: 1; color-scheme: dark; } }
 :root[data-theme="dark"] { --paper: #1e1a14; --ink: #e9e0cc; --chalk: #f6f1e4; --dk: 1; color-scheme: dark; }
 .yellow, [data-tone="yellow"], .nav, .nav-sheet, .ink, [data-tone="ink"] { --ink: var(--night); --paper: var(--bone); color-scheme: light; }
 /* the home page's map is an engraved plate printed on paper: it stays a lit plate, its painted captions dark on paper */

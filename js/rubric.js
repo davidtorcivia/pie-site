@@ -4,8 +4,8 @@
 // sections (data-rank 2 at a major turn, 3 at the end); figures are framed and paragraph ends filled by the library.
 // Everything illum draws is on aria-hidden canvases behind the text, inside main.v-art.
 //
-// The theme: illum follows <html data-theme> (the nav's toggle, js/theme.js), else the reader's system, and redraws
-// when either changes. Without OffscreenCanvas and module workers, nothing runs and the text stays plain (the CSS that
+// The theme: illum follows <html data-theme> (light unless the nav's toggle chose dark, js/theme.js) and redraws
+// when it changes. Without OffscreenCanvas and module workers, nothing runs and the text stays plain (the CSS that
 // hides the real drop letter applies only under html.illum).
 export async function rubric() {
   const art = document.querySelector('main.v-art');

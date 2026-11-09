@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>/* the stored theme, before the first paint (js/theme.js) */try{var t=localStorage.getItem("pie-theme"),r=document.documentElement;if(t==="light"||t==="dark")r.setAttribute("data-theme",t);if(t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches))r.classList.add("dark")}catch(e){}</script>
+<script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Not found — *PIE</title>
 <meta name="robots" content="noindex">
