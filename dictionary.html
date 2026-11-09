@@ -32,6 +32,18 @@
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/dict.css">
 <link rel="stylesheet" href="css/dark.css">
+<!-- the page's whole module graph at once (one round trip, not one per import level), and the type's Google Fonts
+     stylesheet before js/type.js asks for it (the same URL, so the browser hands over the preloaded copy) -->
+<link rel="modulepreload" href="js/dict.js">
+<link rel="modulepreload" href="js/type.js">
+<link rel="modulepreload" href="js/nav.js">
+<link rel="modulepreload" href="js/theme.js">
+<link rel="modulepreload" href="js/colophon.js">
+<link rel="modulepreload" href="js/brush.js">
+<link rel="modulepreload" href="js/translate-api.js">
+<link rel="modulepreload" href="js/initials.js">
+<link rel="modulepreload" href="js/rubric.js">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Archivo:wdth,wght@62..125,100..900&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800">
 <link rel="preload" href="data/dict/index.json" as="fetch" crossorigin>
 </head>
 <body class="dict">
@@ -40,14 +52,15 @@
   <div class="dh-garden" aria-hidden="true"></div>
   <div class="dh-inner">
     <h1 class="display dh-title">Dictionary</h1>
-    <p class="serif dh-p" id="dhP">Every word the project's grammar engine, corpus and translator use. Roots and words come from Wiktionary, verbal roots from LIV², nouns from NIL. Pronouns, particles and numerals come from the engine's own tables. A small number of words were reconstructed or coined by the project, and are marked. Each entry gives the engine's inflection, the forms in the daughter languages, and sentences from the corpus that use the word.</p>
+    <p class="serif dh-p" id="dhP">Every word the project's grammar engine, corpus and translator use. Roots and words come from Wiktionary, verbal roots from LIV², nouns from NIL. Pronouns, particles and numerals come from the engine's own tables. A small number of words were reconstructed or coined by the project, and are marked. Each entry gives the engine's inflection, the forms in the daughter languages, and sentences from the corpus that use the word. <span class="dh-n">8,434 entries.</span></p>
     <div class="dh-search">
       <label for="q" class="sr">Search the dictionary</label>
       <input id="q" class="pie" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="horse, h1ekwos, pater, or a sentence…">
       <span class="dh-count data" id="count"></span>
     </div>
     <p class="serif dh-hint">Search in English, in PIE or in a daughter language. On a keyboard, type h1 h2 h3 for the laryngeals, k' g' for the palatals, kw gw for the labiovelars and bh dh gh for the breathy-voiced stops. Accents are optional. A whole sentence, in English or in PIE, is translated above the matches, each word linked to its entry.</p>
-    <div class="dh-letters pie" id="letters" role="group" aria-label="Browse by letter"></div>
+    <!-- the letters as js/dict.js lays them out (it rebuilds the row with each letter's count), so the page below does not shift when the index arrives -->
+    <div class="dh-letters pie" id="letters" role="group" aria-label="Browse by letter"><button data-l="a">a</button><button data-l="b">b</button><button data-l="bʰ">b<span class="mod">h</span></button><button data-l="d">d</button><button data-l="dʰ">d<span class="mod">h</span></button><button data-l="e">e</button><button data-l="g">g</button><button data-l="gʰ">g<span class="mod">h</span></button><button data-l="ǵ">ǵ</button><button data-l="ǵʰ">ǵ<span class="mod">h</span></button><button data-l="gʷ">g<span class="mod">w</span></button><button data-l="gʷʰ">g<span class="mod">w</span><span class="mod">h</span></button><button data-l="h₁">h<span class="lar">1</span></button><button data-l="h₂">h<span class="lar">2</span></button><button data-l="h₃">h<span class="lar">3</span></button><button data-l="H">H</button><button data-l="i">i</button><button data-l="k">k</button><button data-l="ḱ">ḱ</button><button data-l="kʷ">k<span class="mod">w</span></button><button data-l="l">l</button><button data-l="m">m</button><button data-l="n">n</button><button data-l="o">o</button><button data-l="p">p</button><button data-l="r">r</button><button data-l="s">s</button><button data-l="t">t</button><button data-l="u">u</button><button data-l="w">w</button><button data-l="y">y</button></div>
   </div>
 </header>
 

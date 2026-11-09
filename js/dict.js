@@ -377,12 +377,16 @@ function closeEntry() {
 async function boot() {
   initType();
   nav(); colophon();
+  // the entry the address names (or the one a desktop opens first) is in a shard the id alone locates: fetched
+  // alongside the index rather than after it
+  { const e = new URLSearchParams(location.search).get('e') || (phone() ? null : 'pie-lex-h1ekjwos'); if (e) detail(e).catch(() => {}); }
   const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])]);
   const ai = Array.isArray(au) ? { shards: au } : au;   // index.json: {v, shards} (a bare list before the v2 voices)
   AUDIO = new Set(ai.shards || []); AV = ai.v ? `?v=${ai.v}` : '';
   IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u, f: fold(form), l: loose(form), w: words(g), s: senses(g), L: letterOf(form) }));
   IX.forEach((e, k) => BYID.set(e.id, k));
-  $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${IX.length.toLocaleString()} entries.</span>`);
+  // the count stands in the HTML (so the paragraph's height, and the page below it, hold while the index loads); set here from the index
+  { const n = $('#dhP .dh-n'), t = `${IX.length.toLocaleString()} entries.`; if (n) n.textContent = t; else $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${t}</span>`); }
   // letters
   const count = new Map(); IX.forEach(e => count.set(e.L, (count.get(e.L) || 0) + 1));
   $('#letters').innerHTML = LETTERS.filter(L => count.get(L)).map(L => `<button data-l="${L}" title="${count.get(L)} entries">${ts(L)}</button>`).join('');
@@ -401,8 +405,9 @@ async function boot() {
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
   { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
   garden();
-  // descendant forms, for searching by a daughter-language word
-  fetch('data/dict/reflex.json').then(r => r.json()).then(rx => { RX = rx; if (qi.value.trim()) setQuery(qi.value); });
+  // descendant forms, for searching by a daughter-language word: the largest file, fetched once the page is idle
+  const idle = window.requestIdleCallback || (f => setTimeout(f, 1500));
+  idle(() => fetch('data/dict/reflex.json').then(r => r.json()).then(rx => { RX = rx; if (qi.value.trim()) setQuery(qi.value); }), { timeout: 4000 });
 }
 async function route(push) {
   const p = new URLSearchParams(location.search), id = p.get('e');
