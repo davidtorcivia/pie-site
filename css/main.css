@@ -25,6 +25,8 @@
   --paper: #1e1a14; --ink: #e9e0cc; --chalk: #f6f1e4; --dk: 1; color-scheme: dark; } }
 :root[data-theme="dark"] { --paper: #1e1a14; --ink: #e9e0cc; --chalk: #f6f1e4; --dk: 1; color-scheme: dark; }
 .yellow, [data-tone="yellow"], .nav, .nav-sheet, .ink, [data-tone="ink"] { --ink: var(--night); --paper: var(--bone); color-scheme: light; }
+/* the home page's map is an engraved plate printed on paper: it stays a lit plate, its painted captions dark on paper */
+#s-mig { --ink: var(--night); --paper: var(--bone); color-scheme: light; color: var(--night); }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
