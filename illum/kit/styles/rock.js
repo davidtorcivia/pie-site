@@ -84,12 +84,13 @@ function filler(x0, x1, yTop, yBase, kind, seed, rich = .5) {
 // modest and usual, cups for a part, the sign between a pair for a chapter, a panel at the end; fine, a part's mark rises to
 // the sign; lavish, a chapter's to a panel and the end's panel larger. Each kept in the room the page leaves it.
 function breakMark(cx, y, measure, rank, seed, rich = .5, u = 8, index = 1, room = null) {
-  const lv = lvOf(rich), s = sd(seed), deep = room ? room[1] - room[0] : u * 14, r = rank === 2 ? 3 : rank >= 3 ? 2 : 1;
+  const lv = lvOf(rich), s = sd(seed), deep = room && room[1] - room[0] > 0 ? room[1] - room[0] : u * 14, r = rank === 2 ? 3 : rank >= 3 ? 2 : 1;
   const rr = lv === 0 ? Math.max(1, r - 1) : r === 1 && lv >= 3 ? 2 : r === 2 && lv >= 4 ? 3 : r;
   let job, h;
   if (rr === 1) { h = +Math.min(deep * .9 / .6, u * 4).toFixed(1); job = ['brk', 1, 0, h, s, null]; }
   else if (rr === 2) { h = +Math.min(deep * .9 / .95, u * 5.4).toFixed(1); job = ['brk', 2, 0, h, s, null]; }
   else { h = +Math.min(deep * .92, u * (r === 3 && lv >= 4 ? 17 : 13)).toFixed(1); job = ['brk', 3, +Math.min(measure * .92, h * 4.4).toFixed(1), h, s, null]; }
+  if (!(h > u * .8)) return { marks: [], letters: [] };   // (no room worth a mark: none, rather than a piece sized NaN)
   const p = pieceOf(job), q = piece(cx - p.W / 2, y - p.H / 2, job, 'break' + rr);
   return { marks: [], letters: [q] };
 }

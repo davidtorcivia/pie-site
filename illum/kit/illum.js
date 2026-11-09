@@ -289,7 +289,7 @@ function walk(root, sheet, c) {
     // a written style's: in the free end of the last line, out to the measure, when the gap is worth closing (a heading's
     // run out with a rule; a paragraph's only when a third of the measure is left, the kinds in turn)
     if (W8(el)) { const key = styleAt(el), S = G(key), L = linesOf(el, o, true).at(-1), at = { gap: .8, head: 3, rise: 1, ...S.fillAt }, u = uAt(el); if (!L) return;
-      const head = /^H\d$/.test(el.tagName), x0 = L.right + u * at.gap, x1 = m8[2]; if (x1 - x0 < (head ? u * at.head : (m8[2] - m8[0]) * .3)) return;
+      const head = /^H\d$/.test(el.tagName), er = rel(el, o), x0 = L.right + u * at.gap, x1 = Math.min(m8[2], er[2]); if (x1 - x0 < (head ? u * at.head : (er[2] - er[0]) * .3)) return;
       const k0 = S.kinds(V(key), richAt(el)), kinds = c.vary ? shuffle(k0, c.vary) : k0, kind = head ? 'rule' : kinds[nFillW++ % kinds.length];
       return later(el, 'filler', top(el) + 1, () => ({ marks: S.filler(x0, x1, L.base - u * at.rise, L.base, kind, seed, richAt(el), chapterOf(el)) })); }
     const key = styleAt(el), S = G(key), RICH = richAt(el), SCALE = scaleAt(el), cs = getComputedStyle(el), fs = parseFloat(cs.fontSize), mt = metricOf(`${cs.fontStyle} ${cs.fontWeight} ${fs}px "EB Garamond"`), L = boxes(el, o, sel);
@@ -349,7 +349,12 @@ function walk(root, sheet, c) {
   const nth = {};   // (a written style's break numbered among those of its rank: the chapter's or the book's number)
   root.querySelectorAll(sel.break).forEach((el, k) => { const b = rel(el, o), rank = +el.dataset.rank || 1, cx = (b[0] + b[2]) / 2, y = (b[1] + b[3]) / 2;
     nth[rank] = (nth[rank] ?? 0) + 1;
-    if (W8(el)) return later(el, rank > 1 ? 'book' : 'chapter', b[1], brk(el, cx, y, b[2] - b[0], rank, s(300 + k), nth[rank], [b[1], b[3]]));
+    if (W8(el)) { const over = t => t.l < b[2] && t.r > b[0], up = Math.max(0, ...TEXT.filter(t => over(t) && t.b <= b[1] + 1).map(t => t.b)),
+        dn = Math.min(o.height, ...TEXT.filter(t => over(t) && t.t >= b[3] - 1).map(t => t.t)), pad = uAt(el) * .6;
+      // (the clear band between the text above and below the rule, not its own box: a zero-height <hr> spaced by margins has none)
+      // (only when the rule has no box worth the name: a rule that has one keeps it, as before)
+      const flat = b[3] - b[1] < uAt(el) * 2, room = flat ? [Math.min(b[1], up + pad), Math.max(b[3], dn - pad)] : [b[1], b[3]];
+      return later(el, rank > 1 ? 'book' : 'chapter', b[1], brk(el, cx, flat ? (room[0] + room[1]) / 2 : y, b[2] - b[0], rank, s(300 + k), nth[rank], room)); }
     marks.push({ el, style: styleAt(el), y: b[1], a: pairAt(rank, styleAt(el)), kind: rank > 1 ? 'book' : 'chapter', ax: cx, ay: y, marks: brk(el, cx, y, b[2] - b[0], rank, SEED + 211 * k) }); });
 
   // the guard: after scaling, a stroke or point that would touch a word's box is not drawn (a flourish gives way)
