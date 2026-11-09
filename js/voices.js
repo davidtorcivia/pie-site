@@ -107,15 +107,20 @@ function wireStrips(root, clips) {
   });
 }
 function stages(F) {
-  const ids = ['vtl-m', 'conv-m', 'final-m'], names = ['VocalTractLab', 'converted', 'repaired'];
-  const clips = ids.map(i => F.clips.find(c => c.id === i));
-  $('#stages').innerHTML = `<ol class="strips">${clips.map((c, k) => strip(c, names[k])).join('')}</ol>`;
-  wireStrips($('#stages'), clips);
+  // the first corpus (VocalTractLab) and the second (Chimera): the same line rendered, converted and repaired
+  for (const [sel, ids, names] of [['#stages', ['vtl-m', 'conv1-m', 'final1-m'], ['VocalTractLab', 'converted', 'repaired']],
+                                   ['#stages2', ['chim-m', 'conv-m', 'final-m'], ['Chimera', 'converted', 'repaired']]]) {
+    const host = $(sel); if (!host) continue;
+    const clips = ids.map(i => F.clips.find(c => c.id === i));
+    host.innerHTML = `<ol class="strips">${clips.map((c, k) => strip(c, names[k])).join('')}</ol>`;
+    wireStrips(host, clips);
+  }
 }
 let ladderVoice = 'm';
 function ladder(F) {
   const rungs = [['espeak', 'eSpeak-NG, custom PIE voice'], ['stock', 'Kokoro-82M, stock Hindi voice'], [`vtl-${ladderVoice}`, 'VocalTractLab'],
-    [`conv-${ladderVoice}`, 'converted'], [`final-${ladderVoice}`, 'repaired: the training audio'], [`ours-${ladderVoice}`, 'PIE Kokoro, the voices on this site']];
+    [`first-${ladderVoice}`, 'PIE Kokoro, the first voices'], [`chim-${ladderVoice}`, 'Chimera'], [`final-${ladderVoice}`, 'Chimera, converted and repaired: the training audio'],
+    [`ours-${ladderVoice}`, 'PIE Kokoro, the voices on this site']];
   const clips = rungs.map(([id]) => F.clips.find(c => c.id === id));
   const maxDur = Math.max(...clips.map(c => c.dur));
   $('#ladder').innerHTML = clips.map((c, k) => strip(c, rungs[k][1], ` <span>${c.dur.toFixed(1)} s</span>`).replace('class="st-spec"', `class="st-spec" style="width:${(c.dur / maxDur * 100).toFixed(1)}%"`)).join('');

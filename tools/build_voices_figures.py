@@ -4,10 +4,13 @@ t2-fame-002, n̥sméy ń̥dʰgʷʰitom ḱléwos h₂yéwi dʰedʰh₁dʰí, "Pl
 Sources (tools/voices-src/, copied read-only from the corpus build on tr-desktop and rendered on the Mac's CPU):
   espeak.wav           the custom eSpeak-NG voice (pie.speak, backend espeak, tone)
   kokoro-stock.wav     stock Kokoro-82M, Hindi voice hm_omega (male, as the page defaults to), pitch-patched (pie.speak, backend kokoro)
-  renders-*.wav/.json/.ges   VocalTractLab v10.1 render, its phone timings and gestural score
-  eleven-*.wav         the speech-to-speech conversion of that render
-  murmured-*.wav       after restore.py, retrill.py and murmur.py: the training audio
-  kokoro-pie-*.wav     the fine-tuned Kokoro voices (tools/tts_server.py --say)
+  renders-*.wav/.json/.ges   VocalTractLab v10.1 render, its phone timings and gestural score (the first corpus)
+  chimera-*.wav        the Chimera render of the line (corpus v2, engine dcc37da, on the VocalTractLab phone timings)
+  conv2-m/f.wav        its speech-to-speech conversion into corpus v2's male and female site voices
+  repaired2-m/f.wav    after restoration v2 (chimera-vocal-synth pie/restore_full.py): the training audio
+  kokoro-pie-v3-*-48k.wav   the fine-tuned Kokoro voices (corpus v2, Stage 2 epoch 15; tools/tts_server.py --say,
+                       then the voices' bandwidth extension)
+The first corpus's conversion and repair (eleven-*, murmured-*) and its Kokoro voices (kokoro-pie-*-48k) are the journey's first half.
 
 Writes audio/voices/*.mp3, art/voices/spec-*.webp (spectrograms on the page's paper) and data/voices-figs.json
 (gestural score tiers, phones, F0, clip list, and the h/χ measures of this line before and after the repair).
@@ -39,12 +42,20 @@ CLIPS = [  # id, file, stage label
     ("stock", "kokoro-stock.wav", "Kokoro-82M, stock Hindi voice"),
     ("vtl-m", "renders-JD3-PIE.wav", "VocalTractLab, male"),
     ("vtl-f", "renders-W02-PIE.wav", "VocalTractLab, female"),
-    ("conv-m", "eleven-JD3-PIE.wav", "converted, male"),
-    ("conv-f", "eleven-W02-PIE.wav", "converted, female"),
-    ("final-m", "murmured-JD3-PIE.wav", "repaired, male"),
-    ("final-f", "murmured-W02-PIE.wav", "repaired, female"),
-    ("ours-m", "kokoro-pie-m-48k.wav", "PIE Kokoro, male"),
-    ("ours-f", "kokoro-pie-f-48k.wav", "PIE Kokoro, female"),
+    ("conv1-m", "eleven-JD3-PIE.wav", "first corpus, converted, male"),
+    ("conv1-f", "eleven-W02-PIE.wav", "first corpus, converted, female"),
+    ("final1-m", "murmured-JD3-PIE.wav", "first corpus, repaired, male"),
+    ("final1-f", "murmured-W02-PIE.wav", "first corpus, repaired, female"),
+    ("first-m", "kokoro-pie-m-48k.wav", "PIE Kokoro, first voices, male"),
+    ("first-f", "kokoro-pie-f-48k.wav", "PIE Kokoro, first voices, female"),
+    ("chim-m", "chimera-JD3-PIE.wav", "Chimera, male"),
+    ("chim-f", "chimera-W02-PIE.wav", "Chimera, female"),
+    ("conv-m", "conv2-m.wav", "converted, male"),
+    ("conv-f", "conv2-f.wav", "converted, female"),
+    ("final-m", "repaired2-m.wav", "repaired, male"),
+    ("final-f", "repaired2-f.wav", "repaired, female"),
+    ("ours-m", "kokoro-pie-v3-m-48k.wav", "PIE Kokoro, male"),
+    ("ours-f", "kokoro-pie-v3-f-48k.wav", "PIE Kokoro, female"),
 ]
 
 
@@ -106,11 +117,11 @@ def onset(y):
     return on[0] / SR if len(on) else 0.0
 
 
-# no clip starts with a gap. The male VocalTractLab chain (rendered, converted, repaired) shares one timing with the
-# gestural score and the phone labels, so those clips lose one shared lead (LEAD) and every time in the figures moves
-# by the same amount; every other clip is trimmed at its own onset.
+# no clip starts with a gap. The male chain (VocalTractLab render; the Chimera render made on its phone timings, its
+# conversion and repair) shares one timing with the gestural score and the phone labels, so those clips lose one
+# shared lead (LEAD) and every time in the figures moves by the same amount; every other clip is trimmed at its own onset.
 LEAD = max(0.0, onset(load("renders-JD3-PIE.wav")) - 0.08)
-CHAIN = {"vtl-m", "conv-m", "final-m"}
+CHAIN = {"vtl-m", "conv1-m", "final1-m", "chim-m", "conv-m", "final-m"}
 for cid, f, label in CLIPS:
     y = load(f)
     y = y[int(LEAD * SR):] if cid in CHAIN else trim(y, lead=0.08)
@@ -136,13 +147,14 @@ load24 = lambda f: librosa.resample(load(f), orig_sr=SR, target_sr=SR_SPEC)   # 
 y = load24("renders-JD3-PIE.wav")[int(LEAD * SR_SPEC):]
 f0, vflag, _ = librosa.pyin(y, fmin=60, fmax=300, sr=SR_SPEC, frame_length=1024, hop_length=240)
 out["f0"] = [[round(i * 0.01, 2), round(float(x), 1)] for i, (x, v) in enumerate(zip(f0, vflag)) if v and np.isfinite(x)]
-# the laryngeals of this line through the conversion and the repair (male voice)
-conv, fin = (load24(f)[int(LEAD * SR_SPEC):] for f in ("eleven-JD3-PIE.wav", "murmured-JD3-PIE.wav"))
+# the laryngeals of this line through the conversion and the repair (male voice, corpus v2: the Chimera render)
+y = load24("chimera-JD3-PIE.wav")[int(LEAD * SR_SPEC):]
+conv, fin = (load24(f)[int(LEAD * SR_SPEC):] for f in ("conv2-m.wav", "repaired2-m.wav"))
 lar = []
 for w in ph["words"]:
     for p in w["phones"]:
         if p["phone"] in ("χ", "h"):
-            lar.append({"word": w["word"], "phone": p["phone"], "vtl": share(y, sh(p["start"]), sh(p["end"])),
+            lar.append({"word": w["word"], "phone": p["phone"], "chimera": share(y, sh(p["start"]), sh(p["end"])),
                         "converted": share(conv, sh(p["start"]), sh(p["end"])), "repaired": share(fin, sh(p["start"]), sh(p["end"]))})
 out["laryngeals"] = lar
 print(json.dumps(lar, ensure_ascii=False))

@@ -64,6 +64,9 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 
 /* figures */
 .fig { margin: clamp(36px, 4vw, 60px) auto clamp(44px, 5vw, 76px); max-width: 1180px; }
+.sec .book a, .mat-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.sec .book a:hover, .mat-credit a:hover { text-decoration-thickness: 2px; }
+.fig-shot img { display: block; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 18px 40px -24px rgba(0,0,0,.45); }
 .fig figcaption { font-size: clamp(15px, 1.1vw, 18px); max-width: 680px; margin: 1.1em auto 0; line-height: 1.4; }
 .fig figcaption b { font-family: var(--f-data); font-style: normal; font-size: .72em; letter-spacing: .14em; text-transform: uppercase; margin-right: .5em; }
 .fig-play, .st-play { position: relative; isolation: isolate; border: 0; background: none; cursor: pointer; color: var(--ink); }

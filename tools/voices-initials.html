@@ -7,7 +7,7 @@ import { leafP } from '../js/initials.js';
 await use(new URL('../js/kinds/steppe.js', location.href).href);
 const pal = await fetch('palette.json').then(r => r.json());
 const out = {};
-for (const [i, L] of ['S', 'T', 'V', 'A', 'K', 'W'].entries()) {
+for (const [i, L] of ['S', 'T', 'V', 'A', 'K', 'W', 'C'].entries()) {   // new letters go at the end: the others keep their seeds
   const c = document.createElement('canvas');
   await draw(c, leafP({ random }, i + 90, { ...pal[(i + 2) % pal.length], paper: '#efe7d6' }, L), { size: 360 });
   out[L] = c.toDataURL('image/webp', .9);

@@ -5,5 +5,7 @@ const PORT = process.env.PORT || 4747;
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', args: ['--use-angle=metal', '--enable-gpu'] });
 const p = await b.newPage(); p.on('pageerror', e => console.log('ERR', e.message));
 await p.goto(`http://localhost:${PORT}/tools/voices-initials.html`); await p.waitForFunction(() => document.title === 'done', { timeout: 300000 });
-for (const [k, d] of Object.entries(await p.evaluate(() => window.OUT))) writeFileSync(ROOT + `art/initials/voices/${k}.webp`, Buffer.from(d.split(',')[1], 'base64'));
+// ONLY=C,X writes just those letters (a new section's initial), leaving the published ones untouched
+const ONLY = process.env.ONLY ? new Set(process.env.ONLY.split(',')) : null;
+for (const [k, d] of Object.entries(await p.evaluate(() => window.OUT))) if (!ONLY || ONLY.has(k)) writeFileSync(ROOT + `art/initials/voices/${k}.webp`, Buffer.from(d.split(',')[1], 'base64'));
 await b.close(); console.log('voices initials built');

@@ -18,7 +18,7 @@ from pathlib import Path
 ap = argparse.ArgumentParser()
 ap.add_argument("--port", type=int, default=8766); ap.add_argument("--host", default="127.0.0.1")
 ap.add_argument("--say", nargs=2, metavar=("TEXT", "OUT")); ap.add_argument("--voice", default="m")
-ap.add_argument("--pie", default="/Users/david/AI/PIE"); ap.add_argument("--kokoro", default="/Users/david/AI/pie-runs/tts/kokoro-final-v2")
+ap.add_argument("--pie", default="/Users/david/AI/PIE"); ap.add_argument("--kokoro", default="/Users/david/AI/pie-runs/tts/kokoro-final-v3")
 ap.add_argument("--kikiri", default="/Users/david/AI/pie-runs/tts/kikiri")
 a = ap.parse_args()
 

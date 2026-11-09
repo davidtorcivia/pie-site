@@ -4,7 +4,9 @@ tools/render_hymn_kokoro.py for the model and why its own model code is used).
 Each word is said as a citation form, inside a carrier: "nu. WORD. nu." (each its own sentence, so the word still falls
 as a word said alone) and cut out of it in the middle of the pauses either side. Said alone, the model adds a stray
 vowel before or after a short word and holds stop closures for half a second; mid-phrase it does neither (2026-11-06
-test on the 30 worst words: stray sounds 15 -> 0 of 60 clips, silences over 300 ms 16 -> 0). Every clip is set to the
+test on the 30 worst words: stray sounds 15 -> 0 of 60 clips, silences over 300 ms 16 -> 0). The corpus v2 voices
+(kokoro-final-v3) hold far fewer long closures said alone (tools/dict_alone_test.py, 300 random words: silences over
+300 ms 132/64 -> 11/2, male/female) but not none, so the carrier stays. Every clip is set to the
 same speech loudness (-18 dBFS RMS over its voiced frames) with its peak held under -3 dBFS, carried as 32-bit float
 to the encoder (LAME, highest quality, 96 kbps CBR at the model's own 24 kHz), so nothing clips after decoding. The clips are packed one file per detail shard and voice (audio/dict/NN-<m|f>.mp3), so the whole
 dictionary stays 128 files on Cloudflare; data/dict/audio/NN.json gives each entry's start and length in its shard's
@@ -25,8 +27,10 @@ ap = argparse.ArgumentParser()
 ap.add_argument("mode", choices=["labels", "render"]); ap.add_argument("labels", nargs="?")
 ap.add_argument("-o", "--out", required=True); ap.add_argument("--demo", action="store_true")
 ap.add_argument("--device", default="cpu"); ap.add_argument("--pie", default="/Users/david/AI/PIE")
-ap.add_argument("--kokoro", default="/Users/david/AI/pie-runs/tts/kokoro-final"); ap.add_argument("--kikiri", default="/Users/david/AI/pie-runs/tts/kikiri")
+ap.add_argument("--kokoro", default="/Users/david/AI/pie-runs/tts/kokoro-final-v3"); ap.add_argument("--kikiri", default="/Users/david/AI/pie-runs/tts/kikiri")
 ap.add_argument("--kbps", default="96k")
+ap.add_argument("--part", default="0/1", help="i/n: render only the shards whose number is i mod n (n processes in parallel on one GPU)")
+ap.add_argument("--mem-frac", type=float, default=0.25, help="this process's share of the GPU's memory")
 ap.add_argument("--alone", action="store_true", help="say each word alone, as before 2026-11-06 (no carrier)")
 ap.add_argument("--rms", type=float, default=-18.0, help="speech loudness, dBFS RMS over the voiced frames")
 ap.add_argument("--peak", type=float, default=-3.0, help="sample-peak ceiling, dBFS")
@@ -85,7 +89,7 @@ SR, GAP = 24000, 0.3
 SR_OUT = 48000 if a.bwe else SR
 torch.set_num_threads(4)
 if a.device.startswith("cuda"):
-    torch.cuda.set_per_process_memory_fraction(0.25, 0)                  # the whole card stays under the owner's 0.82
+    torch.cuda.set_per_process_memory_fraction(a.mem_frac, 0)            # all processes together stay under the owner's 0.82
 model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval().to(a.device)
 packs = {n: torch.load(K / f"voices/pie_{n}.pt", weights_only=True).to(a.device) for n in ("m", "f")}
 if a.bwe:
@@ -173,7 +177,10 @@ for i in labels:
     by[zlib.crc32(i.encode()) % 64].append(i)
 (OUT / "audio/dict").mkdir(parents=True, exist_ok=True); (OUT / "data/dict/audio").mkdir(parents=True, exist_ok=True)
 total = 0
+PART, NPART = map(int, a.part.split("/"))
 for s, group in sorted(by.items()):
+    if s % NPART != PART:
+        continue
     if all((OUT / f).exists() for f in (f"data/dict/audio/{s:02d}.json", f"audio/dict/{s:02d}-m.mp3", f"audio/dict/{s:02d}-f.mp3")):
         print(f"shard {s:02d}: already rendered", flush=True); continue      # a resumed run skips finished shards
     offs = defaultdict(dict)

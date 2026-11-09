@@ -1,5 +1,6 @@
-"""Render the Dawn hymn with the project's own Kokoro PIE voices (kokoro_pie_stage2_e10, voices pie_m / pie_f: trained
-on VocalTractLab speech carried into natural voices by speech-to-speech conversion), on the CPU, with word timings
+"""Render the Dawn hymn with the project's own Kokoro PIE voices (kokoro-final-v3, 2026-11-09: corpus v2, Chimera
+renders carried into natural voices by speech-to-speech conversion and repaired, Stage 2 epoch 15; pie_m and pie_f are
+the most accurate male and female of its four voices), on the CPU, with word timings
 from the model's predicted durations. Output: audio/dawn-<m|f>.mp3 + data/hymn-timing.json, and a reading of each corpus leaf: audio/text-<i>-<m|f>.mp3 +
 data/texts-timing.json.
 
@@ -20,7 +21,7 @@ sys.modules["kokoro"] = _pkg
 from kokoro.model import KModel
 
 SITE = Path(__file__).resolve().parents[1]
-K = Path(os.environ.get("PIE_KOKORO", "/Users/david/AI/pie-runs/tts/kokoro-final-v2"))   # model folder: config.json, kokoro_pie_*.pth, voices/
+K = Path(os.environ.get("PIE_KOKORO", "/Users/david/AI/pie-runs/tts/kokoro-final-v3"))   # model folder: config.json, kokoro_pie_*.pth, voices/
 torch.set_num_threads(4)
 model = KModel(config=str(K / "config.json"), model=str(sorted(K.glob("kokoro_pie_*.pth"))[-1])).eval()
 data = json.loads((SITE / "data/site.json").read_text())
