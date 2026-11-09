@@ -75,7 +75,11 @@ button { font: inherit; color: inherit; }
 .mig-pin { position: relative; height: 100svh; overflow: hidden; background: var(--paper); }
 .plate { position: absolute; inset: 0; overflow: hidden; }
 .plate-inner { position: absolute; left: 0; top: 0; width: calc(var(--pw) * 1px); height: calc(var(--ph) * 1px); transform-origin: 0 0; will-change: transform; }
-.relief { position: absolute; inset: 0; background: #2a2219; -webkit-mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; mask-mode: luminance; }
+/* the plate's images (map/*.webp, up to 5.7 MB) are asked for under html.map-near, which js/main.js adds once the
+   hero has arrived: at load they starved the hero's initial and the fonts on a slow connection. Until then the relief
+   (a solid colour under its mask) stays hidden. */
+.relief { position: absolute; inset: 0; background: #2a2219; visibility: hidden; mask-mode: luminance; }
+html.map-near .relief { visibility: visible; -webkit-mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; mask: url(../map/relief-l.webp) 0 0 / 100% 100% no-repeat luminance; }
 .plate svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .plate .rg { font-family: var(--f-book); font-weight: 500; letter-spacing: .5em; fill: #2a2219; }
 .plate .wt { font-family: var(--f-book); font-style: italic; letter-spacing: .12em; fill: #3c4a5e; }
@@ -331,7 +335,8 @@ footer.foot { min-height: 80svh; padding-bottom: 10vh; }
 .mig-p.on { clip-path: inset(0 0 0 0); }
 
 /* the watercolour variant (?map=wc): a wash under the engraving */
-.wash { position: absolute; inset: 0; background: url(../map/wash.webp) 0 0 / 100% 100% no-repeat; display: none; }
+.wash { position: absolute; inset: 0; background: 0 0 / 100% 100% no-repeat; display: none; }
+html.map-near .wash { background-image: url(../map/wash.webp); }
 .map-wc .wash { display: block; }
 .map-wc .relief { background: #241c14; opacity: .85; }
 
@@ -560,7 +565,8 @@ html, body { overflow-x: clip; }
    tools/build_map_phone.mjs) instead of a background under a luminance-masked layer; no paper-tooth or multiply blends
    (each forces another plate-sized surface); the plate is not pinned to its own layer. js/map.js paints it smaller. */
 @media (max-width: 899px) {
-  html.map-wc .wash { display: block; background-image: url(../map/plate-m.webp); }
+  html.map-wc .wash { display: block; }
+  html.map-near .wash { background-image: url(../map/plate-m.webp); }
   .relief { display: none; }
   .plate-inner { will-change: auto; }
   .plate-inner::after { display: none; }

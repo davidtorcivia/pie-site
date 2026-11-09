@@ -620,6 +620,8 @@ async function boot() {
   if (!heroCarved()) await Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]);
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
+  // the plate's images (css/main.css .relief, .wash) come now that the hero's initial and the fonts are in, not at load
+  document.documentElement.classList.add('map-near');
   nav();
   gardens();
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));

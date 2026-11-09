@@ -31,6 +31,24 @@
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/dark.css">
+<!-- the page's whole module graph at once (one round trip, not one per import level), and the type's Google Fonts
+     stylesheet before js/type.js asks for it (the same URL, so the browser hands over the preloaded copy) -->
+<link rel="modulepreload" href="js/main.js">
+<link rel="modulepreload" href="js/translate-api.js">
+<link rel="modulepreload" href="js/type.js">
+<link rel="modulepreload" href="js/hatch.js">
+<link rel="modulepreload" href="js/painter.js">
+<link rel="modulepreload" href="js/illum.js">
+<link rel="modulepreload" href="js/map.js">
+<link rel="modulepreload" href="js/brush.js">
+<link rel="modulepreload" href="js/nav.js">
+<link rel="modulepreload" href="js/theme.js">
+<link rel="modulepreload" href="js/initials.js">
+<link rel="modulepreload" href="js/rubric.js">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Archivo:wdth,wght@62..125,100..900&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800">
+<!-- the hero's printed initial (js/main.js waits for it before the page arrives); ?v= follows ART_V in js/initials.js -->
+<link rel="preload" as="image" href="art/initials/hero.webp?v=4" fetchpriority="high">
+<link rel="preload" as="fetch" href="data/site.json" crossorigin>
 <noscript><style>html.arriving #s-open > * { opacity: 1 !important; }</style></noscript>
 </head>
 <body>
