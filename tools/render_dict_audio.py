@@ -140,15 +140,45 @@ def clip(label, voice):
         y = y[max(0, on[0] * F10 - 1440): (on[-1] + 1) * F10 + 1440] if len(on) else y
     else:
         y, dur = say(PRE + core + ids(".") + POST, packs[voice][min(len("nu. " + label + " nu."), 509) - 1])
-        cum = np.concatenate([[0], np.cumsum(dur)]) * 600                # a duration frame is 600 samples
-        ws, we = cum[1 + len(PRE)] / F10, cum[1 + len(PRE) + len(core) + 1] / F10   # the word, and its full stop
-        e = frames(y); sil = e < e.max() * 0.03
-        n0, _, s1 = pause(sil, int(ws - 40), int(ws + 12))               # the pause after "nu.", the one before " nu."
-        n1, e0, _ = pause(sil, int(we - 15), int(we + 40))
-        if n0 < 4 or n1 < 4:                                             # no clear pause: cut on the model's own timings
+        cum = np.concatenate([[0], np.cumsum(dur)]) * 600 / F10          # 10 ms frames (a duration frame is 600 samples)
+        ws, we = cum[1 + len(PRE)], cum[1 + len(PRE) + len(core) + 1]     # the word, and its full stop
+        e = frames(y); snd = e >= e.max() * 0.03
+        # the render is "nu", a pause, the word, a pause, "nu": its islands of sound (runs of sound joined across
+        # silences under 80 ms, blips under 30 ms dropped). The word is everything between the first island and the
+        # last, cut in the middle of the pauses either side. (2026-11-09: the cut used to take the longest silence
+        # near the word's predicted end; the corpus v2 voices pause less before the second "nu" and their audio runs
+        # ~100-150 ms ahead of the predicted durations, so the silence after that "nu" won and the "nu" stayed in
+        # 1,966 words.) The predicted timings only check that the islands are the ones expected.
+        runs, i, n = [], 0, len(snd)
+        while i < n:
+            j = i
+            while j < n and snd[j] == snd[i]:
+                j += 1
+            if snd[i] and j - i >= 3:
+                if runs and i - runs[-1][1] < 8:
+                    runs[-1][1] = j
+                else:
+                    runs.append([i, j])
+            i = j
+        # each carrier "nu" is the island whose centre is nearest the centre the model's timings give it (less
+        # 100 ms: the audio runs ahead of them); the word is every island between the two. A blip before the first
+        # "nu", a short first syllable cut off by a long closure, a stray after the word: none of them is nearest.
+        n0 = 1 + len(PRE) + len(core) + 2                                 # the second carrier's n (after ". ")
+        c0 = (cum[1] + cum[1 + len(PRE) - 2]) / 2 - 10                    # "nu" of "nu. "
+        c1 = (cum[n0] + cum[n0 + 2]) / 2 - 10                             # "nu" of " nu."
+        mid = [(r[0] + r[1]) / 2 for r in runs]
+        ok = len(runs) >= 3
+        if ok:
+            k0 = min(range(len(runs)), key=lambda k: abs(mid[k] - c0))
+            k1 = min(range(len(runs)), key=lambda k: abs(mid[k] - c1))
+            ok = k1 - k0 >= 2
+        if ok:
+            s1 = (runs[k0][1] + runs[k0 + 1][0]) // 2                     # mid-pause after the first "nu"
+            e0 = (runs[k1 - 1][1] + runs[k1][0]) // 2                     # mid-pause before the second "nu"
+        else:                                                            # no clear pauses: cut on the model's own timings
             FLAGS["no pause"] += 1
-            s1, e0 = int(ws) - 2, int(we) + 4
-        y = y[max(0, s1 - 4) * F10: (e0 + 6) * F10]
+            s1, e0 = int(ws) - 12, int(we) - 10
+        y = y[max(0, s1) * F10: e0 * F10]
         e = frames(y); on = np.where(e > e.max() * 0.03)[0]              # then down to the word itself: 50 ms before, 80 after
         if len(on):
             y = y[max(0, on[0] * F10 - 1200): (on[-1] + 1) * F10 + 1920]
