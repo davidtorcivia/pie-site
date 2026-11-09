@@ -187,10 +187,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
   .pipe-row li + li::after { left: 26px; top: -15px; width: 2px; height: 12px; }
 }
 
-/* illum's rubrication (js/rubric.js). Only when it can run (html.illum): the drop letter is drawn by illum, while the
-   real letter stays in the text, invisible but read and selectable */
-html.illum .ini { color: transparent; }
-html.illum .ini.drop { float: left; line-height: 1; }
+/* illum's rubrication (js/rubric.js; the carved letters' own rule is in main.css): the host for its canvases */
 main.v-art { position: relative; }
 /* the breaks: illum draws its sign or scene in the hr's own box, which must have height (at 0 it measures no room and
    its figure comes out NaN wide); without illum, a quiet rule in the middle of that box */

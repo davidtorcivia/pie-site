@@ -8,6 +8,7 @@ import { colophon } from './colophon.js';
 import { api, failText } from './translate-api.js';
 import { brushStroke } from './brush.js';
 import { ART_V } from './initials.js';
+import { carve, canCarve, NONE } from './rubric.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -296,11 +297,13 @@ function initialFor(form) {
   const m = src.slice(at).match(/^([a-z])([̀-ͯ]*)/i), letter = (m[1].toUpperCase() + m[2]).normalize('NFC');
   return { letter, pre: src.slice(0, at), rest: src.slice(at + m[0].length).normalize('NFC') };
 }
+const CARVE = canCarve();     // the entry's initial and breaks carved by illum (js/rubric.js), else the printed plates
 const initialSrc = L => `art/initials/dict/${[...L.normalize('NFD')].map(c => c.codePointAt(0).toString(16)).join('-')}.webp?v=${ART_V}`;
 
+let carved = null;     // the open entry's carving (js/rubric.js)
 async function openEntry(id, { push = true, scroll = true } = {}) {
   const d = await detail(id); if (!d) return;
-  current = id;
+  current = id; carved?.destroy(); carved = null;
   res.querySelectorAll('.r').forEach(a => a.classList.toggle('on', a.dataset.id === id));
   const ini = initialFor(d.form), star = true;     // every PIE form is a reconstruction
   const meta = [d.class === 'C' ? (d.source?.name === 'coinage' ? 'coined by the project' : 'reconstructed by the project') : null,
@@ -323,7 +326,7 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
   ent.innerHTML = `<div class="e-in">
     <button class="e-back data" aria-label="Back to results">‹ Results</button>
     <header class="e-head">
-      ${ini ? `<img class="e-cap" src="${initialSrc(ini.letter)}" alt="" onerror="this.remove(); this.closest('.e-head')?.classList.add('no-cap')">` : ''}
+      ${!ini ? '' : CARVE ? `<p class="e-cap e-capp" aria-hidden="true"><span class="ini drop" data-lines="4">${esc(ini.letter)}</span></p>` : `<img class="e-cap" src="${initialSrc(ini.letter)}" alt="" onerror="this.remove(); this.closest('.e-head')?.classList.add('no-cap')">`}
       <h2 class="e-form pie">${star ? '<span class="e-star">*</span>' : ''}${ts(d.form)}</h2>
       <p class="e-meta data">${meta.map(esc).join(' · ')}${d.ipa ? `<span class="e-ipa">[${esc(d.ipa)}]</span>` : ''}</p>
       <div class="e-say" hidden><button class="e-play data" aria-label="Listen"><span class="e-play-i" aria-hidden="true"></span>Listen</button>
@@ -331,17 +334,14 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
       ${d.gloss ? `<p class="e-gloss serif">${esc(d.gloss)}</p>` : `<p class="e-gloss serif none">Wiktionary gives no meaning for this form.</p>`}
       ${d.senses?.length > 1 ? `<ol class="e-senses serif">${d.senses.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
     </header>
-    ${sec('Formation', formation)}
-    ${sec('Inflection', paradigm(d.paradigm), 'e-para')}
-    ${sec('Stems (LIV²)', liv)}
-    ${sec('In the corpus', ex, 'e-ex')}
-    ${sec('Descendants', refl, 'e-refl')}
-    ${sec(d.class === 'R' ? 'Words from this root' : 'Related words', family)}
+    ${[sec('Formation', formation), sec('Inflection', paradigm(d.paradigm), 'e-para'), sec('Stems (LIV²)', liv), sec('In the corpus', ex, 'e-ex'),
+      sec('Descendants', refl, 'e-refl'), sec(d.class === 'R' ? 'Words from this root' : 'Related words', family)].filter(Boolean).join(CARVE ? '<hr class="e-br">' : '')}
     <p class="e-src serif">${sourceLine(d.source, d)}</p>
   </div>`;
   // the initial: the letter the entry is filed under, illuminated beside the headword (which is printed whole)
+  // (carved by illum where it can run, after the entry has settled; the printed plates where it cannot)
   const cap = $('.e-cap', ent);
-  if (cap) { const done = () => ent.querySelector('.e-head')?.classList.add('has-cap'); cap.complete && cap.naturalWidth ? done() : cap.addEventListener('load', done, { once: true }); }
+  if (cap) { const done = () => ent.querySelector('.e-head')?.classList.add('has-cap'); cap.tagName !== 'IMG' || (cap.complete && cap.naturalWidth) ? done() : cap.addEventListener('load', done, { once: true }); }
   wireTabs(ent);
   spoken(id).then(o => {
     const box = ent.querySelector('.e-say'); if (!o || !box || current !== id) return;
@@ -353,10 +353,12 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
   });
   ent.querySelector('.e-back').onclick = () => history.length > 1 && history.state?.dict ? history.back() : closeEntry();
   document.documentElement.classList.add('entry-open');
-  if (!reduce && window.gsap) {
-    gsap.from(ent.querySelectorAll('.e-head > *'), { y: 26, opacity: 0, duration: .8, stagger: .06, ease: 'power4.out', clearProps: 'all' });
-    gsap.from(ent.querySelectorAll('.e-sec, .e-src'), { y: 18, opacity: 0, duration: .7, delay: .18, stagger: .07, ease: 'power3.out', clearProps: 'all' });
-  }
+  const tweens = !reduce && window.gsap ? [
+    gsap.from(ent.querySelectorAll('.e-head > *'), { y: 26, opacity: 0, duration: .8, stagger: .06, ease: 'power4.out', clearProps: 'all' }),
+    gsap.from(ent.querySelectorAll('.e-sec, .e-src'), { y: 18, opacity: 0, duration: .7, delay: .18, stagger: .07, ease: 'power3.out', clearProps: 'all' })] : [];
+  // the carving: measured once the entry stands still (the tweens done), and only if it is still the open entry
+  if (CARVE) Promise.all(tweens).then(() => current === id && carve(ent.querySelector('.e-in'), { select: { initial: '.e-capp .ini', drop: '.e-capp .ini', heading: NONE, paraph: NONE, figure: NONE, quote: NONE, filler: '.e-gloss:not(.none)', break: 'hr.e-br' } }))
+    .then(r => { if (!r) return; if (current === id && !carved) carved = r; else r.destroy(); });
   if (scroll) {
     if (phone()) ent.scrollTo({ top: 0 });
     else { const top = $('.dict-main').getBoundingClientRect().top + scrollY - 10; if (scrollY > top) scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' }); }
@@ -366,6 +368,7 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
   if (u.href !== location.href) history[push ? 'pushState' : 'replaceState']({ dict: 1 }, '', u);
 }
 function closeEntry() {
+  carved?.destroy(); carved = null;
   document.documentElement.classList.remove('entry-open');
   state({ e: null }, false);
 }

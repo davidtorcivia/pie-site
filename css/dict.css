@@ -185,3 +185,15 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
 .trc-wait { opacity: .7; margin: .2em 0 0; }
 .trc.busy .trc-wait { animation: trcPulse 1.2s ease-in-out infinite; }
 @keyframes trcPulse { 50% { opacity: .35; } }
+
+/* illum's carving (js/rubric.js, js/dict.js): the entry is its host. The letter the entry is filed under is carved
+   where the printed plate stood, as a drop four lines deep in a paragraph of its own whose four lines are the plate's
+   square (illum sizes a drop by its paragraph's lines; the drop is also where the rock style's figures live). Breaks
+   between the entry's sections are boxes with height (illum draws inside them). */
+.e-in { position: relative; }
+.e-capp { width: auto; height: var(--sq); opacity: 1; transform: none; margin: .1em clamp(16px, 1.8vw, 30px) 10px 0;
+  line-height: calc(var(--sq) / 4); font-size: calc(var(--sq) / 5); font-family: var(--f-book); }
+.e-capp .ini { font-weight: 600; color: #b81d0e; }
+html:not(.illum) .e-capp .ini { float: left; font-size: calc(var(--sq) * 1.3); line-height: .78; }
+hr.e-br { clear: both; border: 0; height: clamp(48px, 5vw, 76px); margin: clamp(22px, 2.6vw, 34px) 0 0; }
+hr.e-br + .e-sec { margin-top: clamp(12px, 1.4vw, 20px); }

@@ -7,6 +7,11 @@ import { mapPlate } from './map.js';
 import { brushGround, brushStroke } from './brush.js';
 import { nav } from './nav.js';
 import { CAP, ART_V } from './initials.js';
+import { carve, canCarve, NONE } from './rubric.js';
+// The hero's P: the printed initialis plate ('plate', the owner's choice), or carved by illum ('carved', tried
+// 2026-11-09 and set aside). One word to swap; ?carved shows the carving for a side-by-side look.
+const HERO_P = new URLSearchParams(location.search).has('carved') ? 'carved' : 'plate';
+const heroCarved = () => HERO_P === 'carved' && canCarve();
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -50,7 +55,10 @@ async function overture() {
   // the P's coloured square spans the title (a third of the width on phones); the horses round it hang outside
   const sq = innerWidth >= 700 ? size : Math.round(innerWidth * .30), pad = CAP.pad, S = sq / (1 - 2 * pad);
   $('.hero-cap').style.setProperty('--hs', S + 'px'); $('.hero-cap').style.setProperty('--hm', `${-S * pad}px ${-S * pad * .6}px ${-S * pad}px ${-S * pad}px`);   // the right-hand horses sit in the gap before the title
-  $('.hero-cap').innerHTML = `<img src="art/initials/hero.webp?v=${ART_V}" alt="" width="100%" height="100%" decoding="async">`;
+  // (carved, it is a drop four lines deep in a paragraph of its own whose four lines are the square: the drop's figures
+  // with it, as a section's opening letter has them)
+  $('.hero-cap').innerHTML = heroCarved() ? `<p class="hero-drop" aria-hidden="true" style="line-height:${sq / 4}px;font-size:${sq / 5}px;padding:${S * pad}px"><span class="ini drop hero-ini" data-lines="4">P</span></p>`
+    : `<img src="art/initials/hero.webp?v=${ART_V}" alt="" width="100%" height="100%" decoding="async">`;
   const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
   place(); addEventListener('repaint', place);
   // the title arrives by CSS alone (html.arrived), so a busy main thread never leaves the header blank
@@ -584,6 +592,19 @@ function gardens() {
 }
 
 const T0 = performance.now(), mark = n => { if (location.search.includes('perf')) console.log('PERF', n, Math.round(performance.now() - T0)); };
+// ---------------------------------------------------------------------------------------------------- carving
+// illum's rock carving (js/rubric.js) where the page is yellow and still: the hero's P (once it has arrived), and the
+// copy beside the reconstruction wheel and above the hymn (fillers at paragraph ends; no paraphs, which want a margin
+// these columns do not have). Not the map (a plate of its own), the moving specimens, or the black bands. Yellow is light in either theme.
+function carving() {
+  const only = sel => ({ theme: 'light', select: { initial: NONE, drop: NONE, heading: NONE, break: NONE, quote: NONE, figure: NONE, code: NONE, pull: NONE,
+    aside: NONE, nav: NONE, paraph: NONE, filler: NONE, ...sel } });
+  const cap = $('.hero-cap'), done = new Promise(r => { cap.addEventListener('animationend', r, { once: true }); setTimeout(r, 1800); });
+  if ($('.hero-ini')) done.then(() => carve(cap, only({ initial: '.hero-ini', drop: '.hero-ini', text: NONE })));
+  carve($('.wheel-copy'), only({ filler: '.wheel-copy > p.serif:not(.cap)' }));
+  carve($('.voice-top'), only({ filler: '.voice-top > p' }));
+}
+
 async function boot() {
   if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');   // watercolour by default; ?map=ink for the plain engraving
   // manuscript sections: the garden margin alternates sides down the page
@@ -596,7 +617,7 @@ async function boot() {
   overture(); mark('overture();');
   // the header's art first: the initial and the garden, then the page arrives (at most 2.5 s)
   const ready = src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; });
-  await Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]);
+  if (!heroCarved()) await Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]);
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
   nav();
@@ -609,6 +630,7 @@ async function boot() {
   voice(data.hymn); mark('voice(data.hymn);');
   specimens(data.specimens); mark('specimens(data.specimens);');
   translator(); mark('translator();');
+  carving();
   // a streak of red paint under the credit line
   { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
 
