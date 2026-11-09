@@ -179,6 +179,10 @@ function boxBlur(A, cw, ch, R, passes = 2) { for (let pass = 0; pass < passes; p
 // from its centre to its shoulders over ~2.5 grains: the zone where the film thins and breaks on the grain
 function settle(F) { const { cw, ch, K } = F; F.z = sm(2.5, 4.5, F.g * (F.zdpr ?? F.dpr));
   const A = boxBlur(K, cw, ch, Math.max(1, Math.round(1.0 * (F.prs ?? F.rp) * F.dpr)));
+  // D, the groove's depth, read by the edge zone (the film thicker at the groove's centre, thinner at its shoulders, its edge
+  // stepping grain by grain): never wider than the figure's own pits; computed only when the zone is open, in one pass, so a
+  // page at its own size, where the zone is shut, is untouched by it. (Lost from here by mistake in stage 12; restored.)
+  F.D = F.z > 0 ? boxBlur(K, cw, ch, Math.max(1, Math.round(Math.min(2 * F.g, 1.6 * (F.prs ?? F.rp)) * F.dpr)), 1) : null;
   for (let i = 0; i < K.length; i++) K[i] = sm(.36, .56, A[i]); }
 const peckedFrom = (F, bb) => { const [x0, y0, x1, y1] = bb; for (let Y = y0; Y <= y1; Y++) for (let X = x0; X <= x1; X++) { const i = Y * F.cw + X; F.K[i] = sm(.02 * F.g, .25 * F.g, -F.H[i]); } };
 export const PROF = {};
