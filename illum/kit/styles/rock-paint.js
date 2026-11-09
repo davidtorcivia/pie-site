@@ -22,8 +22,14 @@ const MIN = [[.34, [.8, .67, .61], 0], [.2, [.82, .77, .72], 0], [.32, [.71, .68
 const mineral = (i, j) => { const u = hash(i, j, 3); let m = 0, acc = MIN[0][0]; while (u > acc && m < 3) acc += MIN[++m][0]; return m; };
 // the granite under a piece: G (height, CSS px) and C (the crystal's colour index), at device resolution.
 // g: the grain size (CSS px); stri: the striations' spacing (CSS px) and angle
+// (a seed's place on the endless rock, kept within ~65 thousand grains of its origin: the crystals' centres are held in 32-bit
+// floats, exact to a 64th of a grain only below ~262 thousand; a page's own seed (a hash, in the millions) put them at
+// 7e8, where they are rounded to whole tens of grains: the rock's relief turned to noise, and where the edge zone opens
+// (a large piece at 2x and up) its peaks took the paint wherever a brush passed, a slab of lit rock round the letter. Seeds
+// below ~990 are where they always were.)
+const wrapOff = v => v < 1e5 ? v : v % 65536;
 export function granite(F, g, { stri = 0, ang = -.32, seed = 1, need = null } = {}) {
-  const { cw, ch, dpr } = F, n = cw * ch, G = new Float32Array(n), C = new Uint8Array(n), B = new Uint8Array(n), N = new Uint8Array(n), ca = Math.cos(ang), sa = Math.sin(ang), ox = seed * 101.3, oy = seed * 57.1;
+  const { cw, ch, dpr } = F, n = cw * ch, G = new Float32Array(n), C = new Uint8Array(n), B = new Uint8Array(n), N = new Uint8Array(n), ca = Math.cos(ang), sa = Math.sin(ang), ox = wrapOff(seed * 101.3), oy = wrapOff(seed * 57.1);
   // the crystals, once each: centre, mineral, facet tilt, height
   const gi0 = Math.floor(ox) - 2, gj0 = Math.floor(oy) - 2, gw = Math.ceil(cw / dpr / g) + 5, gh = Math.ceil(ch / dpr / g) + 5, nc = gw * gh;
   const CX = new Float32Array(nc), CY = new Float32Array(nc), CM = new Uint8Array(nc), TX = new Float32Array(nc), TY = new Float32Array(nc), H0 = new Float32Array(nc);

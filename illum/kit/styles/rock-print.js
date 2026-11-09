@@ -34,9 +34,9 @@ function down(img, w, h, SS) { const { width: W, data: A } = img, Hh = img.heigh
 // opens by the screen's own size (zdpr). By default (stage 12) only below 1.5 device px a CSS px: at 2x a step is half a CSS px.
 export function render(piece0, theme, d, { ss = d < 1.5 ? 2 : 1 } = {}) {
   const piece = painted(piece0), look = LOOK[theme](piece.u ?? 4), F = field(piece.W, piece.H, d);
-  let img; if (ss === 1) img = renderRock(F, piece, look);
-  else { const S2 = field(piece.W, piece.H, d * ss); S2.zdpr = d; img = down(renderRock(S2, piece, look), F.cw, F.ch, ss); }
-  return { img, W: piece.W, H: piece.H, ox: piece.ox, oy: piece.oy };
+  let img, R = F; if (ss === 1) img = renderRock(F, piece, look);
+  else { const S2 = R = field(piece.W, piece.H, d * ss); S2.zdpr = d; img = down(renderRock(S2, piece, look), F.cw, F.ch, ss); }
+  return { img, W: piece.W, H: piece.H, ox: piece.ox, oy: piece.oy, F: R, ss };   // (F: the field it was printed on, for a check)
 }
 // drawn (?draw): the piece pecked pass by pass, then painted stroke by stroke, onto g (its canvas F.cw x F.ch)
 export function writer(piece0, theme, d, cv) { const piece = painted(piece0), F = field(piece.W, piece.H, d); cv.width = F.cw; cv.height = F.ch;
