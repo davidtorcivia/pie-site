@@ -88,6 +88,74 @@ def stack_marks(f, gap_em=0.045):
         added.append(cp)
     f.setGlyphOrder(order); glyf.glyphOrder = order
     return added
+# 3. the rest of PIE's letters, for Newsreader (the face the PIE text is set in): it has none of ₁₂₃ ʰ ʷ ḱ ǵ or the ring
+# below of n̥ r̥ l̥ m̥, so the browser drew ḱ and n̥ in a system font and js/type.js rebuilt ₁₂₃ ʰ ʷ from shrunken digits
+# and letters. Each is made of the face's own parts: ₁₂₃ its superior figures ¹²³ lowered (bottom SUB_BOTTOM below the
+# baseline); ʰ ʷ its h and w scaled MOD_SCALE onto the superior figures' baseline; ḱ ǵ (Ḱ Ǵ) the letter with the acute
+# its own mark-attachment anchors give it (k has one only for the capital-height acute, above its ascender); and the ring
+# below, its ring above scaled RING_SCALE and hung where its dot below hangs, attached by the dot below's anchors.
+PIE_FACES = {'newsreader', 'newsreader-italic'}
+SUB_BOTTOM, MOD_SCALE, RING_SCALE = -0.10, 0.58, 0.85
+def pie_glyphs(f):
+    import copy
+    from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
+    glyf, hm, cmap, order = f['glyf'], f['hmtx'], f.getBestCmap(), list(f.getGlyphOrder()); upm = f['head'].unitsPerEm
+    gpos = f['GPOS'].table; added = []
+    def bb(n): x = glyf[n]; x.recalcBounds(glyf); return x.xMin, x.xMax, x.yMin, x.yMax
+    def subtables():
+        for L in gpos.LookupList.Lookup:
+            for st in L.SubTable:
+                yield (st.ExtSubTable, st.ExtensionLookupType) if L.LookupType == 9 else (st, L.LookupType)
+    def anchor(base, mark):                          # the (dx, dy) that puts mark on base by the font's mark-to-base anchors
+        for s, t in subtables():
+            if t == 4 and mark in s.MarkCoverage.glyphs and base in s.BaseCoverage.glyphs:
+                rec = s.MarkArray.MarkRecord[s.MarkCoverage.glyphs.index(mark)]
+                ba = s.BaseArray.BaseRecord[s.BaseCoverage.glyphs.index(base)].BaseAnchor[rec.Class]
+                if ba is not None:
+                    return ba.XCoordinate - rec.MarkAnchor.XCoordinate, ba.YCoordinate - rec.MarkAnchor.YCoordinate
+        return None
+    def comp(name, x=0, y=0, scale=None):
+        c = GlyphComponent(); c.glyphName = name; c.x = round(x); c.y = round(y); c.flags = 0
+        if scale is not None: c.transform = [[scale, 0], [0, scale]]
+        return c
+    def new(cp, name, comps, adv_from, adv=None, cls=1):
+        if cp is not None and cp in cmap: return
+        g = Glyph(); g.numberOfContours = -1; g.components = comps; glyf.glyphs[name] = g; order.append(name)
+        hm.metrics[name] = (round(adv) if adv is not None else hm.metrics[adv_from][0], 0)
+        if 'HVAR' in f and f['HVAR'].table.AdvWidthMap is not None:
+            f['HVAR'].table.AdvWidthMap.mapping[name] = f['HVAR'].table.AdvWidthMap.mapping[adv_from]
+        if 'GDEF' in f and f['GDEF'].table.GlyphClassDef is not None: f['GDEF'].table.GlyphClassDef.classDefs[name] = cls
+        if cp is not None:
+            for t in f['cmap'].tables:
+                if t.isUnicode(): t.cmap[cp] = name
+            added.append(cp)
+    # ₁₂₃
+    for cp, sup in ((0x2081, 'uni00B9'), (0x2082, 'uni00B2'), (0x2083, 'uni00B3')):
+        if sup in glyf.keys():
+            new(cp, f'uni{cp:04X}', [comp(sup, 0, SUB_BOTTOM * upm - bb(sup)[2])], sup)
+    # ʰ ʷ on the superior figures' baseline
+    if 'uni00B9' in glyf.keys():
+        base_y = bb('uni00B9')[2]
+        for cp, src in ((0x02B0, 'h'), (0x02B7, 'w')):
+            new(cp, f'uni{cp:04X}', [comp(src, 0, base_y, MOD_SCALE)], 'uni00B9', adv=hm.metrics[src][0] * MOD_SCALE)
+    # ḱ ǵ Ḱ Ǵ
+    for cp, base in ((0x1E31, 'k'), (0x01F5, 'g'), (0x1E30, 'K'), (0x01F4, 'G')):
+        for mark in ('acutecomb', 'acutecomb.case'):
+            a = anchor(base, mark) if mark in glyf.keys() else None
+            if a: new(cp, f'uni{cp:04X}', [comp(base), comp(mark, *a)], base); break
+    # the ring below, attached like the dot below
+    if 'uni030A' in glyf.keys() and 'dotbelowcomb' in glyf.keys() and 0x0325 not in cmap:
+        r, d = bb('uni030A'), bb('dotbelowcomb'); s_ = RING_SCALE
+        cx_r, cx_d = (r[0] + r[1]) / 2 * s_, (d[0] + d[1]) / 2
+        new(0x0325, 'uni0325', [comp('uni030A', cx_d - cx_r, d[3] - r[3] * s_, s_)], 'dotbelowcomb', cls=3)
+        for s, t in subtables():
+            cov = s.MarkCoverage if t in (4, 5) else s.Mark1Coverage if t == 6 else None
+            arr = s.MarkArray if t in (4, 5) else s.Mark1Array if t == 6 else None
+            if cov is not None and 'dotbelowcomb' in cov.glyphs:
+                arr.MarkRecord.append(copy.deepcopy(arr.MarkRecord[cov.glyphs.index('dotbelowcomb')])); cov.glyphs.append('uni0325')
+                arr.MarkCount = len(arr.MarkRecord)
+    f.setGlyphOrder(order); glyf.glyphOrder = order
+    return added
 report = {}
 def rngs(cps):
     out = []; 
@@ -98,6 +166,8 @@ def rngs(cps):
 for name, src, axes, gkey in FONTS:
     f = TTFont(os.path.join(SRC, src))
     stacked = stack_marks(f) if name in STACKED else []
+    if name in PIE_FACES:
+        pg = pie_glyphs(f); stacked += pg; print(name, 'PIE glyphs added:', ' '.join(chr(c) for c in pg))
     if stacked: print(name, 'stacked composites added:', ''.join(chr(c) for c in stacked))
     cmap = set(f.getBestCmap().keys())
     have = [cp for cp in cps if cp in cmap]

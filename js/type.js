@@ -2,6 +2,8 @@
 // whole set of faces swaps at once (press F to cycle). PIE is typeset so that any face can set it: the glyphs most
 // faces lack are built from ones they have. Laryngeal digits ₁₂₃ become small figures (.lar), modifier letters
 // ʰ ʷ become raised small letters (.mod), and precomposed accented letters are decomposed to base + combining mark.
+// The site's own set ('steppe') needs none of that: its Newsreader carries ₁₂₃ ʰ ʷ ḱ ǵ ḗ ṓ and the ring below of n̥
+// (tools/build_fonts.py), so there the real characters are set (and copy as themselves).
 
 const G = 'https://fonts.googleapis.com/css2?display=swap&family=';
 
@@ -101,14 +103,14 @@ const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&
 
 // returns HTML: each word in <span class="w">, laryngeals and modifier letters rebuilt in the current face
 export function typeset(text, { words = true } = {}) {
-  const out = [];
+  const out = [], own = document.documentElement.dataset.type === 'steppe';   // the site's own faces have every PIE glyph
   for (const tok of text.normalize('NFD').split(/(\s+)/)) {
     if (!tok) continue;
     if (/^\s+$/.test(tok)) { out.push(tok); continue; }
     let h = '';
     for (const ch of tok) {
-      if (LAR[ch]) h += `<span class="lar">${LAR[ch]}</span>`;
-      else if (MOD[ch]) h += `<span class="mod">${MOD[ch]}</span>`;
+      if (LAR[ch] && !own) h += `<span class="lar">${LAR[ch]}</span>`;
+      else if (MOD[ch] && !own) h += `<span class="mod">${MOD[ch]}</span>`;
       else h += esc(ch);
     }
     out.push(words ? `<span class="w">${h}</span>` : h);
