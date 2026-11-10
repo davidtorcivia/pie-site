@@ -1,10 +1,13 @@
-# Cloudflare Pages headers. Fonts never change: a year. Art, map and audio are sometimes rebuilt under the same name:
+# Cloudflare Pages headers. Fonts and the illum kit (content-named) never change: a year. Art, map and audio are sometimes rebuilt under the same name:
 # a day. Pages, scripts, styles and data change with each deploy: revalidate.
 /art/*
   Cache-Control: public, max-age=86400
 /audio/*
   Cache-Control: public, max-age=86400
 /fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+# illum's kit lives in a directory named by its hash (js/rubric.js): an update is a new directory, so this can be a year
+/illum/*
   Cache-Control: public, max-age=31536000, immutable
 /map/*
   Cache-Control: public, max-age=86400
