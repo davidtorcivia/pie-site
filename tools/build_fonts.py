@@ -46,6 +46,48 @@ FONTS = [  # (output name, source, axis limits, extra google ranges key)
   ('instrumentserif-italic', 'instrumentserif-InstrumentSerif-Italic.ttf', None, 'all'),
   ('jetbrainsmono', 'jetbrainsmono-JetBrainsMono[wght].ttf', {'wght': (400, 400, 700)}, 'jbm'),
 ]
+# 2. ḗ ṓ ḕ ṑ (and capitals): the PIE text is full of ḗ and ṓ (U+1E17, U+1E53: 22,000 in data/), which none of these
+# faces has. Shaped from e + macron + acute, Newsreader stacks the acute beside the macron (no mark-to-mark anchor for it),
+# and under Google's split files Chrome had drawn them in a system font instead. So the serif faces get them as
+# composites of the font's own parts: its ē/ō (letter + macron) with the acute or grave of its é/è above the macron, at
+# the horizontal place (and with the same variations) as in é/è, GAP above the macron's top. In the core file too, so a
+# decomposed e + U+0304 + U+0301 recomposes to it there.
+STACK = [(0x1E17, 'emacron', 'eacute'), (0x1E15, 'emacron', 'egrave'), (0x1E53, 'omacron', 'oacute'), (0x1E51, 'omacron', 'ograve'),
+         (0x1E16, 'Emacron', 'Eacute'), (0x1E14, 'Emacron', 'Egrave'), (0x1E52, 'Omacron', 'Oacute'), (0x1E50, 'Omacron', 'Ograve')]
+STACKED = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic'}
+def stack_marks(f, gap_em=0.045):
+    from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
+    from fontTools.ttLib.tables.TupleVariation import TupleVariation
+    glyf, cmap, order = f['glyf'], f.getBestCmap(), list(f.getGlyphOrder())
+    gap = round(gap_em * f['head'].unitsPerEm); added = []
+    for cp, mac, ref in STACK:
+        if cp in cmap or mac not in glyf.keys() or ref not in glyf.keys(): continue
+        gm, gr = glyf[mac], glyf[ref]
+        if not (gm.isComposite() and gr.isComposite() and len(gm.components) == 2 and len(gr.components) == 2): continue
+        (bm, mm), (br, mk) = gm.components, gr.components
+        if bm.glyphName != br.glyphName: continue
+        top = glyf[mm.glyphName]; top.recalcBounds(glyf); mark = glyf[mk.glyphName]; mark.recalcBounds(glyf)
+        name = mac + ref[1:]                                  # emacronacute, Omacrongrave ...
+        c = GlyphComponent(); c.glyphName = mk.glyphName; c.x = mk.x; c.y = mm.y + top.yMax + gap - mark.yMin; c.flags = 0
+        g = Glyph(); g.numberOfContours = -1; g.components = [bm, mm, c]
+        glyf.glyphs[name] = g; order.append(name)
+        f['hmtx'].metrics[name] = f['hmtx'].metrics[mac]
+        if 'gvar' in f:                                      # deltas: letter + macron from ē, the mark's from é, by region
+            V = f['gvar'].variations; vr = {tuple(sorted(t.axes.items())): t for t in V.get(ref, [])}; out = []
+            for t in V.get(mac, []):
+                r = vr.get(tuple(sorted(t.axes.items())))
+                d = r.coordinates[1] if r is not None else (0, 0)
+                out.append(TupleVariation(t.axes, [t.coordinates[0], t.coordinates[1], d] + list(t.coordinates[2:])))
+            V[name] = out
+        if 'HVAR' in f and f['HVAR'].table.AdvWidthMap is not None:
+            f['HVAR'].table.AdvWidthMap.mapping[name] = f['HVAR'].table.AdvWidthMap.mapping[mac]
+        if 'GDEF' in f and f['GDEF'].table.GlyphClassDef is not None:
+            f['GDEF'].table.GlyphClassDef.classDefs[name] = 1
+        for t in f['cmap'].tables:
+            if t.isUnicode(): t.cmap[cp] = name
+        added.append(cp)
+    f.setGlyphOrder(order); glyf.glyphOrder = order
+    return added
 report = {}
 def rngs(cps):
     out = []; 
@@ -55,6 +97,8 @@ def rngs(cps):
     return ', '.join(f'U+{a:04X}' if a == b else f'U+{a:04X}-{b:04X}' for a, b in out)
 for name, src, axes, gkey in FONTS:
     f = TTFont(os.path.join(SRC, src))
+    stacked = stack_marks(f) if name in STACKED else []
+    if stacked: print(name, 'stacked composites added:', ''.join(chr(c) for c in stacked))
     cmap = set(f.getBestCmap().keys())
     have = [cp for cp in cps if cp in cmap]
     newly = [cp for cp in have if not inr(cp, GOOGLE['all'] + (GOOGLE['jbm'] if gkey == 'jbm' else []))]
@@ -62,7 +106,7 @@ for name, src, axes, gkey in FONTS:
     # the core file does too, so a letter with its marks shapes exactly as it did from the Google service (Chrome falls
     # back for a cluster whose base and marks come from different faces, and whether it does depends on this)
     GMARKS = {0x300, 0x301, 0x303, 0x304, 0x308, 0x309, 0x323}
-    core = [cp for cp in have if inr(cp, LATIN) or cp in GMARKS]; ext = [cp for cp in have if not inr(cp, LATIN)]
+    core = [cp for cp in have if inr(cp, LATIN) or cp in GMARKS or cp in stacked]; ext = [cp for cp in have if not inr(cp, LATIN)]
     if axes:
         f = instancer.instantiateVariableFont(f, {k: instancer.AxisRange(v[0], v[2]) if False else (v[0], v[1], v[2]) for k, v in axes.items()}, inplace=False, updateFontNames=False)
     files = {}

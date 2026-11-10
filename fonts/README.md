@@ -11,6 +11,8 @@ the Velvetyne faces (Basteleur, Compagnon, Gulax, Happy Times, Ouroboros) are th
 | Instrument Serif | github.com/google/fonts ofl/instrumentserif (Rodrigo Fuenzalida, Jordan Egstad) | 1.000 | instrumentserif-core / -ext, instrumentserif-italic-core / -ext |
 | JetBrains Mono | github.com/google/fonts ofl/jetbrainsmono (JetBrains) | 2.211 | jetbrainsmono-core / -ext (wght 400-700) |
 
+The serif faces (Newsreader, Instrument Serif) also carry ḗ ṓ ḕ ṑ as composites of their own ē/ō and é/è parts, built by tools/build_fonts.py: none of these faces has them, and Newsreader shaped e + macron + acute with the acute beside the macron.
+
 The file names carry a hash of their content (fonts/* is cached for a year, immutable). To rebuild after the site's
 characters change: fetch the source TTFs from google/fonts into a folder and run `tools/build_fonts.py <that folder>
 fonts` from the site root with fontTools and brotli installed; it writes the new files and css/fonts.css. Then delete
