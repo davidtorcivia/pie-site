@@ -10,8 +10,9 @@ the Velvetyne faces (Basteleur, Compagnon, Gulax, Happy Times, Ouroboros) are th
 | Newsreader | github.com/google/fonts ofl/newsreader (Production Type) | 1.003 | newsreader-core / -ext, newsreader-italic-core / -ext (wght 400-700, opsz 6-72) |
 | Instrument Serif | github.com/google/fonts ofl/instrumentserif (Rodrigo Fuenzalida, Jordan Egstad) | 1.000 | instrumentserif-core / -ext, instrumentserif-italic-core / -ext |
 | JetBrains Mono | github.com/google/fonts ofl/jetbrainsmono (JetBrains) | 2.211 | jetbrainsmono-core / -ext (wght 400-700) |
+| PIE Serif (Noto Serif) | github.com/google/fonts ofl/notoserif (notofonts/latin-greek-cyrillic) | 2.x (as in google/fonts main, 2026-11-09) | pieserif-core, pieserif-italic-core: only what Newsreader lacks (IPA letters, Greek, Cyrillic); behind Newsreader in every stack |
 
-The serif faces (Newsreader, Instrument Serif) also carry ḗ ṓ ḕ ṑ as composites of their own ē/ō and é/è parts, built by tools/build_fonts.py: none of these faces has them, and Newsreader shaped e + macron + acute with the acute beside the macron.
+The serif faces (Newsreader, Instrument Serif) also carry ḗ ṓ ḕ ṑ as composites of their own ē/ō and é/è parts, built by tools/build_fonts.py: none of these faces has them, and Newsreader shaped e + macron + acute with the acute beside the macron. Newsreader also gets ₁₂₃ ʰ ʷ ḱ ǵ and the ring, inverted breve and vertical line below (n̥ u̯ r̩), from its own figures, letters and marks.
 
 The file names carry a hash of their content (fonts/* is cached for a year, immutable). To rebuild after the site's
 characters change: fetch the source TTFs from google/fonts into a folder and run `tools/build_fonts.py <that folder>

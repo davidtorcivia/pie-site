@@ -8,12 +8,12 @@
   --blue: #2633c9;
   --moss: #2e5b3a;
   --chalk: #f6f1e4;
-  --f-display: 'Archivo', system-ui, sans-serif; --w-display: 900; --v-display: 'wdth' 125; --s-display: normal;
-  --f-pie: 'Archivo', system-ui, sans-serif; --w-pie: 800; --v-pie: normal; --s-pie: normal;
-  --f-serif: 'Instrument Serif', Georgia, serif; --w-serif: 400; --v-serif: normal; --s-serif: italic;
-  --f-book: 'Newsreader', Georgia, serif; --w-book: 500; --v-book: normal; --s-book: normal;
-  --f-data: 'JetBrains Mono', ui-monospace, monospace; --w-data: 500; --v-data: normal; --s-data: normal;
-  --f-accent: 'Basteleur', Georgia, serif; --w-accent: 700; --v-accent: normal; --s-accent: normal;
+  --f-display: 'Archivo', 'Newsreader', 'PIE Serif', system-ui, sans-serif; --w-display: 900; --v-display: 'wdth' 125; --s-display: normal;
+  --f-pie: 'Archivo', 'Newsreader', 'PIE Serif', system-ui, sans-serif; --w-pie: 800; --v-pie: normal; --s-pie: normal;
+  --f-serif: 'Instrument Serif', 'Newsreader', 'PIE Serif', Georgia, serif; --w-serif: 400; --v-serif: normal; --s-serif: italic;
+  --f-book: 'Newsreader', 'PIE Serif', Georgia, serif; --w-book: 500; --v-book: normal; --s-book: normal;
+  --f-data: 'JetBrains Mono', 'PIE Serif', ui-monospace, monospace; --w-data: 500; --v-data: normal; --s-data: normal;
+  --f-accent: 'Basteleur', 'Newsreader', 'PIE Serif', Georgia, serif; --w-accent: 700; --v-accent: normal; --s-accent: normal;
   --gut: clamp(16px, 3.2vw, 48px);
 }
 /* Dark, only when the reader asks for it with the nav's toggle (js/theme.js): the site is light by default, whatever

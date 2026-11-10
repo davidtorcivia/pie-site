@@ -63,7 +63,8 @@ export function applySet(i) {
   const r = document.documentElement.style;
   for (const role of ROLES) {
     const [fam, w, v, st] = set[role] || set.book;   // PIE is set in the book face
-    r.setProperty(`--f-${role}`, `${fam}, system-ui, sans-serif`);
+    // behind each face (but the data face): Newsreader for the PIE letters it carries, then PIE Serif (css/fonts.css)
+    r.setProperty(`--f-${role}`, role === 'data' ? `${fam}, 'PIE Serif', ui-monospace, monospace` : `${fam}, 'Newsreader', 'PIE Serif', system-ui, sans-serif`);
     r.setProperty(`--w-${role}`, w);
     r.setProperty(`--v-${role}`, v || 'normal');
     r.setProperty(`--s-${role}`, st || 'normal');

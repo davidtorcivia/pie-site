@@ -45,7 +45,13 @@ FONTS = [  # (output name, source, axis limits, extra google ranges key)
   ('instrumentserif', 'instrumentserif-InstrumentSerif-Regular.ttf', None, 'all'),
   ('instrumentserif-italic', 'instrumentserif-InstrumentSerif-Italic.ttf', None, 'all'),
   ('jetbrainsmono', 'jetbrainsmono-JetBrainsMono[wght].ttf', {'wght': (400, 400, 700)}, 'jbm'),
+  # 'PIE Serif': Noto Serif (OFL, notofonts/latin-greek-cyrillic) behind Newsreader in every font stack, for what Newsreader
+  # still lacks (IPA letters ɣ ɟ ɡ ʱ ˀ ..., Greek and Cyrillic daughter forms), so those draw in a serif on every system
+  # instead of the system's sans; one file per style holding exactly those characters
+  ('pieserif', 'notoserif-NotoSerif[wdth,wght].ttf', {'wght': (400, 400, 700), 'wdth': 100}, 'fallback'),
+  ('pieserif-italic', 'notoserif-NotoSerif-Italic[wdth,wght].ttf', {'wght': (400, 400, 700), 'wdth': 100}, 'fallback'),
 ]
+NR_CMAP = set()                                      # Newsreader's final characters (roman and italic): the fallback skips them
 # 2. ḗ ṓ ḕ ṑ (and capitals): the PIE text is full of ḗ and ṓ (U+1E17, U+1E53: 22,000 in data/), which none of these
 # faces has. Shaped from e + macron + acute, Newsreader stacks the acute beside the macron (no mark-to-mark anchor for it),
 # and under Google's split files Chrome had drawn them in a system font instead. So the serif faces get them as
@@ -93,14 +99,16 @@ def stack_marks(f, gap_em=0.045):
 # and letters. Each is made of the face's own parts: ₁₂₃ its superior figures ¹²³ lowered (bottom SUB_BOTTOM below the
 # baseline); ʰ ʷ its h and w scaled MOD_SCALE onto the superior figures' baseline; ḱ ǵ (Ḱ Ǵ) the letter with the acute
 # its own mark-attachment anchors give it (k has one only for the capital-height acute, above its ascender); and the ring
-# below, its ring above scaled RING_SCALE and hung where its dot below hangs, attached by the dot below's anchors.
-PIE_FACES = {'newsreader', 'newsreader-italic'}
-SUB_BOTTOM, MOD_SCALE, RING_SCALE = -0.10, 0.58, 0.85
-def pie_glyphs(f):
+# below, its ring above scaled RING_SCALE and hung where its dot below hangs, attached by the dot below's anchors; the
+# inverted breve below of u̯ i̯ (its breve below turned over) and the vertical line below of r̩ l̩ (its bar, shortened).
+PIE_FACES = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic'}
+SUB_BOTTOM, MOD_SCALE, RING_SCALE, LINE_LEN, FIG_SCALE = -0.10, 0.58, 0.85, 0.13, 0.62
+def pie_glyphs(f, cps):
     import copy
     from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
     glyf, hm, cmap, order = f['glyf'], f['hmtx'], f.getBestCmap(), list(f.getGlyphOrder()); upm = f['head'].unitsPerEm
     gpos = f['GPOS'].table; added = []
+    if 'HVAR' not in f and 'gvar' not in f: pass      # a static face: plain composites
     def bb(n): x = glyf[n]; x.recalcBounds(glyf); return x.xMin, x.xMax, x.yMin, x.yMax
     def subtables():
         for L in gpos.LookupList.Lookup:
@@ -130,30 +138,49 @@ def pie_glyphs(f):
                 if t.isUnicode(): t.cmap[cp] = name
             added.append(cp)
     # ₁₂₃
-    for cp, sup in ((0x2081, 'uni00B9'), (0x2082, 'uni00B2'), (0x2083, 'uni00B3')):
+    for cp, sup, fig in ((0x2081, 'uni00B9', 'one'), (0x2082, 'uni00B2', 'two'), (0x2083, 'uni00B3', 'three')):
         if sup in glyf.keys():
             new(cp, f'uni{cp:04X}', [comp(sup, 0, SUB_BOTTOM * upm - bb(sup)[2])], sup)
-    # ʰ ʷ on the superior figures' baseline
-    if 'uni00B9' in glyf.keys():
-        base_y = bb('uni00B9')[2]
+        elif fig in glyf.keys():                     # a face without superior figures (Instrument Serif): its figures, scaled
+            new(cp, f'uni{cp:04X}', [comp(fig, 0, SUB_BOTTOM * upm, FIG_SCALE)], fig, adv=hm.metrics[fig][0] * FIG_SCALE)
+    # ʰ ʷ on the superior figures' baseline (or, without them, with ʰ's top at h's)
+    base_y = bb('uni00B9')[2] if 'uni00B9' in glyf.keys() else bb('h')[3] * (1 - MOD_SCALE) if 'h' in glyf.keys() else None
+    if base_y is not None:
         for cp, src in ((0x02B0, 'h'), (0x02B7, 'w')):
-            new(cp, f'uni{cp:04X}', [comp(src, 0, base_y, MOD_SCALE)], 'uni00B9', adv=hm.metrics[src][0] * MOD_SCALE)
-    # ḱ ǵ Ḱ Ǵ
-    for cp, base in ((0x1E31, 'k'), (0x01F5, 'g'), (0x1E30, 'K'), (0x01F4, 'G')):
-        for mark in ('acutecomb', 'acutecomb.case'):
+            new(cp, f'uni{cp:04X}', [comp(src, 0, base_y, MOD_SCALE)], 'uni00B9' if 'uni00B9' in glyf.keys() else src, adv=hm.metrics[src][0] * MOD_SCALE)
+    # ḱ ǵ Ḱ Ǵ ḿ ...: every precomposed letter + one mark the site uses that the face lacks, placed by the face's own
+    # anchors (the capital-height form of the mark where the letter has an anchor only for that, as k for the acute)
+    rev = {v: k for k, v in f.getBestCmap().items()}
+    for cp in [c for c in cps if c not in cmap]:
+        d = unicodedata.decomposition(chr(cp)).split()
+        if len(d) != 2 or d[0].startswith('<'): continue
+        base, mk = (f.getBestCmap().get(int(x, 16)) for x in d)
+        if not base or not mk or unicodedata.category(chr(int(d[1], 16))) != 'Mn': continue
+        for mark in (mk, mk + '.case'):
             a = anchor(base, mark) if mark in glyf.keys() else None
             if a: new(cp, f'uni{cp:04X}', [comp(base), comp(mark, *a)], base); break
-    # the ring below, attached like the dot below
+    def attach_like(name, like):                     # a new mark glyph takes the mark class and anchor of an existing one
+        for s, t in subtables():
+            cov = s.MarkCoverage if t in (4, 5) else s.Mark1Coverage if t == 6 else None
+            arr = s.MarkArray if t in (4, 5) else s.Mark1Array if t == 6 else None
+            if cov is not None and like in cov.glyphs:
+                arr.MarkRecord.append(copy.deepcopy(arr.MarkRecord[cov.glyphs.index(like)])); cov.glyphs.append(name)
+                arr.MarkCount = len(arr.MarkRecord)
+    # the ring below (n̥ r̥ l̥ m̥): the ring above scaled RING_SCALE, hung and attached like the dot below
     if 'uni030A' in glyf.keys() and 'dotbelowcomb' in glyf.keys() and 0x0325 not in cmap:
         r, d = bb('uni030A'), bb('dotbelowcomb'); s_ = RING_SCALE
         cx_r, cx_d = (r[0] + r[1]) / 2 * s_, (d[0] + d[1]) / 2
         new(0x0325, 'uni0325', [comp('uni030A', cx_d - cx_r, d[3] - r[3] * s_, s_)], 'dotbelowcomb', cls=3)
-        for s, t in subtables():
-            cov = s.MarkCoverage if t in (4, 5) else s.Mark1Coverage if t == 6 else None
-            arr = s.MarkArray if t in (4, 5) else s.Mark1Array if t == 6 else None
-            if cov is not None and 'dotbelowcomb' in cov.glyphs:
-                arr.MarkRecord.append(copy.deepcopy(arr.MarkRecord[cov.glyphs.index('dotbelowcomb')])); cov.glyphs.append('uni0325')
-                arr.MarkCount = len(arr.MarkRecord)
+        attach_like('uni0325', 'dotbelowcomb')
+    # the inverted breve below (u̯ i̯): the breve below turned over in place, attached like it
+    if 'uni032E' in glyf.keys() and 0x032F not in cmap:
+        b_ = bb('uni032E'); c = comp('uni032E', b_[0] + b_[1], b_[2] + b_[3]); c.transform = [[-1, 0], [0, -1]]
+        new(0x032F, 'uni032F', [c], 'uni032E', cls=3); attach_like('uni032F', 'uni032E')
+    # the vertical line below (r̩ l̩ m̩ n̩): the bar, LINE_LEN em long, hung from the dot below's top, attached like it
+    if 'bar' in glyf.keys() and 'dotbelowcomb' in glyf.keys() and 0x0329 not in cmap:
+        b_, d = bb('bar'), bb('dotbelowcomb'); sy = LINE_LEN * upm / (b_[3] - b_[2]); sx = 0.8
+        c = comp('bar', -(b_[0] + b_[1]) / 2 * sx + (d[0] + d[1]) / 2, d[3] - b_[3] * sy); c.transform = [[sx, 0], [0, sy]]
+        new(0x0329, 'uni0329', [c], 'dotbelowcomb', cls=3); attach_like('uni0329', 'dotbelowcomb')
     f.setGlyphOrder(order); glyf.glyphOrder = order
     return added
 report = {}
@@ -167,18 +194,20 @@ for name, src, axes, gkey in FONTS:
     f = TTFont(os.path.join(SRC, src))
     stacked = stack_marks(f) if name in STACKED else []
     if name in PIE_FACES:
-        pg = pie_glyphs(f); stacked += pg; print(name, 'PIE glyphs added:', ' '.join(chr(c) for c in pg))
+        pg = pie_glyphs(f, cps); stacked += pg; print(name, 'PIE glyphs added:', ' '.join(chr(c) for c in pg))
     if stacked: print(name, 'stacked composites added:', ''.join(chr(c) for c in stacked))
     cmap = set(f.getBestCmap().keys())
-    have = [cp for cp in cps if cp in cmap]
+    if name.startswith('newsreader'): NR_CMAP |= cmap
+    have = [cp for cp in cps if cp in cmap and (gkey != 'fallback' or (cp not in NR_CMAP and cp > 0x7f and unicodedata.category(chr(cp))[0] in 'LM'))]
     newly = [cp for cp in have if not inr(cp, GOOGLE['all'] + (GOOGLE['jbm'] if gkey == 'jbm' else []))]
     # Google's "latin" files carry these combining marks beyond their declared range (0300 0301 0303 0304 0308 0309 0323);
     # the core file does too, so a letter with its marks shapes exactly as it did from the Google service (Chrome falls
     # back for a cluster whose base and marks come from different faces, and whether it does depends on this)
     GMARKS = {0x300, 0x301, 0x303, 0x304, 0x308, 0x309, 0x323}
     core = [cp for cp in have if inr(cp, LATIN) or cp in GMARKS or cp in stacked]; ext = [cp for cp in have if not inr(cp, LATIN)]
+    if gkey == 'fallback': core, ext = have, []
     if axes:
-        f = instancer.instantiateVariableFont(f, {k: instancer.AxisRange(v[0], v[2]) if False else (v[0], v[1], v[2]) for k, v in axes.items()}, inplace=False, updateFontNames=False)
+        f = instancer.instantiateVariableFont(f, {k: v if isinstance(v, (int, float)) else (v[0], v[1], v[2]) for k, v in axes.items()}, inplace=False, updateFontNames=False)
     files = {}
     for part, lst in (('core', core), ('ext', ext)):
         if not lst: continue
