@@ -17,7 +17,8 @@ const LOCAL = [
 
 // a set: family names plus the variation/weight each role uses; google: families to fetch
 export const SETS = [
-  { name: 'steppe', google: ['Archivo:wdth,wght@62..125,100..900', 'Instrument+Serif:ital@0;1', 'JetBrains+Mono:wght@400;700', 'Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800'],
+  // the site's own set: its four faces are self-hosted (css/fonts.css, fonts/), nothing to fetch from Google
+  { name: 'steppe', google: [],
     book: ["'Newsreader'", 500, "'opsz' 18"],
     display: ["'Archivo'", 900, "'wdth' 125"], pie: null, serif: ["'Instrument Serif'", 400, 'normal', 'italic'],
     data: ["'JetBrains Mono'", 500], accent: ["'Basteleur'", 700] },
@@ -47,6 +48,7 @@ function loadLocal() {
 }
 
 function loadGoogle(fams) {
+  if (!fams.length) return;
   const href = G + fams.join('&family=');
   if (loaded.has(href)) return;
   loaded.add(href);
