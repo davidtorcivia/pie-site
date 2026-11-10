@@ -31,7 +31,12 @@ export async function carve(host, opts = {}) {
   const { root = host, ...o } = opts;
   const r = m.rubricate(root, { host, style: 'rock', rich: 0.5, draw: 'still', ...o });
   const on = () => r.redraw(); addEventListener('themechange', on);
-  return { redraw: () => r.redraw(), destroy() { removeEventListener('themechange', on); r.destroy(); } };
+  // illum relays out when the host's width changes; content that arrives later (the /model charts, an entry's
+  // sections) changes its height and moves the text under the marks, so a height change redraws too
+  let lastH = host.clientHeight, timer;
+  const ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => { if (host.clientHeight !== lastH) { lastH = host.clientHeight; r.redraw(); } }, 200); });
+  ro.observe(host);
+  return { redraw: () => r.redraw(), destroy() { ro.disconnect(); clearTimeout(timer); removeEventListener('themechange', on); r.destroy(); } };
 }
 
 // the article pages
