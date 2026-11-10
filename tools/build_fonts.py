@@ -60,7 +60,38 @@ NR_CMAP = set()                                      # Newsreader's final charac
 # decomposed e + U+0304 + U+0301 recomposes to it there.
 STACK = [(0x1E17, 'emacron', 'eacute'), (0x1E15, 'emacron', 'egrave'), (0x1E53, 'omacron', 'oacute'), (0x1E51, 'omacron', 'ograve'),
          (0x1E16, 'Emacron', 'Eacute'), (0x1E14, 'Emacron', 'Egrave'), (0x1E52, 'Omacron', 'Oacute'), (0x1E50, 'Omacron', 'Ograve')]
-STACKED = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic'}
+STACKED = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic', 'jetbrainsmono'}
+# ā́ ī́ ū́ (and ḗ ṓ shaped from ē/ō + acute) have no precomposed form: the shaper puts the acute on ā by ā's own top anchor,
+# which each face sets at its plain letter's height, beside the macron. Each face's ā ē ī ō ū (and capitals) get an
+# acute (and grave) anchor above the macron instead, GAP over it.
+def macron_anchors(f, gap_em=0.045):
+    from fontTools.ttLib.tables import otTables as ot
+    glyf = f['glyf']; gap = round(gap_em * f['head'].unitsPerEm); done = 0
+    def bb(n): x = glyf[n]; x.recalcBounds(glyf); return x.xMin, x.xMax, x.yMin, x.yMax
+    gpos = f['GPOS'].table
+    for L in gpos.LookupList.Lookup:
+        for st in L.SubTable:
+            s, t = (st.ExtSubTable, st.ExtensionLookupType) if L.LookupType == 9 else (st, L.LookupType)
+            if t != 4: continue
+            mk, bs = s.MarkCoverage.glyphs, s.BaseCoverage.glyphs
+            for mark in ('acutecomb', 'gravecomb', 'acutecomb.case', 'gravecomb.case'):
+                if mark not in mk: continue
+                rec = s.MarkArray.MarkRecord[mk.index(mark)]; cls = rec.Class; m = bb(mark)
+                for mac in ('amacron', 'emacron', 'imacron', 'omacron', 'umacron', 'Amacron', 'Emacron', 'Imacron', 'Omacron', 'Umacron'):
+                    if mac not in glyf.keys(): continue
+                    letter = mac[:-6]; letter = {'i': 'dotlessi'}.get(letter, letter)
+                    if mac not in bs:                    # no entry: the plain letter's, inserted in glyph order
+                        if letter not in bs: continue
+                        import copy; gid = f.getGlyphID; i = next((k for k, b in enumerate(bs) if gid(b) > gid(mac)), len(bs))
+                        bs.insert(i, mac); s.BaseArray.BaseRecord.insert(i, copy.deepcopy(s.BaseArray.BaseRecord[bs.index(letter)]))
+                        s.BaseArray.BaseCount = len(s.BaseArray.BaseRecord)
+                    ref = s.BaseArray.BaseRecord[bs.index(letter)].BaseAnchor[cls] if letter in bs else None
+                    a = s.BaseArray.BaseRecord[bs.index(mac)].BaseAnchor[cls]
+                    x = (ref or a).XCoordinate if (ref or a) is not None else (bb(mac)[0] + bb(mac)[1]) // 2
+                    y = bb(mac)[3] + gap - m[2] + rec.MarkAnchor.YCoordinate
+                    na = ot.Anchor(); na.Format = 1; na.XCoordinate = round(x); na.YCoordinate = round(y)
+                    s.BaseArray.BaseRecord[bs.index(mac)].BaseAnchor[cls] = na; done += 1
+    return done
 def stack_marks(f, gap_em=0.045):
     from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
     from fontTools.ttLib.tables.TupleVariation import TupleVariation
@@ -87,6 +118,8 @@ def stack_marks(f, gap_em=0.045):
             V[name] = out
         if 'HVAR' in f and f['HVAR'].table.AdvWidthMap is not None:
             f['HVAR'].table.AdvWidthMap.mapping[name] = f['HVAR'].table.AdvWidthMap.mapping[mac]
+        elif 'HVAR' in f:                                # advances indexed by glyph id (JetBrains Mono): leave them to gvar
+            del f['HVAR']
         if 'GDEF' in f and f['GDEF'].table.GlyphClassDef is not None:
             f['GDEF'].table.GlyphClassDef.classDefs[name] = 1
         for t in f['cmap'].tables:
@@ -101,12 +134,13 @@ def stack_marks(f, gap_em=0.045):
 # its own mark-attachment anchors give it (k has one only for the capital-height acute, above its ascender); and the ring
 # below, its ring above scaled RING_SCALE and hung where its dot below hangs, attached by the dot below's anchors; the
 # inverted breve below of u̯ i̯ (its breve below turned over) and the vertical line below of r̩ l̩ (its bar, shortened).
-PIE_FACES = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic'}
+PIE_FACES = {'newsreader', 'newsreader-italic', 'instrumentserif', 'instrumentserif-italic', 'jetbrainsmono'}
 SUB_BOTTOM, MOD_SCALE, RING_SCALE, LINE_LEN, FIG_SCALE = -0.10, 0.58, 0.85, 0.13, 0.62
 def pie_glyphs(f, cps):
     import copy
     from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
     glyf, hm, cmap, order = f['glyf'], f['hmtx'], f.getBestCmap(), list(f.getGlyphOrder()); upm = f['head'].unitsPerEm
+    import math; slant = math.tan(math.radians(-f['post'].italicAngle))   # an italic's figures move along its slant
     gpos = f['GPOS'].table; added = []
     if 'HVAR' not in f and 'gvar' not in f: pass      # a static face: plain composites
     def bb(n): x = glyf[n]; x.recalcBounds(glyf); return x.xMin, x.xMax, x.yMin, x.yMax
@@ -140,14 +174,15 @@ def pie_glyphs(f, cps):
     # ₁₂₃
     for cp, sup, fig in ((0x2081, 'uni00B9', 'one'), (0x2082, 'uni00B2', 'two'), (0x2083, 'uni00B3', 'three')):
         if sup in glyf.keys():
-            new(cp, f'uni{cp:04X}', [comp(sup, 0, SUB_BOTTOM * upm - bb(sup)[2])], sup)
+            dy = SUB_BOTTOM * upm - bb(sup)[2]
+            new(cp, f'uni{cp:04X}', [comp(sup, dy * slant, dy)], sup)
         elif fig in glyf.keys():                     # a face without superior figures (Instrument Serif): its figures, scaled
-            new(cp, f'uni{cp:04X}', [comp(fig, 0, SUB_BOTTOM * upm, FIG_SCALE)], fig, adv=hm.metrics[fig][0] * FIG_SCALE)
+            new(cp, f'uni{cp:04X}', [comp(fig, SUB_BOTTOM * upm * slant, SUB_BOTTOM * upm, FIG_SCALE)], fig, adv=hm.metrics[fig][0] * FIG_SCALE)
     # ʰ ʷ on the superior figures' baseline (or, without them, with ʰ's top at h's)
     base_y = bb('uni00B9')[2] if 'uni00B9' in glyf.keys() else bb('h')[3] * (1 - MOD_SCALE) if 'h' in glyf.keys() else None
     if base_y is not None:
         for cp, src in ((0x02B0, 'h'), (0x02B7, 'w')):
-            new(cp, f'uni{cp:04X}', [comp(src, 0, base_y, MOD_SCALE)], 'uni00B9' if 'uni00B9' in glyf.keys() else src, adv=hm.metrics[src][0] * MOD_SCALE)
+            new(cp, f'uni{cp:04X}', [comp(src, base_y * slant, base_y, MOD_SCALE)], 'uni00B9' if 'uni00B9' in glyf.keys() else src, adv=hm.metrics[src][0] * MOD_SCALE)
     # ḱ ǵ Ḱ Ǵ ḿ ...: every precomposed letter + one mark the site uses that the face lacks, placed by the face's own
     # anchors (the capital-height form of the mark where the letter has an anchor only for that, as k for the acute)
     rev = {v: k for k, v in f.getBestCmap().items()}
@@ -159,6 +194,10 @@ def pie_glyphs(f, cps):
         for mark in (mk, mk + '.case'):
             a = anchor(base, mark) if mark in glyf.keys() else None
             if a: new(cp, f'uni{cp:04X}', [comp(base), comp(mark, *a)], base); break
+        else:                                        # no anchor in the face (JetBrains Mono's k): centred, GAP above the letter
+            if cp in f.getBestCmap() or unicodedata.combining(chr(int(d[1], 16))) != 230: continue   # marks above only
+            bx, mx = bb(base), bb(mk); gap = round(0.06 * upm)
+            new(cp, f'uni{cp:04X}', [comp(base), comp(mk, (bx[0] + bx[1]) / 2 - (mx[0] + mx[1]) / 2, max(0, bx[3] + gap - mx[2]))], base)
     def attach_like(name, like):                     # a new mark glyph takes the mark class and anchor of an existing one
         for s, t in subtables():
             cov = s.MarkCoverage if t in (4, 5) else s.Mark1Coverage if t == 6 else None
@@ -193,6 +232,7 @@ def rngs(cps):
 for name, src, axes, gkey in FONTS:
     f = TTFont(os.path.join(SRC, src))
     stacked = stack_marks(f) if name in STACKED else []
+    if name in STACKED: print(name, 'macron anchors raised:', macron_anchors(f))
     if name in PIE_FACES:
         pg = pie_glyphs(f, cps); stacked += pg; print(name, 'PIE glyphs added:', ' '.join(chr(c) for c in pg))
     if stacked: print(name, 'stacked composites added:', ''.join(chr(c) for c in stacked))
