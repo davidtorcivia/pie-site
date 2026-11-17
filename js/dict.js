@@ -145,7 +145,7 @@ const post = (path, text) => api(path, text);
 const lexOf = an => (an?.analyses || []).find(x => x.lex_id && BYID.has(x.lex_id))?.lex_id;
 function wordCell(form, gloss, id) {
   const f = `<span class="tw-f pie">${ts(form)}</span>`;
-  return `<span class="tw">${id ? `<a href="?e=${encodeURIComponent(id)}" data-id="${esc(id)}">${f}</a>` : f}<span class="tw-g data">${esc((gloss || '').replace(/_/g, ' '))}</span></span>`;
+  return `<span class="tw">${id ? `<a href="?e=${encodeURIComponent(id)}" data-id="${esc(id)}">${f}</a>` : f}<span class="tw-g data">${esc((gloss || '').replace(/_/g, ' ').replace(/~/g, ''))}</span></span>`;
 }
 function translate(q) {
   clearTimeout(trTimer);

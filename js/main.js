@@ -516,12 +516,12 @@ function translator() {
         out.innerHTML = js.map(s => { if (!s.pie) return nothing(s); const sub = subOf(s);
           return `<div class="tr-line pie">${typeset(s.pie)}</div>
           <div class="tr-words">${s.words.map(w => { const gl = w.gloss || '', base = gl.split('-')[0].replace(/_/g, ' '), was = sub[base];
-            return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${esc(gl.replace(/_/g, ' '))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
+            return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${esc(gl.replace(/_/g, ' ').replace(/~/g, ''))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
           ${s.ipa ? `<div class="tr-ipa">[${esc(s.ipa)}]</div>` : ''}
           ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for ${q(en)}; the nearest, ${q(pie)}, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(q).join(', ')}.` : ''}</div>` : ''}`; }).join('');
       } else {
         out.innerHTML = `<div class="tr-line serif">${esc(js.rough_english || '—')}</div>
-          <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ')) : 'not found'}</span></div>`; }).join('')}</div>
+          <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ').replace(/~/g, '')) : 'not found'}</span></div>`; }).join('')}</div>
           ${js.ipa ? `<div class="tr-ipa">[${esc(js.ipa)}]</div>` : ''}`;
       }
       gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .5, stagger: .035, ease: 'power3.out' });
