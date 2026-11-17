@@ -8,6 +8,7 @@ export async function api(path, text) {
     if (r && !(r.status >= 502 && r.status <= 504)) {
       let js = null; try { js = await r.json(); } catch {}
       if (r.ok && js && !js.error) return js;
+      if (r.status === 413) throw { kind: 'long' };
       if (js?.error) throw { kind: 'engine' };
     }
     if (k === 0) await new Promise(res => setTimeout(res, 1500));
@@ -17,6 +18,7 @@ export async function api(path, text) {
 
 export function failText(e) {
   if (e?.kind === 'net') return 'The translator runs on the project’s machine and is not reachable right now. Try again in a minute.';
+  if (e?.kind === 'long') return 'That is too long for the translator: it takes up to 2,000 characters at a time.';
   if (e?.kind === 'engine') return 'The translator couldn’t make sense of that text.';
   console.error(e);
   return 'The translator answered, but this page couldn’t lay out the answer.';

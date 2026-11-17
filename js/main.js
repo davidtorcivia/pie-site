@@ -500,7 +500,8 @@ function translator() {
   const examples = () => { ex.innerHTML = 'Try: ' + EXAMPLES[dir].map(e => `<button>${dir === 'pie2en' ? typeset(e, { words: false }) : e}</button>`).join(' · ');
     ex.querySelectorAll('button').forEach((b, i) => b.onclick = () => { inp.value = EXAMPLES[dir][i]; run(); }); };
   // a sentence the engine could not build (no word in it has a PIE reconstruction): said so, in place of the line
-  const q = x => `“${String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])}”`;
+  const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const q = x => `“${esc(x)}”`;
   const nothing = s => { const u = s.unknown || []; return `<div class="tr-notes serif">${u.length ? `No reconstructed PIE word for ${u.map(q).join(u.length > 2 ? ', ' : ' or ').replace(/, ([^,]*)$/, ', or $1')}, so there is nothing to translate.` : 'Nothing here the engine could translate.'}</div>`; };
   const run = async () => {
     const text = inp.value.trim(), my = ++seq;
@@ -514,14 +515,14 @@ function translator() {
         const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
         out.innerHTML = js.map(s => { if (!s.pie) return nothing(s); const sub = subOf(s);
           return `<div class="tr-line pie">${typeset(s.pie)}</div>
-          <div class="tr-words">${s.words.map(w => { const base = w.gloss.split('-')[0].replace(/_/g, ' '), was = sub[base];
-            return `<div class="tw ${was ? 'sub' : ''} st-${w.status}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${w.gloss.replace(/_/g, ' ')}</span>${was ? `<span class="was">for “${was}”</span>` : ''}</div>`; }).join('')}</div>
-          <div class="tr-ipa">[${s.ipa}]</div>
-          ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for “${en}”; the nearest, “${pie}”, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(x => `“${x}”`).join(', ')}.` : ''}</div>` : ''}`; }).join('');
+          <div class="tr-words">${s.words.map(w => { const gl = w.gloss || '', base = gl.split('-')[0].replace(/_/g, ' '), was = sub[base];
+            return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${esc(gl.replace(/_/g, ' '))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
+          ${s.ipa ? `<div class="tr-ipa">[${esc(s.ipa)}]</div>` : ''}
+          ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for ${q(en)}; the nearest, ${q(pie)}, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(q).join(', ')}.` : ''}</div>` : ''}`; }).join('');
       } else {
-        out.innerHTML = `<div class="tr-line serif">${js.rough_english || '—'}</div>
-          <div class="tr-words">${js.words.map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? a.gloss.replace(/_/g, ' ') : 'not found'}</span></div>`; }).join('')}</div>
-          ${js.ipa ? `<div class="tr-ipa">[${js.ipa}]</div>` : ''}`;
+        out.innerHTML = `<div class="tr-line serif">${esc(js.rough_english || '—')}</div>
+          <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ')) : 'not found'}</span></div>`; }).join('')}</div>
+          ${js.ipa ? `<div class="tr-ipa">[${esc(js.ipa)}]</div>` : ''}`;
       }
       gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .5, stagger: .035, ease: 'power3.out' });
     } catch (e) {
