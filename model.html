@@ -5,13 +5,13 @@
 <script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>How I trained a model to speak Proto-Indo-European — *PIE</title>
-<meta name="description" content="How the project's language model was made: a lexicon, a grammar engine and a corpus composed through it, fine-tuning Nemotron 3.5 Super, eight stages of reinforcement learning, and a benchmark where it scores 86.2 strict against the best frontier model's 50.0.">
+<meta name="description" content="How I taught a language model to read and write Proto-Indo-European: an 8,368-entry lexicon, a deterministic grammar engine, a 133,982-word corpus, fine-tuning Nemotron 3.5 Super, and reinforcement learning—scoring 86.2 strict against 50.0 for the best frontier run.">
 <link rel="canonical" href="https://wekwos.com/model">
 <meta name="theme-color" content="#ffd21a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="*PIE">
 <meta property="og:title" content="How I trained a model to speak Proto-Indo-European — *PIE">
-<meta property="og:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and eight stages of reinforcement learning: the model scores 86.2 strict on the project's benchmark against the best frontier model's 50.0.">
+<meta property="og:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and reinforcement learning: the model scores 86.2 strict on my benchmark against 50.0 for Claude Opus 5.5.">
 <meta property="og:url" content="https://wekwos.com/model">
 <meta property="og:image" content="https://wekwos.com/art/og/model.jpg">
 <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How I trained a model to speak Proto-Indo-European — *PIE">
-<meta name="twitter:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and eight stages of reinforcement learning: 86.2 strict against the best frontier model's 50.0.">
+<meta name="twitter:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and reinforcement learning: 86.2 strict against 50.0 for the best frontier run.">
 <meta name="twitter:image" content="https://wekwos.com/art/og/model.jpg">
 <meta name="twitter:image:alt" content="The word Model above the benchmark scores: 86.2 strict for the project's model against 50.0 for the best frontier model.">
 <link rel="apple-touch-icon" href="art/icon-180.png">
@@ -31,6 +31,7 @@
 <link rel="preload" as="font" type="font/woff2" href="fonts/archivo-core.480c010d.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/newsreader-core.dfba1cb3.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/instrumentserif-italic-core.62b1eb2a.woff2" crossorigin>
+<link rel="preload" as="fetch" href="data/model-figs.json" crossorigin>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/nav.css">
@@ -44,7 +45,7 @@
 <link rel="modulepreload" href="js/nav.js">
 <link rel="modulepreload" href="js/theme.js">
 <link rel="modulepreload" href="js/colophon.js">
-<link rel="modulepreload" href="js/brush.js">
+<noscript><style>html.arriving .v-inner > * { opacity: 1 !important; }</style></noscript>
 </head>
 <body class="v-page m-page">
 
@@ -52,26 +53,36 @@
   <div class="v-garden" aria-hidden="true"></div>
   <div class="v-inner">
     <h1 class="display v-title">Model</h1>
-    <p class="serif v-lede">Proto-Indo-European has not been spoken for thousands of years, and nobody who spoke it wrote any of it down. Every PIE word we know today is a reconstruction. It is, however, the ur-language of many modern languages, and this thought was rolling around in my head while working with LLMs: the living language machines. Surely there is some echo within there? Wouldn't it be funny to pull it out? This is how I taught a language model to read and write PIE, in the scholars' notation.</p>
+    <p class="serif v-lede">Proto-Indo-European has not been spoken for thousands of years, and nobody who spoke it wrote any of it down. Every PIE word we know today is a reconstruction. It is, however, the ur-language of many modern languages, and this thought was rolling around in my head while working with LLMs: the living language machines. Surely there is some echo in there? Wouldn't it be funny to pull it out? This is how I taught a language model to read and write PIE, in the scholars' notation.</p>
   </div>
   <canvas class="v-herd" aria-hidden="true"></canvas>
 </header>
 
 <main class="v-art paper" data-tone="paper">
 
+  <div class="m-toc data" role="navigation" aria-label="Sections">
+    <a href="#result"><em>01</em> Result</a>
+    <a href="#lexicon"><em>02</em> Lexicon</a>
+    <a href="#engine"><em>03</em> Engine</a>
+    <a href="#corpus"><em>04</em> Corpus</a>
+    <a href="#sft"><em>05</em> Fine-tuning</a>
+    <a href="#rl"><em>06</em> RL</a>
+    <a href="#measure"><em>07</em> Benchmark</a>
+  </div>
+
   <section class="sec" id="result">
     <h2 class="display v-h2"><span>The result</span></h2>
-    <p class="lead book"><span class="ini drop">I</span>n the end, on the project's benchmark the model scores 88.5 lenient and 86.2 strict. The best frontier runs I tested, Claude Opus 5.5 at xhigh and GPT-6.1 Sol at high, score 86.0 and 84.4 lenient, then 50.0 and 47.0 strict. The lenient score forgives notation (accents, vowel length, ASCII spellings like h2 for h₂), and simply asks whether the grammar is right. The strict score grades the exact form, written the way the scholarly reconstructions write it. The frontier models lose over 35 points when the score demands this fidelity, while this model loses 2.3.</p>
+    <p class="lead book"><span class="ini drop">O</span>n my held-out benchmark, the final model scores 88.5 lenient and 86.2 strict. The strongest frontier runs I tested—Claude Opus 5.5 at xhigh and GPT-6.1 Sol at high—hit 86.0 and 84.4 lenient, then drop to 50.0 and 47.0 strict. Lenient scoring ignores notation (accents, vowel length, ASCII spellings like h2 for h₂) and just checks the grammar. Strict scoring expects the actual scholarly form. Frontier models lose more than 35 points under strict grading; mine loses 2.3.</p>
     <div class="nums" aria-label="Headline numbers">
-      <div><b class="display">86.2</b><span class="serif">strict benchmark score, against 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol</span></div>
-      <div><b class="display">98.8%</b><span class="serif">of the cells in Wiktionary's inflection tables regenerated by the grammar engine</span></div>
-      <div><b class="display" style="white-space:nowrap">78 → 3</b><span class="serif">English words the model could never produce in PIE, before and after the last training stages</span></div>
-      <div><b class="display">127,000+</b><span class="serif">words of text composed and verified through the engine, then checked again in adversarial review</span></div>
+      <div><b class="display">86.2</b><span class="serif">strict benchmark score, vs. 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol</span></div>
+      <div><b class="display">98.8%</b><span class="serif">of Wiktionary's inflection cells regenerated from scratch by the grammar engine</span></div>
+      <div><b class="display" style="white-space:nowrap">78 → 3</b><span class="serif">English words the model failed to produce in PIE, before and after the last training rounds</span></div>
+      <div><b class="display">133,982</b><span class="serif">words of PIE composed through the engine and checked in adversarial review</span></div>
     </div>
-    <p class="book">Generating this corpus was the most painstaking part of this process. There are no native speakers to learn from, no recordings and no text written by anyone who spoke the language. What we do have is a body of scholarship that infers and reconstructs each word from its descendants and then writes it in a notation full of laryngeals (h₁ h₂ h₃), three rows of back consonants (ḱ, k, kʷ), breathy-voiced stops, syllabic resonants and pitch accents. Remember, PIE was only ever spoken, and the academic sources still disagree about details of pronunciation, spelling and construction. A model can't pick that up from Common Crawl the way it picks up French - though I was surprised how well the frontier models did, largely because of reconstructed texts like Schleicher's. To really speak PIE though, it needed a lexicon, a grammar that inflects every word the same way every time, and a corpus written through that grammar.</p>
+    <p class="book">Building the training data was the real grind. There are no native speakers, no recordings, and no ancient texts to scrape—just a century and a half of comparative scholarship written in a gnarly notation: three laryngeals (h₁, h₂, h₃), three rows of back consonants (ḱ, k, kʷ), breathy-voiced stops, syllabic resonants, and pitch accents. Remember, PIE was only ever spoken, so even the handbooks disagree on details of pronunciation and spelling. A model can't absorb that from Common Crawl the way it picks up French—though I was genuinely surprised how well the frontier models did on lenient grading, largely from famous reconstructions like Schleicher's fable. To actually write clean PIE, though, it needed a consistent lexicon, a deterministic grammar engine, and a corpus built through both.</p>
     <figure class="fig" id="fig1">
       <div class="chart" id="chBench"></div>
-      <figcaption class="serif"><b>Figure 1.</b> The benchmark. Solid bars are the strict score, the hatched extension is the lenient score. The overall score weights English → PIE 30, inflection and PIE → English 20 each, paradigms and dialogue 15 each. Our model is a fine-tuned Nemotron 3.5 Super.</figcaption>
+      <figcaption class="serif"><b>Figure 1.</b> The benchmark. Solid bars are the strict score, the hatched extension is lenient. The overall score weights English → PIE 30, inflection and PIE → English 20 each, paradigms and dialogue 15 each. Mine is a fine-tuned Nemotron 3.5 Super.</figcaption>
     </figure>
   </section>
 
@@ -79,19 +90,19 @@
 
   <section class="sec" id="lexicon">
     <h2 class="display v-h2"><span>The lexicon</span></h2>
-    <p class="lead book"><span class="ini drop">T</span>he lexicon holds over 8,300 entries. Over 7,400 come directly from the well-sourced work of Wiktionary's reconstructions (roots, words and the derivatives in their descendant trees), over 800 are from LIV², the standard lexicon of PIE verbs, 135 are from the <i>Nomina im Indogermanischen Lexikon</i> and 3 were added by hand from scouring handbooks. LIV² and NIL don't exist as digital data, so I had them transcribed from page images: 1,172 roots from LIV², and 207 roots with 3,044 formations from all 737 pages of NIL. Where two transcriptions of the same page overlapped, they agreed 96% of the time.</p>
-    <p class="book">A lexicon this size does carry errors (as do the sources), and the project made considerable efforts to find, correct, and source our corrections for these errors. 367 entries required fixes (mostly Wiktionary), usually a gloss that misled a writer or a stem the handbooks correct. When Wiktionary gave no meaning, 119 glosses were confirmed by the descendants themselves (the word's reflexes agree on a meaning in at least two branches), and 3,745 more were composed from the root's meaning and the suffix's function, marked as approximate so the reviews can measure them separately.</p>
+    <p class="lead book"><span class="ini drop">T</span>he lexicon holds 8,368 entries: 7,401 from Wiktionary's PIE reconstructions (roots, words, and descendant-tree derivatives), 829 verbal roots from LIV², 135 nouns from the <i>Nomina im Indogermanischen Lexikon</i> (NIL), and 3 pulled straight out of handbooks by hand. Neither LIV² nor NIL exists as clean digital data, so I had both transcribed from page scans—1,172 roots from LIV², and 207 roots with 3,044 formations across all 737 pages of NIL. Where two transcriptions of the same page overlapped, they agreed 96% of the time.</p>
+    <p class="book">Any lexicon this size has mistakes, and so do its sources. I patched 367 entries (mostly Wiktionary)—usually a misleading gloss or a stem the handbooks disagree with. Where Wiktionary gave no meaning at all, 119 glosses were pinned down from daughter reflexes that agree across at least two branches, and 3,745 more were derived from root plus suffix, flagged as approximate so reviews could track them separately.</p>
   </section>
 
   <hr>
 
   <section class="sec" id="engine">
     <h2 class="display v-h2"><span>The grammar engine</span></h2>
-    <p class="lead book"><span class="ini drop">T</span>he next step once the lexicon was built was to construct a grammar engine that could manipulate words, change their forms, and construct proper grammatically correct sentences automatically. The rules and exceptions were built from our academic source books and then, to verify, we had the engine rebuild Wiktionary's PIE inflection tables from scratch. It got 98.8% of the cells right, 14,023 of 14,197, and we traced the remaining mismatches to Wiktionary's own inconsistencies (such as a dropped laryngeal or an inconsistent delabialization), partial tables, or lexical exceptions the engine still needs an override for.</p>
-    <p class="book">The engine works in two layers. The first takes a stem, its weak form and its accent class and builds cells: nouns in all eight cases and three numbers across the acrostatic, proterokinetic, hysterokinetic and amphikinetic classes, adjectives in three genders, and verbs through the present, aorist and perfect with subjunctive, optative, imperative, middle and participles. The second guesses the stem and class for the words Wiktionary lacks tables for, from the shape of the lemma. Every rule was backtested on the words that do have tables, with the table hidden, and only a rule that matches at least 85% of the hidden cells (remember, there are many errors on Wiktionary) may feed the corpus. A separate checker runs the lexicon forward through the sound laws into Vedic, Greek, Latin and Proto-Germanic as a warning system: 95% of 5,315 checks passed.</p>
+    <p class="lead book"><span class="ini drop">O</span>nce the lexicon was in shape, I needed a grammar engine to inflect words deterministically—same rules, same forms, every time. I encoded the morphology from the standard handbooks and tested it by regenerating Wiktionary's PIE inflection tables from scratch. It matched 98.8% of the cells (14,023 of 14,197), and the remaining misses traced back to Wiktionary's own typos (a dropped laryngeal, inconsistent delabialization), incomplete tables, or genuine irregulars that needed an override.</p>
+    <p class="book">The engine runs in two layers. The first takes a stem, its weak form, and its accent class and builds every cell: nouns across eight cases, three numbers, and four accent classes (acrostatic, proterokinetic, hysterokinetic, amphikinetic); adjectives in three genders; verbs across present, aorist, and perfect with subjunctive, optative, imperative, middle, and participles. The second infers stem and class from lemma shape alone for words without Wiktionary tables. Every classifier rule was backtested with real tables hidden, and only rules clearing 85% (remember, Wiktionary itself is noisy) were allowed into the corpus. A separate forward checker pushes the lexicon through sound laws into Vedic, Greek, Latin, and Proto-Germanic as an early-warning tripwire: 95% of 5,315 checks passed.</p>
     <figure class="fig" id="fig2">
       <div class="chart" id="chEngine"></div>
-      <figcaption class="serif"><b>Figure 2.</b> The share of Wiktionary's table cells the engine regenerates exactly, for the noun and adjective classes. The middle, subjunctive, optative and participles came later and bring the whole to 14,023 of 14,197.</figcaption>
+      <figcaption class="serif"><b>Figure 2.</b> Share of Wiktionary's table cells regenerated exactly across noun and adjective classes. Middle, subjunctive, optative, and participles were added next, bringing the total to 14,023 of 14,197.</figcaption>
     </figure>
   </section>
 
@@ -99,12 +110,12 @@
 
   <section class="sec" id="corpus">
     <h2 class="display v-h2"><span>The corpus</span></h2>
-    <p class="lead book"><span class="ini drop">T</span>he corpus is 5,230 records in four tiers with nearly all of it written through the engine. Tier 1 is the scholars' own text: 99 lines from 17 published versions of Schleicher's fable and "The King and the God", from Schleicher's 1868 original to Byrd, plus 7 reconstructed formulas from Watkins and West. Tier 2 is back-projection: 109 lines reconstructed from passages that the daughter traditions share (the Rigveda beside Homer, the Avesta beside the Edda), each with its attested witnesses. Tier 3 is the majority of the text and where the engine constructions came into play: 4,755 records, single sentences and connected texts, 127,896 words. There is also Tier 3b, 260 records of everyday talk, so the model can approximate something conversational.</p>
-    <p class="book">It may be tempting to point a frontier model at this problem and say "write a corpus in PIE", but our Tier 3 intentionally avoids that methodology. Instead we had a model write an English text and a structured plan (which lexeme, which case or tense, which person), then the engine produces every form of those words, the model is allowed only to reorder the words and choose particles, and a validator checks the result, keeping only lines that pass. This was created in waves tackling different genres (epic, hymns, charms, laws, farm life, animal fables, speeches). We also included some coinages that modern speech needs, built from attested roots and productive suffixes only and logged with their derivations; they're 4% of the words in the training corpus.</p>
-    <p class="book">Once a batch was completed, it would be passed to adversarial review with planted errors to check that the reviewer is paying attention. A review that finds a wrong record does not simply fix that record: it finds the cause in the engine, the classifier or the lexicon, fixes it there, and then the entire tier is regenerated.</p>
+    <p class="lead book"><span class="ini drop">T</span>he corpus is 5,230 records across four tiers, nearly all of it built through the engine. Tier 1 is the scholars' own text: 99 lines from 17 published versions of Schleicher's fable and “The King and the God” (from Schleicher's 1868 original up to Byrd), plus 7 reconstructed poetic formulas from Watkins and West. Tier 2 is back-projection: 109 lines reconstructed from parallel phrases shared across branches (Rigveda beside Homer, Avesta beside the Edda), each tied to its attested witnesses. Tier 3 is the bulk of the text—4,755 engine-built sentences and connected passages, 127,896 words. Tier 3b adds 260 records of everyday talk so the model can actually hold a conversation.</p>
+    <p class="book">Pointing a frontier model at a blank prompt and asking for PIE produces plausible-looking gibberish. Tier 3 splits the job instead: a planner model writes the English plus a structured grammatical plan (lexeme, case, tense, person), the engine produces every inflected form, the planner only arranges word order and particles, and a validator drops anything that fails. I built it in genre waves—epics, hymns, charms, laws, farm life, animal fables, speeches—alongside a small set of modern coinages built strictly from attested roots and productive suffixes, every derivation logged (about 4% of training words).</p>
+    <p class="book">Every finished batch went through adversarial review with deliberate errors planted inside to make sure the reviewer was paying attention. When a real bug surfaced, I didn't hand-patch the line—I fixed the root cause in the engine, classifier, or lexicon, then regenerated the entire tier.</p>
     <figure class="fig" id="fig3">
       <div class="chart" id="chCorpus"></div>
-      <figcaption class="serif"><b>Figure 3.</b> The corpus by tier, in records and in words of PIE. Tier 1 is small because the scholarship is: 17 published versions of two short texts and a handful of formulas. Tier 2 is small because real parallels across the branches are rare.</figcaption>
+      <figcaption class="serif"><b>Figure 3.</b> The corpus by tier, in records and words of PIE. Tier 1 is small because the published scholarship is; Tier 2 is small because clean cross-branch parallels are rare.</figcaption>
     </figure>
   </section>
 
@@ -112,17 +123,17 @@
 
   <section class="sec" id="sft">
     <h2 class="display v-h2"><span>Fine-tuning</span></h2>
-    <p class="lead book"><span class="ini drop">W</span>e fine-tuned a number of models but settled on Nemotron 3.5 Super, NVIDIA's 120-billion-parameter mixture of experts (12 billion active), as our final base, scoring 88.5 lenient and 86.2 strict, first on the benchmark overall after fine-tuning was complete. Getting there took several model families, rounds of training, and plenty of experimentation.</p>
-    <p class="book">The training data is the corpus turned into conversation turns (system prompts and all): 47,088 of them with a held-out test split of 713. About half are translations (what does X mean in English, or translate Y to PIE), the rest are dialogue in English and in PIE, interlinear glosses, single inflected forms, whole paradigms, reconstruction from cognates and the continuation of hymns and charms.</p>
+    <p class="lead book"><span class="ini drop">I</span> ended up settling on Nemotron 3.5 Super—NVIDIA's 120-billion-parameter mixture of experts (12B active)—as the final base. After fine-tuning it hit 88.5 lenient and 86.2 strict, taking first place on the benchmark overall, though it took a few smaller families and dead ends to get there.</p>
+    <p class="book">The corpus was exported into 47,088 conversation turns (system prompts included), with 713 held out for testing. Roughly half are translations in both directions; the rest cover English and PIE dialogue, interlinear glosses, single inflections, full paradigms, cognate-to-PIE reconstruction, and continuing hymns or charms.</p>
     <figure class="fig" id="fig4">
       <div class="chart" id="chExport"></div>
-      <figcaption class="serif"><b>Figure 4.</b> The training conversations by type (47,088 conversations).</figcaption>
+      <figcaption class="serif"><b>Figure 4.</b> Training conversations by task type (47,088 total).</figcaption>
     </figure>
-    <p class="book">When first seeing if this was viable, I started small, with Qwen3-4B on a single RTX 5090, to see if it could learn PIE at all. The initial run was successful, though mediocre, but it validated that this was doable. I then tried several other small models to see what directions we could take: Qwen3-4B base (instead of the instruct-tuned version I initially used) and Typewriter, a model trained only on text from before 1913 (the logic being that it might be fun to have an older corpus for the model to work from). Neither panned out; both scored worse than the instruct-tuned 4B. It was time to scale up, so I moved to Qwen3.6-35B, trained on Tinker (my favorite quick training tool when I don't want to tie up my machines or when a model exceeds the size I have available): after one epoch it beat the more trained 4B, and it only scaled up from there. I spent some time RL'ing this new model, which was decently solid, but kept running into issues where it seemed like the model just wasn't memorizing or learning quite fully enough to grasp the nuances. Time to scale again. I reached for my favorite manageable fine-tuning family: Nemotron 3.5 Super.</p>
-    <p class="book">Back on Tinker, I swept the learning rate and optimizer for Nemotron first (this was going to be a more expensive run with an expanded corpus). Thinking Machines' new Dimuon at 8e-3 won, 40 times the AdamW rate, and rank 32 seemed no better than rank 16. The full run went three epochs, 2,514 steps in about five hours. Interestingly, held-out loss bottomed in the first epoch and rose after it, which by the usual rule says stop at epoch one, but the third epoch won the benchmark, best on every segment except English → PIE, where it tied for first. For this corpus it turns out held-out loss isn't a stopping signal, so I'm glad I was scoring every epoch. Quantized to 5 bits to run on my Mac, it scores within noise of the full-precision model.</p>
+    <p class="book">To check whether any of this was even viable, I started small with Qwen3-4B on a single RTX 5090. That first run was mediocre, but it proved a model could learn PIE. Next I tried Qwen3-4B base (without instruct tuning) and Typewriter, a model trained strictly on pre-1913 English—I liked the idea of starting from an older linguistic world. Both scored worse than the instruct-tuned 4B. Time to scale up: I moved to Qwen3.6-35B on Tinker (my go-to when I don't want to tie up local GPUs or when a model outgrows my hardware). After a single epoch it beat the longer-trained 4B, and kept climbing. A round of RL made it pretty solid, yet it still hit a ceiling where it wasn't holding onto the finer morphological rules. Time to scale again—I reached for my favorite manageable fine-tuning family: Nemotron 3.5 Super.</p>
+    <p class="book">Back on Tinker, I swept learning rates and optimizers first since this run would be pricier on the expanded corpus. Thinking Machines' Dimuon at 8e-3 won—40× the AdamW rate—and rank 32 didn't beat rank 16. The full run went three epochs: 2,514 steps in about five hours. Weirdly, held-out loss bottomed out in epoch 1 and climbed after that, which by the textbook rule means stop at epoch 1. Yet epoch 3 won the benchmark, taking first on every segment except English → PIE (where it tied). Held-out loss turned out not to be a stopping signal here, so I'm glad I benchmarked every epoch. Quantized to 5 bits to run locally on my Mac, it lands within noise of full precision.</p>
     <figure class="fig" id="fig5">
       <div class="chart" id="chSweep"></div>
-      <figcaption class="serif"><b>Figure 5.</b> First: the learning-rate and optimizer sweep for Nemotron 3.5 Super, held-out loss after 100 steps (lower is better). Second: the full run's three epochs, held-out loss beside the benchmark score. The loss would have picked epoch 1; the benchmark picked epoch 3. Epoch 2 was benchmarked in the 5-bit quantization, the others in bf16.</figcaption>
+      <figcaption class="serif"><b>Figure 5.</b> Left: learning-rate and optimizer sweep for Nemotron 3.5 Super, held-out loss after 100 steps (lower is better). Right: the full run's three epochs, held-out loss beside benchmark score. Loss would have picked epoch 1; the benchmark picked epoch 3. Epoch 2 was scored in 5-bit quantization, the others in bf16.</figcaption>
     </figure>
   </section>
 
@@ -130,25 +141,25 @@
 
   <section class="sec" id="rl">
     <h2 class="display v-h2"><span>Reinforcement learning</span></h2>
-    <p class="lead book"><span class="ini drop">I</span> had never RL'd a model before, I don't know why, but I thought I'd give it a shot here. Reinforcement learning, with one short fine-tune in the middle, took the English words the model kept failing to translate into PIE from 78 to 3, and brought its English → PIE translation back to within a point of its best. I ran several rounds of RL, sometimes improving, sometimes not, sometimes merging different rounds when one area improved but another failed. At one point it became apparent there was a gap in the lexicon the model had learned (words in the lexicon that the training text rarely or never used, and of course the model can't know words it has never seen), so I trained those in with a quick local fine-tune and then RL'd one more round after that. The end result is the model here today.</p>
-    <p class="book">All of the RL'ing ran on my Mac Studio, with GRPO in mlx-lm-lora. For each prompt the model samples eight answers, and the ones that score above their group's mean are reinforced. The reward is local wherever the engine can decide. Inflections and paradigms are checked against the engine's cells; a translation scores zero for an empty answer, commentary, padding or any word the engine doesn't know, and one for a reference answer. Only what the local checks can't settle reaches a Claude judge: Haiku 5.5 at high effort screens (surprisingly, Haiku outscored Opus at catching planted errors in my tests), and a second Haiku call re-checks what the first flagged. An answer counts as wrong only if both say so.</p>
+    <p class="lead book"><span class="ini drop">I</span> had never RL'd a model before—I don't know why, I just hadn't—so I figured I'd give it a shot here. Several rounds of RL, plus one short vocabulary fine-tune in the middle, cut the English words the model consistently failed to translate into PIE from 78 down to 3, and brought its English → PIE score back within a point of its peak. Some rounds helped, some regressed, and a few times I merged adapters when one skill climbed while another slipped. Midway through it became obvious there was a vocabulary blind spot: lexicon words that rarely showed up in the training text (and a model can't guess PIE words it has never seen). A quick local fine-tune taught those words, followed by one last round of RL.</p>
+    <p class="book">All the RL ran locally on my Mac Studio using GRPO in <span class="data">mlx-lm-lora</span>. For each prompt the model samples eight completions, reinforcing whichever beat the group mean. Rewards stay local whenever the engine can grade them: inflections and paradigms check directly against engine cells; translations get zero for an empty reply, chatter, padding, or any unknown word, and one for a reference match. Only what local rules can't settle goes to a Claude judge: Haiku 5.5 at high effort screens first (surprisingly, Haiku beat Opus at catching planted errors in my tests), and a second Haiku call double-checks anything flagged. An answer only loses credit if both agree.</p>
     <figure class="fig" id="fig6">
       <div class="chart" id="chCurve"></div>
-      <figcaption class="serif"><b>Figure 6.</b> The final round of RL as it trained: the mean reward of the sampled answers, and the KL from the starting weights, which stayed far below the 0.3 that stops a run.</figcaption>
+      <figcaption class="serif"><b>Figure 6.</b> The final RL round over 150 steps: mean reward of sampled answers, and KL divergence from the starting weights—well below the 0.3 stop threshold.</figcaption>
     </figure>
     <figure class="fig" id="fig7">
       <div class="chart" id="chStages"></div>
-      <figcaption class="serif"><b>Figure 7.</b> The last rounds on the held-out test sets: chrF over all prompts, English → PIE chrF alone, paradigm cells on the grammar drills, and of the 83 words the vocabulary fine-tune targeted, how many the model could never produce.</figcaption>
+      <figcaption class="serif"><b>Figure 7.</b> Late training stages on the held-out sets: overall chrF, English → PIE chrF, paradigm cell accuracy, and how many of the 83 targeted words the model still couldn't produce.</figcaption>
     </figure>
-    <p class="book">The final round still trails the round before the vocabulary fine-tune by about a point of chrF and a little on paradigm cells. I tried blending the two sets of weights exactly (stacking the two adapters, so the result is a weighted sum of what each one changed), but every blend traded the new words against the grammar, and none beat the final round outright.</p>
+    <p class="book">The final round still trails the pre-vocab checkpoint by about a point of chrF and a sliver on paradigm cells. I tried blending the two adapters directly—a weighted sum of their weight deltas—but every ratio traded the new vocabulary straight off against grammar, and none beat the final round outright.</p>
   </section>
 
   <hr>
 
   <section class="sec" id="measure">
     <h2 class="display v-h2"><span>Measuring it</span></h2>
-    <p class="lead book"><span class="ini drop">O</span>f course, when you're training you need some way to measure improvement, so I constructed a number of benchmarks that were refined into the scoring system you see on this site now. When tuning, every checkpoint was measured on prompts held out of all training. The benchmark combines automatic scores as well as judging (more on that in a moment). The auto scores are chrF against the reference, exact match on single forms, the share of a paradigm's cells the model gets right, and the share of its PIE words the engine recognizes as real forms. They're quick and automatic and helpful for catching regressions when training.</p>
-    <p class="book">However, because they are simple, they can also mislead. chrF against one reference punishes a different but correct translation, so the benchmark has the translations and dialogue judged by Claude Opus 5.5 and by GPT-6.1 Sol, two vendors, so no vendor grades its own models alone, each with the engine and the corpus as tools and the reference beside the answer. Each item scores 1, 0.5 or 0, and separately for notation. Models answer from their weights alone with no tools or access to any data. The end result is the benchmark you see here!</p>
+    <p class="lead book"><span class="ini drop">Y</span>ou can't train blind, so I built a suite of held-out evals early and gradually refined them into the benchmark on this site. Every checkpoint ran on prompts kept strictly out of all training. The automatic metrics—chrF against a reference, exact match on single forms, paradigm cell accuracy, and the share of PIE words recognized by the engine—are fast and great for catching regressions mid-run.</p>
+    <p class="book">Simple metrics still lie, though. Single-reference chrF punishes a valid translation that happens to pick a synonym or different word order. So translations and dialogue are also graded by two judges from different labs—Claude Opus 5.5 and GPT-6.1 Sol, so neither vendor grades itself alone—each armed with the grammar engine, the corpus, and the reference answer. Every item is scored 1, 0.5, or 0 for meaning and grammar, and graded separately for scholarly notation. Contestant models answer from weights alone, no tools or lookup. That's the benchmark you see here.</p>
   </section>
   <hr data-rank="3">
 </main>
@@ -172,7 +183,6 @@
   <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by <a href="https://davidtorcivia.com">David Torcivia</a>.</p>
 </footer>
 
-<script src="js/vendor/gsap.min.js"></script>
 <script type="module" src="js/model.js"></script>
 </body>
 </html>

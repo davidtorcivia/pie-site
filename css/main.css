@@ -121,8 +121,8 @@ html.map-near .relief { visibility: visible; -webkit-mask: url(../map/relief-l.w
 .note { max-width: 46ch; margin: 1em auto 0; font-size: clamp(18px, 1.5vw, 24px); }
 
 /* 4 · results */
-.res-head { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--gut); align-items: end; }
-.res-head p { margin: 0 0 1em; max-width: 36ch; font-size: clamp(18px, 1.5vw, 24px); }
+.res-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--gut); align-items: start; }
+.res-head p { margin: .35em 0 0; max-width: 40ch; font-size: clamp(18px, 1.45vw, 23px); line-height: 1.42; }
 .bars { margin-top: clamp(30px, 5vw, 70px); display: grid; gap: clamp(14px, 1.8vw, 26px); }
 .bar { display: grid; grid-template-columns: minmax(140px, 18%) minmax(0, 1fr); gap: 16px; align-items: center; }
 .bar .who { font-family: var(--f-data); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; line-height: 1.3; }
@@ -142,15 +142,20 @@ html.map-near .relief { visibility: visible; -webkit-mask: url(../map/relief-l.w
 
 /* 5 · voice */
 #s-voice { min-height: 100svh; }
-.voice-top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--gut); align-items: end; }
-.voice-top p { margin: 0 0 1em; font-size: clamp(18px, 1.5vw, 24px); max-width: 38ch; }
-.voice-stage { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(24px, 4vw, 70px); align-items: center; margin-top: clamp(24px, 4vw, 60px); }
-.disc { position: relative; width: clamp(200px, 26vw, 420px); aspect-ratio: 1; border-radius: 50%; border: 0; background: var(--ink); color: var(--yellow); cursor: pointer; padding: 0; }
+.voice-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--gut); align-items: start; }
+.voice-top p { margin: .35em 0 0; font-size: clamp(18px, 1.45vw, 23px); line-height: 1.42; max-width: 42ch; }
+.voice-stage { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(24px, 4vw, 70px); align-items: center; margin-top: clamp(28px, 4.5vw, 64px); }
+.disc { position: relative; width: clamp(200px, 25vw, 400px); aspect-ratio: 1; border-radius: 50%; border: 0; background: var(--ink); color: var(--yellow); cursor: pointer; padding: 0;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s ease; }
+.disc:hover { transform: scale(1.035); box-shadow: 0 22px 44px -26px rgba(14, 13, 11, .55); }
+.disc:active { transform: scale(.985); }
+.disc:focus-visible { outline: 2px solid #b81d0e; outline-offset: 8px; }
 .disc canvas { position: absolute; inset: -14%; width: 128%; height: 128%; pointer-events: none; }
 .disc-label { position: relative; font-size: clamp(24px, 3vw, 48px); }
 .hymn { font-family: var(--f-pie); font-weight: var(--w-pie); font-variation-settings: var(--v-pie); font-size: clamp(22px, 2.6vw, 46px); line-height: 1.12; }
 .hymn .hl { display: block; }
-.hymn .w { transition: color .15s, background .15s; padding: 0 .05em; }
+.hymn .w { transition: color .15s, background .15s; padding: 0 .06em; border-radius: 2px; }
+.hymn .w:hover { background: rgba(14, 13, 11, .1); }
 .hymn .w.done { color: var(--ink); }
 .hymn.playing .w { color: rgba(14, 13, 11, .28); }
 .hymn.playing .w.done { color: var(--ink); }
@@ -554,8 +559,10 @@ html, body { overflow-x: clip; }
 
 @media (max-width: 700px) { #s-voice { padding-bottom: 50vh !important; } .garden { z-index: 0; } #s-voice .hymn { position: relative; z-index: 2; } }
 
-/* the credit line on a red paint stroke, like the yellow ones */
-.foot-by { display: inline-block; padding: .45em 1.4em .55em 1.1em; background: var(--streak) 0 0 / 100% 100% no-repeat; color: #fff4dc; }
+/* the credit line on a red paint stroke (pure CSS mask, zero runtime canvas paint) */
+.foot-by { position: relative; isolation: isolate; display: inline-block; padding: .48em 1.45em .56em 1.15em; color: #fff4dc; }
+.foot-by::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #b81d0e;
+  -webkit-mask: url(../art/brush/22.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/22.webp) 0 0 / 100% 100% no-repeat; }
 .foot-by a { color: #fff4dc !important; text-decoration-color: rgba(255, 244, 220, .6); }
 
 /* phones: the header starts below the navigation stroke */
@@ -612,14 +619,51 @@ footer.colo .colo-notes p { margin: 0; }
   footer.colo .colo-notes { grid-template-columns: 1fr; gap: 1em; }
 }
 .nobr { white-space: nowrap; }
-/* the hero paragraph: a wider column on desktop, so the longer intro stays above the garden's lower vines */
-@media (min-width: 901px) { .open-p { max-width: 76ch; } }
+/* the hero paragraph: sits cleanly in the bright yellow pocket above the lower vines */
+@media (min-width: 901px) { .open-p { max-width: 52ch; line-height: 1.42; } }
 @media (min-width: 901px) {
-  /* a soft halo of the page's yellow, so the vines behind the wider columns never cut through the type */
-  .open-p, .wheel-copy p { text-shadow: 0 0 3px var(--yellow), 0 0 7px var(--yellow), 0 0 14px var(--yellow), 0 0 22px var(--yellow); }
-  /* the reconstruction text: a wider column, the wheel a little narrower */
-  #s-wheel .wheel-pin.ms-left { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); }
-  .wheel-copy p { max-width: 46ch; }
+  /* a soft halo of the page's yellow, so the vines behind the columns never cut through the type */
+  .open-p, .wheel-copy p { text-shadow: 0 0 3px var(--yellow), 0 0 8px var(--yellow), 0 0 16px var(--yellow), 0 0 24px var(--yellow); }
+  /* the reconstruction text: a balanced column beside the wheel */
+  #s-wheel .wheel-pin.ms-left { grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr); }
+  .wheel-copy p { max-width: 44ch; line-height: 1.38; }
+}
+/* editorial inline links on home sections */
+.inline-go { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: currentColor; white-space: nowrap; transition: color .2s ease, text-decoration-color .2s ease; }
+.yellow .inline-go:hover, .paper .inline-go:hover { color: #b81d0e; }
+.ink .inline-go { color: var(--yellow); text-decoration-color: rgba(255, 210, 26, .55); }
+.ink .inline-go:hover { text-decoration-color: var(--yellow); }
+
+/* wheel wrapper + quiet drag cue + refined navigation */
+.wheel-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.wheel-hint { margin: .6em 0 0; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .55; }
+.wheel-nav { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: .7em; margin-top: 1.5em; }
+.wheel-nav .wn-list { display: flex; flex-wrap: wrap; gap: .3em .85em; align-items: baseline; }
+.wheel-nav button { transition: opacity .2s ease, color .2s ease; }
+.wheel-nav button:hover { opacity: 1; color: #b81d0e; }
+.wheel-nav .on { text-decoration-color: #b81d0e; }
+
+/* method step numerals + subtle editorial cadence */
+.tier { transition: transform .25s ease; }
+.tier .num { color: var(--ink); }
+.tier .lab b { display: flex; align-items: baseline; gap: .55em; }
+.tier-i { font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: .14em; color: #b81d0e; flex: none; }
+.tier + .tier { border-top: 1px solid color-mix(in srgb, var(--ink) 11%, transparent) !important; }
+
+/* translator polish */
+.tr-box textarea { transition: background-color .2s ease, box-shadow .2s ease; }
+.tr-box textarea:focus { box-shadow: inset 0 0 0 1px rgba(255, 210, 26, .45); }
+.tr-go { transition: background-color .2s ease, transform .15s ease; border-radius: 2px; }
+.tr-go:active { transform: translateY(1px); }
+
+/* footer: balanced 3-column credits + shared colophon nav */
+footer.foot .colo-nav { margin: 2em auto 0; }
+footer.foot .foot-by { margin: 2.2em auto 0; }
+@media (min-width: 901px) {
+  footer.foot .foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 960px; margin-left: auto; margin-right: auto; gap: 2.4em; }
+}
+@media (max-width: 700px) {
+  .open-h .line:nth-child(3) { font-size: clamp(36px, 13.5vw, 58px) !important; }
 }
 /* the homepage footer's garden fills the footer edge to edge (cropped top and bottom on wide windows, never stretched) */
 @media (min-width: 701px) { footer .garden .gv, footer .garden .gf { object-fit: cover !important; object-position: 50% 50% !important; } }

@@ -22,7 +22,7 @@ export function nav() {
     <button class="nav-open" aria-expanded="false" aria-controls="navSheet">Menu</button></div>`;
   const sheet = document.createElement('div'); sheet.className = 'nav-sheet'; sheet.id = 'navSheet'; sheet.hidden = true;
   sheet.innerHTML = `<button class="nav-close data">Close</button><div class="nav-sheet-links display">${links('sl')}</div>
-    <img class="nav-sheet-garden" src="art/garden-foot-m.webp" alt="" loading="lazy">`;
+    <img class="nav-sheet-garden" data-src="art/garden-foot-m.webp" alt="">`;
   // light and dark: the toggle closes the row (and stays beside Menu when the row folds); a second one in the menu
   n.querySelector('.nav-bar').append(themeButton('nt'));
   sheet.prepend(themeButton('st'));
@@ -36,7 +36,7 @@ export function nav() {
   // the row, or the menu when the row does not fit
   const fit = () => { n.classList.remove('folded'); const row = n.querySelector('.nav-links');
     if (row.scrollWidth > Math.min(innerWidth * .62, 900)) n.classList.add('folded'); };
-  const open = () => { sheet.hidden = false; requestAnimationFrame(() => sheet.classList.add('on')); n.querySelector('.nav-open').setAttribute('aria-expanded', 'true');
+  const open = () => { const sg = sheet.querySelector('.nav-sheet-garden'); if (sg && !sg.src && sg.dataset.src) sg.src = sg.dataset.src; sheet.hidden = false; requestAnimationFrame(() => sheet.classList.add('on')); n.querySelector('.nav-open').setAttribute('aria-expanded', 'true');
     document.documentElement.classList.add('sheet-open'); window.lenis?.stop(); sheet.querySelector('a').focus({ preventScroll: true }); };
   function close() { if (sheet.hidden) return; sheet.classList.remove('on'); n.querySelector('.nav-open').setAttribute('aria-expanded', 'false');
     document.documentElement.classList.remove('sheet-open'); window.lenis?.start(); setTimeout(() => { sheet.hidden = true; }, 450); }

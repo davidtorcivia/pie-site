@@ -22,3 +22,8 @@ html.dark .v-art .v-h2 span { display: inline-block; }
    marked in a corpus sentence, Listen, Back), and a fainter wash on the paradigm's rows */
 html.dark .r.on, html.dark .trc, html.dark .ex-pie mark, html.dark .e-play, html.dark .e-back { color: var(--night); --ink: var(--night); }
 html.dark .para tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .14), rgba(255, 210, 26, .05) 75%, rgba(255, 210, 26, 0)); }
+
+/* warm red accents lifted slightly for dark-paper legibility */
+html.dark .nums b, html.dark .m-toc a em, html.dark .tier-i { color: #e0452a; }
+html.dark .mb-row.mb-ours { background: rgba(224, 69, 42, .12); }
+html.dark .m-stop { stroke: #e0452a; }

@@ -1,19 +1,25 @@
 import { api, failText } from './translate-api.js';
 import { initType, typeset, typesetAll } from './type.js';
-import { noise2, rng, fit, field, draw, speckle, hatchRect } from './hatch.js';
-import { loadMask, paintSilhouette } from './painter.js';
-import { ramp, cord, wheel as sunWheel } from './illum.js';
+import { noise2, rng, fit, hatchRect } from './hatch.js';
 import { mapPlate } from './map.js';
-import { brushGround, brushStroke } from './brush.js';
+import { brushGround } from './brush.js';
 import { nav } from './nav.js';
 import { CAP, ART_V } from './initials.js';
 import { carve, canCarve, NONE } from './rubric.js';
-// The hero's P: the printed initialis plate ('plate', the owner's choice), or carved by illum ('carved', tried
-// 2026-11-09 and set aside). One word to swap; ?carved shows the carving for a side-by-side look.
+
+// The hero's P: the printed initialis plate ('plate', the owner's choice), or carved by illum ('carved').
 const HERO_P = new URLSearchParams(location.search).has('carved') ? 'carved' : 'plate';
 const heroCarved = () => HERO_P === 'carved' && canCarve();
 
 const C = { yellow: '#ffd21a', deep: '#f2b705', ink: '#0e0d0b', paper: '#efe7d6', red: '#f2471c', blue: '#2633c9', moss: '#2e5b3a', chalk: '#f6f1e4' };
+const PALETTE = [
+  { name: 'ochre', ink: '#8e2a17', accent: '#2f5e8e', paper: '#f1e8d8' },
+  { name: 'malachite', ink: '#1f5a43', accent: '#a8361f', paper: '#eee9dc' },
+  { name: 'lapis', ink: '#1f3478', accent: '#b07a2a', paper: '#efebe2' },
+  { name: 'charcoal', ink: '#2b2924', accent: '#b23a1e', paper: '#ece6d8' },
+  { name: 'bronze', ink: '#5a3b18', accent: '#1f5a43', paper: '#f0e6d2' },
+  { name: 'madder', ink: '#6e1f3a', accent: '#b07a2a', paper: '#f1e9df' },
+];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r = document) => r.querySelector(s);
 
@@ -22,7 +28,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 // smooth scroll, driven by GSAP's ticker so ScrollTrigger stays in step
 let lenis = null;
-// not on touch screens: native scrolling is already smooth there, and Lenis would add work to every frame
 if (!reduce && window.Lenis && !matchMedia('(pointer: coarse)').matches && innerWidth >= 900) {
   lenis = new Lenis({ lerp: .09, wheelMultiplier: .9 });
   lenis.on('scroll', ScrollTrigger.update);
@@ -31,156 +36,42 @@ if (!reduce && window.Lenis && !matchMedia('(pointer: coarse)').matches && inner
   gsap.ticker.lagSmoothing(0);
 }
 
-
 // ---------------------------------------------------------------------------------------------------- paper tooth
-// one fine paper texture, used only on the map plate (it moves with the map)
+// One compact paper-weave tile, generated lazily only on desktop when the map nears (never blocking first paint)
+let toothDone = false;
 function tooth() {
-  const c = document.createElement('canvas'); c.width = c.height = 384; const g = c.getContext('2d'), im = g.createImageData(384, 384), r = rng(11), n = noise2(12);
-  for (let y = 0; y < 384; y++) for (let x = 0; x < 384; x++) {
-    const i = (y * 384 + x) * 4, weave = (x % 4 === 0 ? 7 : 0) + (y % 4 === 1 ? 5 : 0), mott = n(x / 60, y / 60) * 9;
+  if (toothDone || innerWidth < 900) return;
+  toothDone = true;
+  const S = 128, c = document.createElement('canvas'); c.width = c.height = S;
+  const g = c.getContext('2d'), im = g.createImageData(S, S), r = rng(11), n = noise2(12);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const i = (y * S + x) * 4, weave = (x % 4 === 0 ? 7 : 0) + (y % 4 === 1 ? 5 : 0), mott = n(x / 32, y / 32) * 9;
     const v = 255 - r() * 20 - weave - Math.max(0, mott);
     im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255;
   }
   g.putImageData(im, 0, 0);
-  document.documentElement.style.setProperty('--tooth', `url(${c.toDataURL()})`);
+  const url = c.toDataURL('image/webp', .75);
+  document.documentElement.style.setProperty('--tooth', `url(${url})`);
 }
 
 // ---------------------------------------------------------------------------------------------------- overture
-// The header is an illuminated page: a steppe garden over the whole field (art/hero.webp), a great initial P from
-// our own kinds (a horse frieze, the herd, sun wheels, tulips), the title on brush-stroke grounds, and a herd of
-// painted horses galloping across the foot.
-async function overture() {
-  // the P spans the whole title: its top on the first line's top, its foot on the last line's foot (pre-rendered)
+function overture() {
   const hb = $('.open-h').getBoundingClientRect(), size = Math.round(hb.height);
-  // the P's coloured square spans the title (a third of the width on phones); the horses round it hang outside
   const sq = innerWidth >= 700 ? size : Math.round(innerWidth * .30), pad = CAP.pad, S = sq / (1 - 2 * pad);
-  $('.hero-cap').style.setProperty('--hs', S + 'px'); $('.hero-cap').style.setProperty('--hm', `${-S * pad}px ${-S * pad * .6}px ${-S * pad}px ${-S * pad}px`);   // the right-hand horses sit in the gap before the title
-  // (carved, it is a drop four lines deep in a paragraph of its own whose four lines are the square: the drop's figures
-  // with it, as a section's opening letter has them)
-  $('.hero-cap').innerHTML = heroCarved() ? `<p class="hero-drop" aria-hidden="true" style="line-height:${sq / 4}px;font-size:${sq / 5}px;padding:${S * pad}px"><span class="ini drop hero-ini" data-lines="4">P</span></p>`
-    : `<img src="art/initials/hero.webp?v=${ART_V}" alt="" width="100%" height="100%" decoding="async">`;
-  const place = () => { const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft); pp.style.top = (tb.bottom - sb.top + 22) + 'px'; pp.style.left = (tb.left - sb.left - padL) + 'px'; };
+  $('.hero-cap').style.setProperty('--hs', S + 'px');
+  $('.hero-cap').style.setProperty('--hm', `${-S * pad}px ${-S * pad * .6}px ${-S * pad}px ${-S * pad}px`);
+  $('.hero-cap').innerHTML = heroCarved()
+    ? `<p class="hero-drop" aria-hidden="true" style="line-height:${sq / 4}px;font-size:${sq / 5}px;padding:${S * pad}px"><span class="ini drop hero-ini" data-lines="4">P</span></p>`
+    : `<img src="art/initials/hero.webp?v=${ART_V}" alt="" width="800" height="800" fetchpriority="high" decoding="async" style="width:100%;height:100%">`;
+  const place = () => {
+    const tb = $('.hero-title').getBoundingClientRect(), sb = $('#s-open').getBoundingClientRect(), pp = $('.open-p'), padL = parseFloat(getComputedStyle(pp).paddingLeft);
+    pp.style.top = (tb.bottom - sb.top + 22) + 'px';
+    pp.style.left = (tb.left - sb.left - padL) + 'px';
+  };
   place(); addEventListener('repaint', place);
-  // the title arrives by CSS alone (html.arrived), so a busy main thread never leaves the header blank
-}
-
-// ---------------------------------------------------------------------------------------------------- migration
-// Abstract geography (fractions of the stage): the steppe, and each branch's first written witness. Dates are
-// conventional, rounded, for the earliest substantial texts.
-const BRANCHES = [
-  { b: 'Anatolian', w: 'Hittite tablets', y: -1650, x: .5, yy: .7 },
-  { b: 'Indo-Iranian', w: 'the Rigveda', y: -1400, x: .8, yy: .82 },
-  { b: 'Greek', w: 'Linear B', y: -1400, x: .4, yy: .73 },
-  { b: 'Italic', w: 'Latin inscriptions', y: -600, x: .25, yy: .66 },
-  { b: 'Celtic', w: 'Lepontic inscriptions', y: -550, x: .1, yy: .42 },
-  { b: 'Germanic', w: 'the first runes', y: 200, x: .3, yy: .26 },
-  { b: 'Armenian', w: 'the Armenian Bible', y: 410, x: .63, yy: .72 },
-  { b: 'Tocharian', w: 'Tarim Basin manuscripts', y: 600, x: .93, yy: .38 },
-  { b: 'Balto-Slavic', w: 'Old Church Slavonic', y: 870, x: .47, yy: .2 },
-  { b: 'Albanian', w: 'a baptismal formula', y: 1462, x: .35, yy: .62 },
-];
-const HOME = { x: .6, y: .44 };
-// push apart labels that overlap (map phase), top to bottom
-function nudge(lis) {
-  const boxes = lis.filter(l => +l.style.opacity > 0).map(l => ({ l, y: parseFloat(l.style.top), x: parseFloat(l.style.left) }))
-    .sort((a, b) => a.y - b.y);
-  for (let i = 0; i < boxes.length; i++) for (let j = 0; j < i; j++) {
-    const a = boxes[j], b = boxes[i];
-    if (Math.abs(a.x - b.x) < 230 && Math.abs(a.y - b.y) < 44) { b.y = a.y + 44; b.l.style.top = b.y + 'px'; }
-  }
-}
-const fmtYear = y => y < 0 ? `${Math.round(-y)} BCE` : `${Math.round(y)} CE`;
-
-function migration() {
-  const cv = $('#mig'), pin = $('.mig-pin');
-  const labels = $('#migLabels');
-  labels.innerHTML = BRANCHES.map(b => `<li><b>${b.b}</b><span>${b.w}, ${fmtYear(b.y)}</span></li>`).join('');
-  const lis = [...labels.children];
-  let ctx, W, H, ground, threads;
-  const N = 46;
-  const build = () => {
-    ({ ctx, w: W, h: H } = fit(cv, 1.5));
-    // the ground: dark granite, laid once into an offscreen canvas
-    ground = document.createElement('canvas'); ground.width = cv.width; ground.height = cv.height;
-    const g = ground.getContext('2d'); g.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
-    g.fillStyle = C.ink; g.fillRect(0, 0, W, H);
-    speckle(g, W, H, { colors: ['#1d1a15', '#262219', '#14120e', '#2c2a22'], density: .06, size: [.6, 2], seed: 4 });
-    const r = rng(21);
-    threads = BRANCHES.map((b, i) => Array.from({ length: N }, (_, k) => ({
-      off: (r() - .5) * 2, wob: r() * 6.28, lw: .6 + r() * 1.5,
-      c: r() < .7 ? C.yellow : r() < .5 ? C.deep : r() < .5 ? C.red : C.chalk, d: r() * .25 })));
-  };
-  // a branch's path at morph m (0 = map, 1 = family tree): start, control, end
-  const path = (i, m) => {
-    const b = BRANCHES[i];
-    const geo = { s: [HOME.x * W, HOME.y * H], e: [b.x * W, b.yy * H] };
-    geo.c = [(geo.s[0] + geo.e[0]) / 2 + (geo.e[1] - geo.s[1]) * .35, (geo.s[1] + geo.e[1]) / 2 - (geo.e[0] - geo.s[0]) * .2];
-    const order = [4, 3, 9, 2, 0, 6, 1, 7, 8, 5].indexOf(i);           // tree leaves, west to east-ish
-    const leafX = W * (.08 + .84 * order / (BRANCHES.length - 1)), tree = { s: [W * .5, H * .16], e: [leafX, H * .8] };
-    tree.c = [leafX, H * .3];
-    const L = (a, bb) => [a[0] + (bb[0] - a[0]) * m, a[1] + (bb[1] - a[1]) * m];
-    return { s: L(geo.s, tree.s), c: L(geo.c, tree.c), e: L(geo.e, tree.e) };
-  };
-  const q = (p, t) => [(1 - t) * (1 - t) * p.s[0] + 2 * (1 - t) * t * p.c[0] + t * t * p.e[0], (1 - t) * (1 - t) * p.s[1] + 2 * (1 - t) * t * p.c[1] + t * t * p.e[1]];
-  const n = noise2(17);
-  let last = -1;
-  const render = (p, time = 0) => {
-    // p 0..1 over the pinned scroll: 0–.1 the steppe, .1–.8 branches leave in order of their first texts, .8–1 the map becomes a tree
-    const m = gsap.utils.clamp(0, 1, (p - .8) / .17), grow = i => gsap.utils.clamp(0, 1, (p - .1 - i * .062) / .14);
-    ctx.drawImage(ground, 0, 0, W, H);
-    // the homeland: a hatched yellow blob that pulses
-    const hx = HOME.x * W + (W * .5 - HOME.x * W) * m, hy = HOME.y * H + (H * .16 - HOME.y * H) * m, hr = Math.min(W, H) * (.07 + .02 * Math.sin(time * .002)) * (1 - m * .5);
-    ctx.save(); ctx.beginPath();
-    for (let a = 0; a <= 6.3; a += .2) { const rr = hr * (1 + .18 * n(Math.cos(a) * 1.3 + time * .0004, Math.sin(a) * 1.3)); ctx.lineTo(hx + Math.cos(a) * rr, hy + Math.sin(a) * rr); }
-    ctx.closePath(); ctx.clip();
-    ctx.strokeStyle = C.yellow; ctx.lineWidth = 1.3;
-    for (let k = -hr * 2; k < hr * 2; k += 4.5) { ctx.beginPath(); ctx.moveTo(hx + k - hr, hy + hr); ctx.quadraticCurveTo(hx + k, hy, hx + k + hr, hy - hr); ctx.stroke(); }
-    ctx.restore();
-    BRANCHES.forEach((b, i) => {
-      const gi = grow(i);
-      if (gi <= 0) return;
-      const P = path(i, m), spread = (14 + 26 * (1 - m)) * Math.min(1, gi * 2);
-      for (const t of threads[i]) {
-        const k = gsap.utils.clamp(0, 1, gi * 1.25 - t.d);
-        if (k <= 0) continue;
-        ctx.beginPath();
-        for (let s = 0; s <= 28; s++) {
-          const u = s / 28 * k, [x, y] = q(P, u), w = Math.sin(u * Math.PI) * spread;
-          const dx = P.e[0] - P.s[0], dy = P.e[1] - P.s[1], L = Math.hypot(dx, dy) || 1;
-          const off = t.off * w + n(u * 3 + t.wob, i + time * .0003) * 6 * (1 - m);
-          const X = x - dy / L * off, Y = y + dx / L * off;
-          s ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
-        }
-        ctx.strokeStyle = t.c; ctx.lineWidth = t.lw; ctx.globalAlpha = .85; ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      const li = lis[i], [ex, ey] = P.e;
-      li.style.left = ex + 'px'; li.style.top = (ey + (m > .02 ? 30 + ([4, 3, 9, 2, 0, 6, 1, 7, 8, 5].indexOf(i) % 2) * 34 : 0)) + 'px';
-      li.style.opacity = gsap.utils.clamp(0, 1, (gi - .7) / .3);
-    });
-    labels.classList.toggle('tree', m > .02);
-    if (m <= .02) nudge(lis);
-    if (p !== last) {
-      const k = gsap.utils.clamp(0, BRANCHES.length - 1, Math.floor((p - .1) / .062));
-      $('#migYear').textContent = p < .1 ? 'c. 4000 BCE' : m > .5 ? 'Common ancestor' : fmtYear(BRANCHES[k].y);
-      document.querySelectorAll('.mig-p').forEach(el => {
-        const s = +el.dataset.step, on = s === Math.min(3, Math.floor(p * 4.2));
-        el.style.opacity = on ? 1 : 0; el.style.transform = `translateY(${on ? 0 : 12}px)`; el.style.transition = 'opacity .5s, transform .5s';
-      });
-      last = p;
-    }
-  };
-  build();
-  let prog = 0;
-  ScrollTrigger.create({ trigger: '#s-mig', start: 'top top', end: '+=360%', pin: pin, scrub: true,
-    onUpdate: s => { prog = s.progress; } });
-  const loop = t => { render(prog, t); requestAnimationFrame(loop); };
-  requestAnimationFrame(loop);
-  addEventListener('repaint', build);
 }
 
 // ---------------------------------------------------------------------------------------------------- wheel
-// SVG text can't hold the HTML spans, so the laryngeals and modifier letters are rebuilt as tspans
 function svgPie(text) {
   let out = '', shift = 0;
   for (const ch of text.normalize('NFD')) {
@@ -198,15 +89,13 @@ function svgPie(text) {
 function wheel(words) {
   const svg = $('#wheel');
   const R0 = 150, R1 = 470;
-  // the rim: an engraved scale, graduated like Russell's charts (every degree, longer every five and fifteen)
   let rim = '';
   for (let i = 0; i < 360; i++) {
     const a = i / 360 * Math.PI * 2, l = i % 15 === 0 ? 30 : i % 5 === 0 ? 18 : 9, rr = R1 + 8;
     rim += `<line x1="${(Math.cos(a) * rr).toFixed(1)}" y1="${(Math.sin(a) * rr).toFixed(1)}" x2="${(Math.cos(a) * (rr + l)).toFixed(1)}" y2="${(Math.sin(a) * (rr + l)).toFixed(1)}" stroke-width="${i % 15 === 0 ? 2.2 : 1}"/>`;
   }
-  
+
   svg.innerHTML = `<g class="spin"><g stroke="${C.ink}" stroke-linecap="round">${rim}</g>
-    
     <g stroke="${C.ink}" stroke-width="1.2">${Array.from({ length: 240 }, (_, i) => { const a = i / 240 * Math.PI * 2, r0 = R0 + 6, r1 = R0 + (i % 2 ? 20 : 30); return `<line x1="${(Math.cos(a) * r0).toFixed(1)}" y1="${(Math.sin(a) * r0).toFixed(1)}" x2="${(Math.cos(a) * r1).toFixed(1)}" y2="${(Math.sin(a) * r1).toFixed(1)}"/>`; }).join('')}</g>
     <g class="arms"></g></g>
     <circle r="${R0 - 8}" fill="${C.ink}"/>
@@ -218,11 +107,9 @@ function wheel(words) {
     center.innerHTML = '*' + svgPie(w.form);
     center.setAttribute('font-size', w.form.length > 7 ? 46 : 58);
     mean.textContent = w.meaning.split(',')[0];
-    // each daughter rides a spiral arm from the hub to the rim (Russell's vortex)
     arms.innerHTML = ds.map(([br, d], k) => {
       const a0 = k / ds.length * Math.PI * 2, pts = [];
       for (let s = 0; s <= 40; s++) { const u = s / 40, rr = R0 + 12 + (R1 - R0 - 12) * u, a = a0 + u * 1.15; pts.push([Math.cos(a) * rr, Math.sin(a) * rr]); }
-      // a word on the lower half would read upside down: run its path the other way
       const mid = pts[20], down = mid[1] > 0, run = down ? [...pts].reverse() : [...pts];
       pts.length = 0; run.forEach(([x, y]) => pts.push(`${x.toFixed(1)},${y.toFixed(1)}`));
       const off = down ? ['62%', '20%'] : ['3%', '30%'];
@@ -231,11 +118,9 @@ function wheel(words) {
         <text font-size="15" class="w-br"><textPath href="#arm${k}" startOffset="${off[0]}">${br}</textPath></text>
         <text font-size="34" class="w-form" dy="-10"><textPath href="#arm${k}" startOffset="${off[1]}">${svgPie(d.form)}</textPath></text>`;
     }).join('');
-    $('#wheelCap').textContent = `*${w.form}, “${w.meaning}”, and its descendants in ${ds.length} branches, from the project's lexicon.`;
+    $('#wheelCap').textContent = `*${w.form} (“${w.meaning}”) across ${ds.length} branches.`;
   };
   let cur = -1, tl = null;
-  // a change of word: the arms draw back into the hub, the centre word turns through a blur, then the new arms
-  // draw out along their spirals one after another, each form sliding along its arm into place, the dots blooming
   const armsIn = () => {
     const paths = [...arms.querySelectorAll('path')], forms = [...arms.querySelectorAll('.w-form, .w-br')], dots = [...arms.querySelectorAll('circle')];
     paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
@@ -261,22 +146,24 @@ function wheel(words) {
       .to([center, mean], { opacity: 1, filter: 'blur(0px)', duration: .6, ease: 'power2.out' });
   };
   set(0);
-  // a row of the words, and previous / next: the reader moves through them, no long scroll
-  const nav = document.createElement('div'); nav.className = 'wheel-nav';
-  nav.innerHTML = `<button class="wn-prev" aria-label="Previous word">‹</button>${words.map((w, i) => `<button class="wn-w pie" data-i="${i}">*${typeset(w.form, { words: false })}</button>`).join('')}<button class="wn-next" aria-label="Next word">›</button>`;
-  $('.wheel-copy').append(nav);
-  const go = i => { i = (i + words.length) % words.length; set(i); nav.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i));
-    gsap.to(svg.querySelector('.spin'), { rotate: '+=36', svgOrigin: '0 0', duration: 1.4, ease: 'power3.inOut' }); };
-  nav.querySelector('.wn-prev').onclick = () => go(cur - 1); nav.querySelector('.wn-next').onclick = () => go(cur + 1);
-  nav.querySelectorAll('.wn-w').forEach(b => b.onclick = () => go(+b.dataset.i));
-  nav.querySelector('.wn-w').classList.add('on');
-  // grab it and it spins: dragged round its centre, a flick carries on and slows to rest. On touch screens a
-  // horizontal drag spins it and a vertical one still scrolls the page.
+
+  const navEl = document.createElement('div'); navEl.className = 'wheel-nav';
+  navEl.innerHTML = `<button class="wn-prev" aria-label="Previous word">‹</button><div class="wn-list">${words.map((w, i) => `<button class="wn-w pie" data-i="${i}" title="${w.meaning}">*${typeset(w.form, { words: false })}</button>`).join('')}</div><button class="wn-next" aria-label="Next word">›</button>`;
+  $('.wheel-copy').append(navEl);
+  const go = i => {
+    i = (i + words.length) % words.length; set(i);
+    navEl.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i));
+    gsap.to(svg.querySelector('.spin'), { rotate: '+=36', svgOrigin: '0 0', duration: 1.4, ease: 'power3.inOut' });
+  };
+  navEl.querySelector('.wn-prev').onclick = () => go(cur - 1);
+  navEl.querySelector('.wn-next').onclick = () => go(cur + 1);
+  navEl.querySelectorAll('.wn-w').forEach(b => b.onclick = () => go(+b.dataset.i));
+  navEl.querySelector('.wn-w').classList.add('on');
+
   const spin = svg.querySelector('.spin');
   svg.classList.add('grabbable'); svg.style.touchAction = matchMedia('(pointer: coarse)').matches ? 'pan-y' : 'none';
   let drag = null, vel = 0, coast = 0, acc = 0;
-  // turning it moves through the words: every 40 degrees clockwise is the next word, anticlockwise the one before
-  const STEP = 40, pick = i => { i = (i + words.length) % words.length; set(i); nav.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i)); };
+  const STEP = 40, pick = i => { i = (i + words.length) % words.length; set(i); navEl.querySelectorAll('.wn-w').forEach((b, k) => b.classList.toggle('on', k === i)); };
   const turned = d => { acc += d; while (acc >= STEP) { acc -= STEP; pick(cur + 1); } while (acc <= -STEP) { acc += STEP; pick(cur - 1); } };
   const angle = e => { const b = svg.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)) * 180 / Math.PI; };
   svg.addEventListener('pointerdown', e => {
@@ -301,17 +188,18 @@ function wheel(words) {
 // ---------------------------------------------------------------------------------------------------- machine
 function machine(s) {
   const tiers = [
-    [s.lexicon_entries, '', 'Lexicon', 'Entries, each with its source: 7,401 reconstructions from Wiktionary, 829 verbal roots added from LIV² and 135 nouns from the Nomina im Indogermanischen Lexikon.'],
-    [s.engine_agreement, '%', 'Grammar engine', `The engine inflects nouns, adjectives and verbs. Tested against the published paradigms, it reproduces ${s.engine_cells} of their cells.`],
-    [s.records, '', 'Corpus', `Texts in about fifty genres, from hymns, laws and riddles to laments, oaths and everyday dialogue: ${s.pie_words.toLocaleString('en')} words.`],
-    [86.2, '', 'Model', 'The fine-tuned model’s strict score on the held-out benchmark. The strongest frontier model scores 56.5.'],
+    ['I', s.lexicon_entries, '', 'Lexicon', '7,401 entries from Wiktionary, 829 verbal roots transcribed from LIV², and 135 nouns from NIL—each tied back to its source.'],
+    ['II', s.engine_agreement, '%', 'Grammar engine', `Inflects nouns, adjectives and verbs by rule, reproducing ${s.engine_cells} cells from Wiktionary's published paradigms.`],
+    ['III', s.records, '', 'Corpus', `${s.pie_words.toLocaleString('en')} words across ~50 genres—hymns, laws, riddles, laments, oaths, and everyday talk.`],
+    ['IV', 86.2, '', 'Model', 'Strict score on my held-out benchmark, where frontier models drop into the 40s and 50s.'],
   ];
-  $('#cascade').innerHTML = tiers.map(([n, u, l, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display">${l}</b><span class="serif">${d}</span></div></div>`).join('');
+  $('#cascade').innerHTML = tiers.map(([rm, n, u, l, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display"><em class="tier-i data">${rm}</em>${l}</b><span class="serif">${d}</span></div></div>`).join('');
   document.querySelectorAll('.tier .num').forEach(el => {
     const n = +el.dataset.n, dec = n % 1 ? 1 : 0, o = { v: 0 };
     el.textContent = n.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u;
-    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () =>
-      gsap.to(o, { v: n, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
+    if (reduce) return;
+    ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () =>
+      gsap.to(o, { v: n, duration: 1.25, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
   });
 }
 
@@ -319,29 +207,31 @@ function machine(s) {
 function results(bench) {
   const ours = bench.find(b => b.id === 'ours-nemotron35-e3-bf16');
   const best = fam => bench.filter(b => b.id.startsWith(fam)).sort((a, b) => b.lenient - a.lenient)[0];
-  const rows = [{ ...ours, name: 'Ours · PIE e3' }, ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best).filter(Boolean)];
+  const rows = [{ ...ours, name: 'Mine · PIE e3' }, ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best).filter(Boolean)];
   const box = $('#bars');
-  box.innerHTML = rows.map(r => `<div class="bar ${r.family === 'ours' ? 'ours' : ''}"><div class="who">${r.name}<div class="nums"><span class="sv">${r.strict.toFixed(1)}</span><span class="lv">/ ${r.lenient.toFixed(1)} lenient</span></div></div><div class="track"><canvas></canvas>
-</div></div>`).join('')
+  box.innerHTML = rows.map(r => `<div class="bar ${r.family === 'ours' ? 'ours' : ''}"><div class="who">${r.name}<div class="nums"><span class="sv">${r.strict.toFixed(1)}</span><span class="lv">/ ${r.lenient.toFixed(1)} lenient</span></div></div><div class="track"><canvas></canvas></div></div>`).join('')
     + `<div class="legend data small"><span><i style="background:${C.yellow}"></i>strict</span><span><i style="background:repeating-linear-gradient(45deg,rgba(255,210,26,.62) 0 1.5px,transparent 1.5px 7px)"></i>lenient</span><span>0 — 100</span></div>`;
   const draws = [...box.querySelectorAll('.bar')].map((el, i) => {
     const r = rows[i], cv = el.querySelector('canvas');
     const paint = k => {
       const { ctx, w, h } = fit(cv);
       ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = 'rgba(246,241,228,.18)'; ctx.lineWidth = 1;
-      
+      // subtle track background & 25 / 50 / 75 / 100 reference hairlines so scores read effortlessly against 100
+      ctx.fillStyle = 'rgba(246,241,228,.05)'; ctx.fillRect(0, 2, w, h - 4);
+      ctx.strokeStyle = 'rgba(246,241,228,.12)'; ctx.lineWidth = 1;
+      for (const p of [.25, .5, .75, 1]) { const x = Math.min(w - .5, Math.round(w * p) + .5); ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
       const L = w * r.lenient / 100 * k, S = w * r.strict / 100 * k;
-      ctx.globalAlpha = .62; hatchRect(ctx, 0, 2, L, h - 4, { color: C.yellow, gap: 7.5, lw: 1.1 }); ctx.globalAlpha = 1;   // lenient: a lighter hatch
+      ctx.globalAlpha = .62; hatchRect(ctx, 0, 2, L, h - 4, { color: C.yellow, gap: 7.5, lw: 1.1 }); ctx.globalAlpha = 1;
       ctx.fillStyle = r.family === 'ours' ? C.yellow : C.deep; ctx.fillRect(0, 2, S, h - 4);
-      
     };
     paint(0);
     return { el, paint };
   });
   draws.forEach(({ el, paint }, i) => {
-    const o = { k: 0 };
-    ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => gsap.to(o, { k: 1, duration: 1.4, delay: i * .08, ease: 'power3.out', onUpdate: () => paint(o.k) }) });
+    const o = { k: reduce ? 1 : 0 };
+    if (reduce) { paint(1); } else {
+      ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => gsap.to(o, { k: 1, duration: 1.2, delay: i * .07, ease: 'power3.out', onUpdate: () => paint(o.k) }) });
+    }
     addEventListener('repaint', () => paint(o.k));
   });
 }
@@ -352,14 +242,13 @@ function voice(h) {
   const audio = $('#audio'), hymn = $('#hymn'), disc = $('#disc'), ipa = $('#ipa'), en = $('#hymnEn');
   let voiceName = 'male';
   audio.src = h.audio[voiceName];
-  // lines from the timeline
   const lines = [];
   h.words.forEach((w, i) => { (lines[w.line - 1] ||= []).push(i); });
   hymn.innerHTML = lines.map((ix, li) => `<div class="hline" data-l="${li}"><span class="hl">${ix.map(i => `<span class="w" data-i="${i}">${typeset(h.words[i].word, { words: false })}</span>`).join(' ')}</span><span class="hen">${h.english_lines[li] || ''}</span></div>`).join('');
   const hlines = [...hymn.querySelectorAll('.hline')];
   const spans = [...hymn.querySelectorAll('.w')];
   en.textContent = '';
-  // the ring: hatched spokes around the disc, driven by the audio's spectrum
+
   const ring = $('#ring');
   let actx, an, buf;
   const setupAudio = () => {
@@ -369,22 +258,32 @@ function voice(h) {
     src.connect(an); an.connect(actx.destination); buf = new Uint8Array(an.frequencyBinCount);
   };
   const n = noise2(77);
-  let cur = -1;
-  const frame = t => {
+  let cur = -1, visible = false, raf = 0, lastIdle = 0;
+
+  const drawRing = t => {
     const { ctx, w, h: hh } = ring._fit || (ring._fit = fit(ring));
     ctx.clearRect(0, 0, w, hh);
     const cx = w / 2, cy = hh / 2, R = w / 2 / 1.28;
-    if (an) an.getByteFrequencyData(buf);
+    if (an && !audio.paused) an.getByteFrequencyData(buf);
     const N = 180;
     for (let i = 0; i < N; i++) {
-      const a = i / N * Math.PI * 2 - Math.PI / 2, bin = buf ? buf[Math.floor((i < N / 2 ? i : N - i) / (N / 2) * 70)] / 255 : 0;
+      const a = i / N * Math.PI * 2 - Math.PI / 2, bin = (buf && !audio.paused) ? buf[Math.floor((i < N / 2 ? i : N - i) / (N / 2) * 70)] / 255 : 0;
       const idle = .18 + .12 * (n(Math.cos(a) * 1.5 + t * .0003, Math.sin(a) * 1.5) + 1);
       const L = R * (.06 + (audio.paused ? idle * .25 : bin * .32 + idle * .05));
       ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * (R + 6), cy + Math.sin(a) * (R + 6));
       ctx.lineTo(cx + Math.cos(a + .02) * (R + 6 + L), cy + Math.sin(a + .02) * (R + 6 + L));
       ctx.strokeStyle = i % 9 === 0 ? C.red : C.ink; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.stroke();
     }
-    // the current word
+  };
+
+  const frame = t => {
+    raf = 0;
+    if (!visible && audio.paused) return;
+    // throttle idle motion to ~24fps when paused; full 60fps during audio playback
+    if (!audio.paused || t - lastIdle > 42) {
+      drawRing(t);
+      lastIdle = t;
+    }
     const tt = audio.currentTime;
     let k = -1;
     const T = h.timing ? h.timing[voiceName === 'male' ? 'm' : 'f'] : h.words;
@@ -395,15 +294,21 @@ function voice(h) {
       spans.forEach((s, i) => { s.classList.toggle('now', i === k); s.classList.toggle('done', i < k); });
       if (k >= 0) { ipa.textContent = `[${h.words[k].ipa}]`; hlines.forEach((l, i) => l.classList.toggle('now', i === h.words[k].line - 1)); }
     }
-    requestAnimationFrame(frame);
+    if (visible || !audio.paused) raf = requestAnimationFrame(frame);
   };
-  requestAnimationFrame(frame);
-  addEventListener('repaint', () => { ring._fit = null; });
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  new IntersectionObserver(e => {
+    visible = e[0].isIntersecting;
+    if (visible) kick();
+    else if (audio.paused && raf) { cancelAnimationFrame(raf); raf = 0; }
+  }).observe($('#s-voice'));
+
+  addEventListener('repaint', () => { ring._fit = null; if (visible) drawRing(performance.now()); });
   disc.addEventListener('click', async () => {
     setupAudio(); if (actx.state === 'suspended') await actx.resume();
     if (audio.paused) { if (audio.ended) audio.currentTime = 0; await audio.play(); } else audio.pause();
   });
-  audio.addEventListener('play', () => { hymn.classList.add('playing'); $('#discLabel').textContent = 'Pause'; });
+  audio.addEventListener('play', () => { hymn.classList.add('playing'); $('#discLabel').textContent = 'Pause'; kick(); });
   audio.addEventListener('pause', () => { $('#discLabel').textContent = audio.ended ? 'Again' : 'Play'; });
   audio.addEventListener('ended', () => { hymn.classList.remove('playing'); });
   document.querySelectorAll('.voices button').forEach(b => b.addEventListener('click', () => {
@@ -413,16 +318,13 @@ function voice(h) {
     const t = audio.currentTime, playing = !audio.paused;
     audio.src = h.audio[voiceName]; audio.currentTime = t; if (playing) audio.play();
   }));
-  // click a word to hear from there
   spans.forEach((s, i) => s.addEventListener('click', async () => { setupAudio(); await actx.resume(); const T = h.timing ? h.timing[voiceName === 'male' ? 'm' : 'f'] : h.words; audio.currentTime = T[i].start; audio.play(); }));
   spans.forEach(s => s.style.cursor = 'pointer');
 }
 
 // ---------------------------------------------------------------------------------------------------- specimens
-// Each text is a leaf: bone paper, one ink, a grown margin (florilegium, rendered by tools/build_gardens.mjs in the
-// leaf's ink) and an illuminated initial (initialis) printed in the same inks on the same paper.
-async function specimens(list) {
-  const pal = await fetch('tools/palette.json').then(r => r.json());
+function specimens(list) {
+  const pal = PALETTE;
   const track = $('#specTrack');
   track.innerHTML = list.map((s, i) => {
     const k = pal[i % pal.length];
@@ -433,34 +335,27 @@ async function specimens(list) {
       ${s.audio ? `<p class="lis serif"><button class="play" aria-label="Listen">listen</button> · <button data-v="male" class="on">male</button> / <button data-v="female">female</button></p>` : ''}</div></article>`;
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
-  // each leaf's garden grows (gardens/leaf-<i>.mp4) as the leaf comes into view; loaded a little before
   const near = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src; } near.unobserve(e.target); } }), { rootMargin: '0px 60% 0px 60%' });
   leaves.forEach(l => near.observe(l));
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) v.src = v.dataset.src;
     v.play().catch(() => { v.poster = v.dataset.still; }); e.target.classList.add('grown'); io.unobserve(e.target); } }), { threshold: .35 });
   leaves.forEach(l => io.observe(l));
-  let lib = null;
-  lib = true;
+
   const build = (el, i) => {
-    const s = list[i], k = pal[i % pal.length];
+    const s = list[i];
     const src = s.pie.normalize('NFD'), at = src.search(/[a-z]/i);
-    const [cl, base, marks, extra] = src.slice(at).match(/^([a-z])([̀-ͯ]*)([ʰʷ₁₂₃]*)/i);
+    const [, base, marks] = src.slice(at).match(/^([a-z])([\u0300-\u036f]*)([ʰʷ₁₂₃]*)/i);
     const ini = el.querySelector('.ini');
-    // a parallel text: each PIE sentence with its English beneath, where the sentences match one to one
     const sent = t => t.match(/[^.!?]+[.!?]+/g)?.map(x => x.trim()) || [t];
     const ps = sent(s.pie), es = sent(s.english), pair = ps.length === es.length && ps.length > 1;
     const body = pair ? ps.map((x, k) => `<span class="ps">${typeset(k ? x : x.normalize('NFD').slice(at + base.length + marks.length))}</span><span class="pe">${es[k]}</span>`).join(' ')
       : typeset(src.slice(at + base.length + marks.length));
     el.querySelector('.pt').innerHTML = body;
     el.querySelector('.e').style.display = pair ? 'none' : '';
-    if (!lib) return;
-    const fs = parseFloat(getComputedStyle(el.querySelector('.p')).fontSize), size = Math.round(fs * 1.28 * 3.4);
-    // our own illumination: a cord or a frieze of horses round the frame, an incised ground, sun-wheel corners,
-    // tulips for the growing ornament, all in the leaf's inks on its paper
     ini.innerHTML = `<img src="art/initials/leaf-${i}.webp?v=${ART_V}" alt="" decoding="async" loading="lazy" style="width:100%;height:100%">`;
   };
   leaves.forEach(build);
-  // readings: one player for all the leaves; the words light up as they are spoken
+
   const player = new Audio(); let playing = null, raf = 0;
   const stopLeaf = () => { if (playing) { playing.el.classList.remove('reading'); playing.el.querySelectorAll('.w.now').forEach(w => w.classList.remove('now')); playing.el.querySelector('.play').textContent = 'listen'; } playing = null; cancelAnimationFrame(raf); };
   const tickLeaf = () => { if (!playing) return; const T = playing.T, t = player.currentTime + .06; let k = -1; for (let i = 0; i < T.length; i++) if (t >= T[i].start) k = i;
@@ -468,18 +363,18 @@ async function specimens(list) {
   leaves.forEach((el, i) => {
     const s = list[i]; if (!s.audio) return;
     const lb = el.querySelector('.lis'); if (lb) brushGround(lb, 0, '#ffd21a');
-    let voice = 'male';
-    el.querySelectorAll('.lis [data-v]').forEach(b => b.onclick = () => { voice = b.dataset.v; el.querySelectorAll('.lis [data-v]').forEach(x => x.classList.toggle('on', x === b)); if (playing?.el === el) { stopLeaf(); el.querySelector('.play').click(); } });
+    let voiceName = 'male';
+    el.querySelectorAll('.lis [data-v]').forEach(b => b.onclick = () => { voiceName = b.dataset.v; el.querySelectorAll('.lis [data-v]').forEach(x => x.classList.toggle('on', x === b)); if (playing?.el === el) { stopLeaf(); el.querySelector('.play').click(); } });
     el.querySelector('.play').onclick = () => {
       if (playing?.el === el) { player.pause(); stopLeaf(); return; }
-      stopLeaf(); player.src = s.audio[voice]; player.currentTime = 0; player.play();
-      playing = { el, T: s.timing[voice === 'male' ? 'm' : 'f'], ws: [...el.querySelectorAll('.pt .w')] };
+      stopLeaf(); player.src = s.audio[voiceName]; player.currentTime = 0; player.play();
+      playing = { el, T: s.timing[voiceName === 'male' ? 'm' : 'f'], ws: [...el.querySelectorAll('.pt .w')] };
       el.classList.add('reading'); el.querySelector('.play').textContent = 'stop'; tickLeaf();
     };
   });
   player.addEventListener('ended', stopLeaf);
-  // each leaf's text fits its page: the type steps down until nothing runs past the foot
-  const fitLeaf = el => { const t = el.querySelector('.txt'), p = el.querySelector('.p'); let fs = parseFloat(getComputedStyle(p).fontSize);
+
+  const fitLeaf = el => { const t = el.querySelector('.txt'), p = el.querySelector('.p'); let fs;
     p.style.fontSize = ''; fs = parseFloat(getComputedStyle(p).fontSize);
     for (let n = 0; n < 24 && t.scrollHeight > t.clientHeight + 2; n++) { fs *= .95; p.style.fontSize = fs + 'px'; } };
   if (innerWidth >= 700) { leaves.forEach(fitLeaf); addEventListener('repaint', () => leaves.forEach(fitLeaf)); }
@@ -489,7 +384,6 @@ async function specimens(list) {
 }
 
 // ---------------------------------------------------------------------------------------------------- translator
-// The engine's translator, both ways: the sentence set large, then each word with its gloss, and the pronunciation
 const EXAMPLES = {
   en2pie: ['The wolf sees the sheep, and the dog guards them.', 'The king gives the horses to the shepherd.', 'Dawn, daughter of the sky, shines.', 'We carry water to the house.'],
   pie2en: ['h₂ówis h₁éḱwōs-kʷe', 'dyḗws ph₂tḗr h₁ésti', 'wĺ̥kʷos h₂ówim widéh₁yeti', 'ḱléwos ń̥dʰgʷʰitom'],
@@ -499,7 +393,6 @@ function translator() {
   let dir = 'en2pie', tm, seq = 0;
   const examples = () => { ex.innerHTML = 'Try: ' + EXAMPLES[dir].map(e => `<button>${dir === 'pie2en' ? typeset(e, { words: false }) : e}</button>`).join(' · ');
     ex.querySelectorAll('button').forEach((b, i) => b.onclick = () => { inp.value = EXAMPLES[dir][i]; run(); }); };
-  // a sentence the engine could not build (no word in it has a PIE reconstruction): said so, in place of the line
   const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const q = x => `“${esc(x)}”`;
   const nothing = s => { const u = s.unknown || []; return `<div class="tr-notes serif">${u.length ? `No reconstructed PIE word for ${u.map(q).join(u.length > 2 ? ', ' : ' or ').replace(/, ([^,]*)$/, ', or $1')}, so there is nothing to translate.` : 'Nothing here the engine could translate.'}</div>`; };
@@ -511,7 +404,6 @@ function translator() {
       const js = await api(dir, text);
       if (my !== seq) return;
       if (dir === 'en2pie') {
-        // substitutions the engine made ("'brown' ≈ 'grey' (no PIE word for 'brown' …)"): the stand-in word is marked
         const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
         out.innerHTML = js.map(s => { if (!s.pie) return nothing(s); const sub = subOf(s);
           return `<div class="tr-line pie">${typeset(s.pie)}</div>
@@ -524,7 +416,7 @@ function translator() {
           <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ').replace(/~/g, '')) : 'not found'}</span></div>`; }).join('')}</div>
           ${js.ipa ? `<div class="tr-ipa">[${esc(js.ipa)}]</div>` : ''}`;
       }
-      gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .5, stagger: .035, ease: 'power3.out' });
+      if (!reduce) gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .45, stagger: .03, ease: 'power3.out' });
     } catch (e) {
       if (my === seq) out.innerHTML = `<div class="err">${failText(e)}</div>`;
     } finally { out.classList.remove('busy'); }
@@ -541,27 +433,9 @@ function translator() {
   ScrollTrigger.create({ trigger: '#s-apps', start: 'top 70%', once: true, onEnter: run });
 }
 
-// ---------------------------------------------------------------------------------------------------- footer
-async function footer() {
-  const cv = $('.foot-herd'), frames = await Promise.all(Array.from({ length: 11 }, (_, k) => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = `art/horse/paint-dark-${String(k + 1).padStart(2, '0')}.webp`; })));
-  let on = false; new IntersectionObserver(e => { on = e[0].isIntersecting; if (on) requestAnimationFrame(run); }).observe(cv);
-  const run = t => {
-    if (!on) return;
-    const { ctx, w, h } = cv._fit || (cv._fit = fit(cv)); ctx.clearRect(0, 0, w, h);
-    [0, .5].forEach((x0, i) => { const im = frames[(Math.floor(t / 90) + i * 5) % 11], hh = h * .95, ww = hh * im.naturalWidth / im.naturalHeight;
-      ctx.drawImage(im, ((x0 + t * .00003) % 1.15) * w - ww * .1, h - hh, ww, hh); });
-    requestAnimationFrame(run);
-  };
-  addEventListener('repaint', () => { cv._fit = null; });
-}
-
 // ---------------------------------------------------------------------------------------------------- gardens
-// each section's steppe garden (tools/build_section_gardens.mjs), laid behind it; skipped with ?nogarden (the build
-// measures the page without them)
 function gardens() {
   if (location.search.includes('nogarden')) return;
-  // the growth is a video (tools/build_growth.mjs): florilegium's own growth, played once when the section is reached,
-  // resting on the finished garden. Browsers without VP9 alpha (Safari) show the finished garden as an image.
   const probe = document.createElement('video');
   const phone = innerWidth < 700, sfx = phone ? '-m' : '';
   let busy = false; const waiting = [];
@@ -571,8 +445,6 @@ function gardens() {
   for (const [name, sel] of [['open', '#s-open'], ['opentop', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
-    // one growth at a time on a phone (each alpha video is a software decoder there); when a growth ends, its video
-    // gives way to the finished garden as an image, so no decoder stays open
     const play = done => {
       const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
       v.src = `art/growth-${name}${sfx}.webm`; g.append(v);
@@ -580,23 +452,20 @@ function gardens() {
       v.addEventListener('canplay', () => v.play().catch(finish), { once: true });
       v.addEventListener('ended', finish, { once: true });
       v.addEventListener('error', finish, { once: true });
-      setTimeout(finish, 20000);                     // a growth that never arrives does not hold up the next
+      setTimeout(finish, 20000);
     };
     const start = () => (alphaVideo && !reduce) ? queue(play) : still();
     const still = then => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`;
       im.decode().catch(() => {}).then(() => { g.append(im); then?.(); }); };
     if (name.startsWith('open')) { start(); continue; }
-    // start when the garden's part of the section comes into view: on a phone that is the foot of the section
     const target = phone ? (() => { const s = document.createElement('div'); s.className = 'g-sentinel'; host.append(s); return s; })() : host;
     new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -10% 0px' }).observe(target);
   }
 }
 
 const T0 = performance.now(), mark = n => { if (location.search.includes('perf')) console.log('PERF', n, Math.round(performance.now() - T0)); };
+
 // ---------------------------------------------------------------------------------------------------- carving
-// illum's rock carving (js/rubric.js) where the page is yellow and still: the hero's P (once it has arrived), and the
-// copy beside the reconstruction wheel and above the hymn (fillers at paragraph ends; no paraphs, which want a margin
-// these columns do not have). Not the map (a plate of its own), the moving specimens, or the black bands. Yellow is light in either theme.
 function carving() {
   const only = sel => ({ theme: 'light', select: { initial: NONE, drop: NONE, heading: NONE, break: NONE, quote: NONE, figure: NONE, code: NONE, pull: NONE,
     aside: NONE, nav: NONE, paraph: NONE, filler: NONE, ...sel } });
@@ -607,36 +476,37 @@ function carving() {
 }
 
 async function boot() {
-  if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');   // watercolour by default; ?map=ink for the plain engraving
-  // manuscript sections: the garden margin alternates sides down the page
-  [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right'], ].forEach(([s, c]) => $(s)?.classList.add(c));
-  const data = await fetch('data/site.json', { cache: 'no-store' }).then(r => r.json());
-  typesetAll();
-  tooth();      // for the map plate only
-  await document.fonts.ready; mark('fonts');
+  if (new URLSearchParams(location.search).get('map') !== 'ink') document.documentElement.classList.add('map-wc');
+  [['#s-wheel .wheel-pin', 'ms-left'], ['#s-machine', 'ms-right'], ['#s-voice', 'ms-left'], ['#s-apps', 'ms-right']].forEach(([s, c]) => $(s)?.classList.add(c));
 
-  overture(); mark('overture();');
-  // the header's art first: the initial and the garden, then the page arrives (at most 2.5 s)
+  // Start fetching site.json immediately (reusing <link rel="preload">) WITHOUT blocking hero arrival
+  const dataP = fetch('data/site.json').then(r => r.json());
+  typesetAll();
+
   const ready = src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; });
-  if (!heroCarved()) await Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]);
+  await Promise.all([
+    document.fonts.ready,
+    heroCarved() ? Promise.resolve() : Promise.race([ready(`art/initials/hero.webp?v=${ART_V}`), new Promise(r => setTimeout(r, 1200))]),
+  ]);
+  mark('fonts+hero');
+
+  overture(); mark('overture');
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
-  // the plate's images (css/main.css .relief, .wash) come now that the hero's initial and the fonts are in, not at load
-  document.documentElement.classList.add('map-near');
+
   nav();
   gardens();
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));
-  await mapPlate($('#s-mig')); mark("await mapPlate($('#s-mig'));");      // first: its pin spacing must exist before later sections measure
-  wheel(data.wheels); mark('wheel(data.wheels);');
-  machine(data.stats); mark('machine(data.stats);');
-  results(data.bench); mark('results(data.bench);');
-  voice(data.hymn); mark('voice(data.hymn);');
-  specimens(data.specimens); mark('specimens(data.specimens);');
-  translator(); mark('translator();');
-  carving();
-  // a streak of red paint under the credit line
-  { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
+  mapPlate($('#s-mig'), { onNear: tooth }); mark('mapPlate');
 
+  const data = await dataP;
+  wheel(data.wheels); mark('wheel');
+  machine(data.stats); mark('machine');
+  results(data.bench); mark('results');
+  voice(data.hymn); mark('voice');
+  specimens(data.specimens); mark('specimens');
+  translator(); mark('translator');
+  carving();
 
   ScrollTrigger.refresh();
   dispatchEvent(new Event('pie:ready'));

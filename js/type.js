@@ -43,7 +43,10 @@ export const SETS = [
 const ROLES = ['display', 'pie', 'book', 'serif', 'data', 'accent'];
 const loaded = new Set();
 
+let localLoaded = false;
 function loadLocal() {
+  if (localLoaded) return;
+  localLoaded = true;
   const css = LOCAL.map(([fam, file, w, st]) =>
     `@font-face{font-family:'${fam}';src:url(fonts/${file}.woff2) format('woff2');font-weight:${w};font-style:${st || 'normal'};font-display:swap}`).join('');
   const s = document.createElement('style'); s.textContent = css; document.head.append(s);
@@ -59,6 +62,7 @@ function loadGoogle(fams) {
 
 export function applySet(i) {
   const set = SETS[(i + SETS.length) % SETS.length];
+  if (set.name !== 'steppe') loadLocal();
   loadGoogle(set.google);
   const r = document.documentElement.style;
   for (const role of ROLES) {
@@ -75,7 +79,6 @@ export function applySet(i) {
 }
 
 export function initType() {
-  loadLocal();
   let start = 0;
   try { start = Math.max(0, SETS.findIndex(s => s.name === (new URLSearchParams(location.search).get('type') || localStorage.getItem('pie-type')))); } catch {}
   let cur = start;

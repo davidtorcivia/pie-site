@@ -5,7 +5,7 @@
 // that square (css: --cap-pad), and the horses hang outside the text they sit beside.
 export const CAP = { margin: 40, gap: 100 };
 // bump when the initials are rebuilt: their file names stay the same and browsers cache art
-export const ART_V = '4';
+export const ART_V = '5';
 CAP.pad = (CAP.margin + CAP.gap) / 1000;
 const framed = (P, band = 'horses', perSide = 3) => ({ ...P, frame: 'rect', fRules: 2, fMargin: CAP.margin, fGap: CAP.gap, fW1: 0, fW2: 0, fBand: band, fHorseN: perSide });
 // the borders, in turn: horses on about one initial in three, the others beads, pearls or dentils, all laid evenly

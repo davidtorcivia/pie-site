@@ -2,15 +2,12 @@
 // story; the pages; the signature. The homepage's own footer garden (art/garden-foot*.webp, growth-foot*.webm)
 // grows behind it when the footer comes into view, scaled to cover so it never stretches.
 import { typeset } from './type.js';
-import { brushStroke } from './brush.js';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function colophon() {
   const f = document.querySelector('footer.colo'); if (!f) return;
   f.querySelectorAll('.colo-pie a').forEach(a => { a.innerHTML = typeset(a.textContent.trim(), { words: false }); });
-  const by = f.querySelector('.foot-by');
-  if (by) by.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`);
   const here = location.pathname.split('/').pop().replace(/\.html$/, '') || 'index';
   f.querySelectorAll('.colo-nav a').forEach(a => { if (a.getAttribute('href').replace(/\.html$/, '') === here) a.setAttribute('aria-current', 'page'); });
   if (location.search.includes('nogarden')) return;

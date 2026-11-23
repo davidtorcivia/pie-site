@@ -5,7 +5,6 @@ import { initType, typeset, typesetAll } from './type.js';
 import { rubric } from './rubric.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
-import { brushStroke } from './brush.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -166,9 +165,10 @@ function garden() {
   if (innerWidth < 700 || location.search.includes('nogarden')) return;
   const host = $('.v-garden'), probe = document.createElement('video');
   const alpha = probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  const still = () => { const im = new Image(); im.className = 'gv'; im.alt = ''; im.src = 'art/garden-voices.webp'; im.onerror = () => im.remove(); host.append(im); };
+  const still = then => { const im = new Image(); im.className = 'gv'; im.alt = ''; im.src = 'art/garden-voices.webp'; im.onerror = () => im.remove(); im.decode().catch(() => {}).then(() => { host.append(im); then?.(); }); };
   if (alpha && !reduce) { const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.className = 'gv'; v.src = 'art/growth-voices.webm'; host.append(v);
-    v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true }); v.addEventListener('error', () => { v.remove(); still(); }, { once: true }); }
+    const finish = () => { if (v._done) return; v._done = true; still(() => { v.removeAttribute('src'); v.load(); v.remove(); }); };
+    v.addEventListener('canplay', () => v.play().catch(finish), { once: true }); v.addEventListener('ended', finish, { once: true }); v.addEventListener('error', finish, { once: true }); }
   else still();
 }
 // Muybridge's horse, painted (art/horse/paint-dark-NN.webp, 300 px tall: the herd is at most 150 CSS px, so that covers
@@ -198,7 +198,6 @@ async function boot() {
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
   score(F); stages(F); ladder(F); materials(cfg);
   document.querySelectorAll('.lad-voices button').forEach(b => b.onclick = () => { stop(); ladderVoice = b.dataset.v; document.querySelectorAll('.lad-voices button').forEach(x => x.classList.toggle('on', x === b)); ladder(F); });
-  { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
   // headings on painted grounds, each its own stroke
   document.querySelectorAll('.v-art .v-h2 span').forEach((s, i) => s.style.setProperty('--stroke', `url(${new URL(`art/brush/${String((i * 7 + 9) % 64).padStart(2, '0')}.webp`, location.href).href})`));
   garden(); herd(); live(cfg);

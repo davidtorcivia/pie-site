@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>How we built a voice for Proto-Indo-European — *PIE</title>
-<meta name="description" content="How the project built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
+<title>How I built a voice for Proto-Indo-European — *PIE</title>
+<meta name="description" content="How I built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
 <link rel="canonical" href="https://wekwos.com/voices">
 <meta name="theme-color" content="#ffd21a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="*PIE">
-<meta property="og:title" content="How we built a voice for Proto-Indo-European — *PIE">
-<meta property="og:description" content="How the project built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
+<meta property="og:title" content="How I built a voice for Proto-Indo-European — *PIE">
+<meta property="og:description" content="How I built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
 <meta property="og:url" content="https://wekwos.com/voices">
 <meta property="og:image" content="https://wekwos.com/art/og/voices.jpg">
 <meta property="og:image:width" content="1200">
@@ -19,13 +19,13 @@
 <meta property="og:image:alt" content="The word Voices above a spectrogram of a line of Proto-Indo-European, with a painted horse and steppe plants.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="How we built a voice for Proto-Indo-European — *PIE">
-<meta name="twitter:description" content="How the project built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
+<meta name="twitter:title" content="How I built a voice for Proto-Indo-European — *PIE">
+<meta name="twitter:description" content="How I built speech for Proto-Indo-European: sounds made in simulated vocal tracts, first VocalTractLab and then Chimera, carried into human voices, and learned by a fine-tuned Kokoro text-to-speech model.">
 <meta name="twitter:image" content="https://wekwos.com/art/og/voices.jpg">
 <meta name="twitter:image:alt" content="The word Voices above a spectrogram of a line of Proto-Indo-European, with a painted horse and steppe plants.">
 <link rel="apple-touch-icon" href="art/icon-180.png">
 <link rel="manifest" href="site.webmanifest">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How we built a voice for Proto-Indo-European", "url": "https://wekwos.com/voices", "inLanguage": "en", "author": {"@type": "Person", "name": "David Torcivia", "url": "https://davidtorcivia.com"}, "about": ["Proto-Indo-European", "speech synthesis", "articulatory synthesis", "VocalTractLab", "Kokoro"], "isPartOf": {"@type": "WebSite", "name": "*PIE", "url": "https://wekwos.com/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How I built a voice for Proto-Indo-European", "url": "https://wekwos.com/voices", "inLanguage": "en", "author": {"@type": "Person", "name": "David Torcivia", "url": "https://davidtorcivia.com"}, "about": ["Proto-Indo-European", "speech synthesis", "articulatory synthesis", "VocalTractLab", "Kokoro"], "isPartOf": {"@type": "WebSite", "name": "*PIE", "url": "https://wekwos.com/"}}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffd21a'/%3E%3Ctext x='50' y='92' font-size='110' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900'%3E*%3C/text%3E%3C/svg%3E">
 <!-- the faces of the first screen (css/fonts.css) -->
 <link rel="preload" as="font" type="font/woff2" href="fonts/archivo-core.480c010d.woff2" crossorigin>
@@ -78,8 +78,8 @@
   <section class="sec" id="sounds">
     <h2 class="display v-h2"><span>The sounds</span></h2>
     <p class="lead book"><span class="ini drop">H</span>ow do you piece together a language that has no speakers? This was the initial hurdle of the project, and while we have strong scholarly work indicating probable pronunciations, the language has no descendants that kept all the features of the original. There are three laryngeals: h₁, which I read (as there is some debate) as a plain [h]; h₂, a voiceless uvular fricative [χ], the scrape at the back of German <i>Bach</i>; and h₃, its voiced, lip-rounded partner [ɣʷ]. Then there are stops at the back of the mouth which come in three rows - palatal [c ɟ], plain [k ɡ] and labiovelar [kʷ ɡʷ] (a labiovelar is one sound, the lips already rounding as the stop releases). Finally there are the breathy-voiced stops [bʱ dʱ ɡʱ], resonants that carry a syllable all by themselves (like the l at the end of English <i>bottle</i>), a short vowel that turns up wherever a laryngeal sits between two consonants (so <span class="pie" data-pie>ph₂tḗr</span> “father” comes out [pə.téːr]), and an accent made of pitch (the accented syllable is sung higher).</p>
-    <p class="book">While no <i>one</i> language carries all of these features, every one of these exists <i>somewhere</i>. Hindi has the breathy stops and Arabic the uvular fricatives, Czech says syllabic r and l, Hungarian has palatal stops, and Swedish tells words apart by pitch. Unfortunately this means no vocal synthesis program or model, which are trained off of existing languages, has the full inventory necessary to recreate PIE accurately (as you can see in the table below) - we'll have to recreate these sounds from scratch.</p>
-    <p class="book">The phonetic values for this project come straight from the handbooks of the field: Fortson, Ringe, Beekes, Clackson and Byrd. Where the authors disagree (and there are several places, this is opinionated speculative work on some level), I picked one reading and recorded the others in the project's <a href="https://github.com/davidtorcivia/pie-corpus/blob/main/docs/pronunciation.md">pronunciation notes</a>. From there a <a href="https://github.com/davidtorcivia/pie-corpus/blob/main/pie/ipa.py">converter</a> turns written PIE into IPA via these fixed rules. Now we have what we need to start building a spoken language corpus.</p>
+    <p class="book">While no <i>one</i> language carries all of these features, every one of these exists <i>somewhere</i>. Hindi has the breathy stops and Arabic the uvular fricatives, Czech says syllabic r and l, Hungarian has palatal stops, and Swedish tells words apart by pitch. Unfortunately this means no vocal synthesis program or model, which are trained off of existing languages, has the full inventory necessary to recreate PIE accurately (as you can see in the table below) - I'd have to recreate these sounds from scratch.</p>
+    <p class="book">The phonetic values for this project come straight from the handbooks of the field: Fortson, Ringe, Beekes, Clackson and Byrd. Where the authors disagree (and there are several places, this is opinionated speculative work on some level), I picked one reading and recorded the others in the project's <a href="https://github.com/davidtorcivia/pie-corpus/blob/main/docs/pronunciation.md">pronunciation notes</a>. From there a <a href="https://github.com/davidtorcivia/pie-corpus/blob/main/pie/ipa.py">converter</a> turns written PIE into IPA via these fixed rules. Now I had what I needed to start building a spoken language corpus.</p>
 
     <figure class="fig fig-matrix" id="fig1">
       <table class="mx">

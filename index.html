@@ -5,13 +5,13 @@
 <script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>*PIE — Proto-Indo-European, rebuilt as a working language</title>
-<meta name="description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and a synthetic voice.">
+<meta name="description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and synthetic voices.">
 <link rel="canonical" href="https://wekwos.com/">
 <meta name="theme-color" content="#ffd21a">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="*PIE">
 <meta property="og:title" content="*PIE — Proto-Indo-European, rebuilt as a working language">
-<meta property="og:description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and a synthetic voice.">
+<meta property="og:description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and synthetic voices.">
 <meta property="og:url" content="https://wekwos.com/">
 <meta property="og:image" content="https://wekwos.com/art/og/home.jpg">
 <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="*PIE — Proto-Indo-European, rebuilt as a working language">
-<meta name="twitter:description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and a synthetic voice.">
+<meta name="twitter:description" content="Proto-Indo-European, reconstructed as a working language: a lexicon of 8,434 words, a grammar engine, a corpus of texts, a language model that reads and writes it, and synthetic voices.">
 <meta name="twitter:image" content="https://wekwos.com/art/og/home.jpg">
 <meta name="twitter:image:alt" content="An illuminated initial P beside the words Proto-Indo-European, on yellow with a garden of steppe plants.">
 <link rel="apple-touch-icon" href="art/icon-180.png">
@@ -35,13 +35,11 @@
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/dark.css">
-<!-- the page's whole module graph at once (one round trip, not one per import level) -->
+<!-- the page's module graph (one round trip, no dead modules) -->
 <link rel="modulepreload" href="js/main.js">
 <link rel="modulepreload" href="js/translate-api.js">
 <link rel="modulepreload" href="js/type.js">
 <link rel="modulepreload" href="js/hatch.js">
-<link rel="modulepreload" href="js/painter.js">
-<link rel="modulepreload" href="js/illum.js">
 <link rel="modulepreload" href="js/map.js">
 <link rel="modulepreload" href="js/brush.js">
 <link rel="modulepreload" href="js/nav.js">
@@ -49,7 +47,7 @@
 <link rel="modulepreload" href="js/initials.js">
 <link rel="modulepreload" href="js/rubric.js">
 <!-- the hero's printed initial (js/main.js waits for it before the page arrives); ?v= follows ART_V in js/initials.js -->
-<link rel="preload" as="image" href="art/initials/hero.webp?v=4" fetchpriority="high">
+<link rel="preload" as="image" href="art/initials/hero.webp?v=5" fetchpriority="high">
 <link rel="preload" as="fetch" href="data/site.json" crossorigin>
 <noscript><style>html.arriving #s-open > * { opacity: 1 !important; }</style></noscript>
 </head>
@@ -57,12 +55,11 @@
 
 <!-- 0 · overture -->
 <section id="s-open" class="s yellow">
-  <div class="hero-field" aria-hidden="true"></div>
   <div class="hero-title">
     <div class="hero-cap"></div>
     <h1 class="open-h"><span class="line">roto-</span><span class="line">Indo-</span><span class="line">European</span></h1>
   </div>
-  <p class="open-p serif">Proto-Indo-European is the ancestor of most languages spoken in Europe, Iran and northern India today. It was spoken around 4000 BCE but never written down, so everything we know about it has been pieced together by comparing its descendants. Each reconstructed form is marked with an asterisk (*). This project builds the language as a working system: a lexicon; a grammar engine that inflects words by the reconstructed rules; texts drawn from scholars' reconstructions or composed through the engine and checked against those same rules (each record says which); a language model fine-tuned on this material, so it can read and write Proto-Indo-European itself; and synthetic voices trained to say it aloud.</p>
+  <p class="open-p serif">Proto-Indo-European is the ancestor of most languages spoken from Ireland to northern India. Spoken around 4000 BCE and never written down, every word we have is reconstructed from its descendants—marked with an asterisk (*). I rebuilt it as a working language: a lexicon, a grammar engine, a corpus written through it, a language model that reads and writes PIE, and voices trained to speak it.</p>
 </section>
 
 <!-- 1 · migration -->
@@ -71,10 +68,10 @@
     <div class="plate"><div class="plate-inner"><div class="wash"></div><div class="relief"></div><svg aria-label="The routes of the Indo-European branches"></svg></div></div>
     <div class="mig-year display">c. 4000 BCE</div>
     <div class="mig-copy">
-      <p class="serif mig-p" data-step="0">The homeland was probably north of the Black Sea and the Caspian, in what is now Ukraine and southern Russia: the Pontic–Caspian steppe. Its people herded cattle, sheep and goats, and drove wagons on solid wheels (not spoked ones) pulled by oxen. They kept horses, and their language had a word for them, *h₁éḱwos. Whether they rode them is still argued over.</p>
-      <p class="serif mig-p" data-step="1">Over the next two thousand years or so their descendants moved west into Europe, south into the Balkans, Greece and Anatolia (modern Turkey), and east through Central Asia to India, where one group became the Vedic people who composed the Rigveda in Sanskrit. As they went, their speech split into branches, and each branch became a separate language.</p>
-      <p class="serif mig-p" data-step="2">The earliest texts in any of these languages are Hittite: clay tablets in cuneiform from Hattusa, the Hittite capital, from the 1600s BCE. The date beside each branch on the map is its earliest text.</p>
-      <p class="serif mig-p" data-step="3">No branch ever wrote down Proto-Indo-European itself; by the time we have texts at all, it had been gone for two thousand years.</p>
+      <p class="serif mig-p" data-step="0">Most linguists place the homeland on the Pontic–Caspian steppe, north of the Black and Caspian seas in what's now Ukraine and southern Russia. Its people herded cattle, sheep and goats, hauled solid-wheeled wagons behind oxen, and kept horses—their word for one was *h₁éḱwos. Whether they actually rode them is still debated.</p>
+      <p class="serif mig-p" data-step="1">Over the next two millennia their descendants spread west across Europe, south into the Balkans, Greece and Anatolia, and east through Central Asia to India, where the Rigveda would later be composed in Sanskrit. As communities drifted apart, their speech split into separate languages.</p>
+      <p class="serif mig-p" data-step="2">The oldest surviving writing in the family is Hittite: cuneiform clay tablets from Hattusa dating to the 1600s BCE. Each date on the map marks that branch's first written witness.</p>
+      <p class="serif mig-p" data-step="3">Nobody ever wrote down Proto-Indo-European itself. By the time anyone picked up a stylus, the original tongue had been gone for two thousand years.</p>
     </div>
   </div>
 </section>
@@ -84,20 +81,23 @@
   <div class="wheel-pin">
     <div class="wheel-copy">
       <h2 class="display h2">Comparative reconstruction</h2>
-      <p class="serif">But because languages change in regular ways (the same sound change happens to many words at once), scholars can work backwards. Take the word for father: Vedic Sanskrit <i>pitár</i>, Ancient Greek <i>patḗr</i>, Latin <i>pater</i>, Gothic <i>fadar</i> (in the Bible translated by Wulfila around 350 CE). These all come from a single form, *ph₂tḗr. The asterisk means reconstructed by comparison, not directly attested. Every word in this project's lexicon is marked the same way.</p>
-      <p class="serif">What reconstruction recovers least well is syntax: word order, how questions were formed, the particles that glued clauses together. Some of it is fairly secure, like <span class="nobr">*-kʷe</span> “and” tacked onto the end of a word, or the verb tending to come last. Much of the rest is inferred from the oldest daughter languages and remains uncertain.</p>
+      <p class="serif">Sounds change in regular ways—when a shift hits one word, it tends to hit dozens—so linguists can run the tape backwards. Take “father”: Vedic Sanskrit <i>pitár</i>, Ancient Greek <i>patḗr</i>, Latin <i>pater</i>, Gothic <i>fadar</i>. Line them up and they converge on a single older form, *ph₂tḗr. Every word in the lexicon carries that asterisk because it was worked out by comparison, never found carved in stone.</p>
+      <p class="serif">What reconstruction recovers least well is syntax: word order, how questions were framed, the little particles gluing clauses together. Pieces are solid—<span class="nobr">*-kʷe</span> “and” tacked onto the end of a word, verbs tending to land last—while much of the rest is inferred from the oldest daughters and stays educated guesswork.</p>
       <p class="serif cap" id="wheelCap"></p>
     </div>
-    <svg id="wheel" class="wheel" viewBox="-500 -500 1000 1000" aria-label="A PIE word and its descendants"></svg>
+    <div class="wheel-wrap">
+      <svg id="wheel" class="wheel" viewBox="-500 -500 1000 1000" aria-label="A PIE word and its descendants"></svg>
+      <p class="wheel-hint data" aria-hidden="true">Drag wheel to spin</p>
+    </div>
   </div>
 </section>
 
 <!-- 3 · the machine -->
 <section id="s-machine" class="s paper">
-    <div class="frame-inset">
+  <div class="frame-inset">
     <h2 class="display h2 center">Method</h2>
     <div class="cascade" id="cascade"></div>
-    <p class="serif center note">The corpus is not recovered text. It is PIE composed to follow the reconstructed grammar. Each record states its source: a published scholarly reconstruction, an attested poetic formula, a back-projection from parallel phrases in the daughter languages, or a passage generated and checked by the engine.</p>
+    <p class="serif center note">None of this is unearthed text—it's PIE composed to obey the reconstructed grammar. Every record names its source: a scholar's published reconstruction, a shared poetic formula, a back-projection from parallel daughter texts, or a new passage built and checked by the engine.</p>
   </div>
 </section>
 
@@ -105,17 +105,17 @@
 <section id="s-results" class="s ink">
   <div class="res-head">
     <h2 class="display h2">Evaluation</h2>
-    <p class="serif">We tested our model against frontier models on a fixed set of questions held out of all training: inflection, full paradigms, translation in both directions, and dialogue. Each answer gets two scores. The lenient score ignores notation, so a form without accents or with ASCII laryngeals still counts. The strict score requires the standard scholarly notation. The frontier models score well on the lenient measure and lose 25 to 36 points on the strict one. Our model loses about two.</p>
+    <p class="serif">Every model took the same held-out test—inflection, full paradigms, two-way translation, and dialogue—with no tools. Lenient scoring checks the grammar and forgives sloppy notation like missing accents or ASCII h2 for h₂. Strict scoring demands standard scholarly PIE. Frontier models hold up fine on lenient, then drop 25 to 37 points under strict. Mine drops 2.3.</p>
   </div>
   <div class="bars" id="bars"></div>
-  <p class="serif cap res-foot">PIE score, 0–100, weighted over five segments. Frontier models answered without tools; each is shown at its best effort level. Ours is Nemotron 3.5 Super (122B), fine-tuned, stage e3.</p>
+  <p class="serif cap res-foot">Weighted 0–100 across five task types. Frontier models ran without tools, shown at their highest lenient effort; mine is a fine-tuned Nemotron 3.5 Super (122B), epoch 3. <a class="inline-go" href="model.html">How the model was trained →</a></p>
 </section>
 
 <!-- 5 · voice -->
 <section id="s-voice" class="s yellow">
   <div class="voice-top">
     <h2 class="display h2">A hymn to Dawn</h2>
-    <p class="serif">This hymn to the dawn goddess *h₂éwsōs comes from the corpus. Her name survives as Vedic Uṣás, Greek Ēṓs and Latin Aurōra. It is read by the project's own PIE voices, Kokoro text-to-speech models we trained for the language. Their training speech began in a simulated vocal tract (Chimera, a physical model of the human airway), where each sound is a movement of tongue, lips and larynx: the uvular fricative of h₂, the palatal stops, the breathy-voiced stops, the pitch accent. Speech-to-speech conversion then carried it into natural human voices.</p>
+    <p class="serif">A hymn from the corpus to *h₂éwsōs, the dawn goddess whose name became Vedic Uṣás, Greek Ēṓs and Latin Aurōra. It's read by Kokoro TTS models trained from scratch on PIE speech: first synthesized inside Chimera, a 3D physical model of the human vocal tract built to shape uvulars, palatals, breathy stops and pitch accent, then converted into natural human voices. <a class="inline-go" href="voices.html">How the voices were made →</a></p>
   </div>
   <div class="voice-stage">
     <button class="disc" id="disc" aria-label="Play the hymn"><canvas id="ring"></canvas><span class="disc-label display" id="discLabel">Play</span></button>
@@ -140,7 +140,7 @@
 <!-- 7 · apps -->
 <section id="s-apps" class="s ink">
   <h2 class="display h2">Instruments</h2>
-  <p class="serif apps-p">The translator below runs on the project's grammar engine. It parses English, picks the PIE words, inflects them, and gives a gloss and pronunciation for each. A chat interface to the model and a reader for the corpus are in progress.</p>
+  <p class="serif apps-p">Try the rule-based translator below—no LLM involved. It parses your sentence, picks roots from the <a class="inline-go" href="dictionary.html">8,434-word dictionary</a>, inflects them through the grammar engine, and returns the gloss and IPA. A live chat interface for the fine-tuned model is on the way.</p>
   <div class="tr">
     <div class="tr-dir serif"><button data-d="en2pie" class="on">English to PIE</button> · <button data-d="pie2en">PIE to English</button></div>
     <div class="tr-box"><textarea id="trIn" class="serif" rows="2" maxlength="2000" aria-label="Text to translate" placeholder="Type a sentence…">The wolf sees the sheep, and the dog guards them.</textarea><button class="tr-go display" id="trGo">Translate</button></div>
@@ -151,7 +151,8 @@
 
 <footer class="s yellow foot">
   <div class="foot-pie pie" data-pie>h₂ówis h₁éḱwōs-kʷe</div>
-  <p class="serif foot-en">“The sheep and the horses.” In 1868 August Schleicher wrote a short fable in the language he had reconstructed, the first text ever composed in it. Every reconstruction since has been tested by rewriting it.</p>
+  <p class="serif foot-en">“The sheep and the horses.” In 1868 August Schleicher wrote a short fable in the language he'd reconstructed—the first text ever composed in PIE. Almost every linguist since has tested their own reconstruction by rewriting it.</p>
+  <nav class="colo-nav" aria-label="Pages"><a href="index.html" aria-current="page">*PIE</a><a href="voices.html">Voices</a><a href="model.html">Model</a><a href="dictionary.html">Dictionary</a></nav>
   <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by <a href="https://davidtorcivia.com">David Torcivia</a>.</p>
   <div class="foot-cols serif">
     <p>The lexicon draws on Wiktionary (CC BY-SA 4.0), LIV² and the Nomina im Indogermanischen Lexikon. Elevation: AWS Terrain Tiles; coasts and rivers: Natural Earth.</p>
@@ -160,9 +161,9 @@
   </div>
 </footer>
 
-<script src="js/vendor/gsap.min.js"></script>
-<script src="js/vendor/ScrollTrigger.min.js"></script>
-<script src="js/vendor/lenis.min.js"></script>
+<script defer src="js/vendor/gsap.min.js"></script>
+<script defer src="js/vendor/ScrollTrigger.min.js"></script>
+<script defer src="js/vendor/lenis.min.js"></script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
