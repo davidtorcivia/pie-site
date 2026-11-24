@@ -30,7 +30,7 @@
   "rows": [
    {
     "id": "ours-nemotron35-e3-bf16",
-    "name": "Mine, Nemotron 3.5 Super",
+    "name": "Wekwos-120B, Nemotron 3.5 Super",
     "score": {
      "strict": 86.2,
      "lenient": 88.5

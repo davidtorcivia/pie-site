@@ -43,19 +43,28 @@ export function nav() {
   n.querySelector('.nav-open').onclick = open; sheet.querySelector('.nav-close').onclick = close;
   addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 
-  let lastY = scrollY, hidden = false, raf = 0;
-  const update = () => {
+  let lastY = scrollY, toneY = -999, probeX = 0, probeY = 0, hidden = false, raf = 0;
+  const measureBar = () => {
+    const bar = n.querySelector('.nav-bar').getBoundingClientRect();
+    probeX = Math.min(innerWidth - 8, bar.left + bar.width / 2);
+    probeY = bar.bottom + 4;
+  };
+  const update = (force = false) => {
     raf = 0;
-    const y = scrollY, bar = n.querySelector('.nav-bar').getBoundingClientRect();
-    const below = document.elementsFromPoint(Math.min(innerWidth - 8, bar.left + bar.width / 2), bar.bottom + 4).find(el => !el.closest('.nav'));
-    const sec = below?.closest('section, footer, header, .dict-sec, .dict-entry');
-    const tone = sec?.classList.contains('yellow') || sec?.dataset.tone === 'yellow' ? 'on-yellow' : 'on-other';
-    if (n.dataset.tone !== tone) n.dataset.tone = tone;
+    const y = scrollY;
+    if (force || Math.abs(y - toneY) >= 24) {
+      toneY = y;
+      if (!probeX) measureBar();
+      const below = document.elementsFromPoint(probeX, probeY).find(el => !el.closest('.nav'));
+      const sec = below?.closest('section, footer, header, .dict-sec, .dict-entry');
+      const tone = sec?.classList.contains('yellow') || sec?.dataset.tone === 'yellow' ? 'on-yellow' : 'on-other';
+      if (n.dataset.tone !== tone) n.dataset.tone = tone;
+    }
     const dy = y - lastY;
     if (Math.abs(dy) > 6) { const h = dy > 0 && y > 240; if (h !== hidden) { hidden = h; n.classList.toggle('away', h); } lastY = y; }
   };
-  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
-  addEventListener('resize', () => { fit(); if (!raf) raf = requestAnimationFrame(update); });
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => update(false)); }, { passive: true });
+  addEventListener('resize', () => { fit(); measureBar(); if (!raf) raf = requestAnimationFrame(() => update(true)); });
   n.addEventListener('focusin', () => { hidden = false; n.classList.remove('away'); });
-  document.fonts?.ready.then(fit); fit(); update();
+  document.fonts?.ready.then(() => { fit(); measureBar(); update(true); }); fit(); measureBar(); update(true);
 }

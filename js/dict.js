@@ -6,7 +6,6 @@ import { initType, typeset } from './type.js';
 import { nav } from './nav.js';
 import { colophon } from './colophon.js';
 import { api, failText } from './translate-api.js';
-import { brushStroke } from './brush.js';
 import { ART_V } from './initials.js';
 import { carve, canCarve, NONE } from './rubric.js';
 
@@ -33,7 +32,45 @@ const CLASS = { R: 'root', D: 'derivative', A: 'affix', G: 'grammar', C: 'projec
 const POSN = { noun: 'noun', verb: 'verb', adj: 'adjective', adv: 'adverb', num: 'numeral', pron: 'pronoun', particle: 'particle',
   det: 'determiner', prefix: 'prefix', suffix: 'suffix', conj: 'conjunction', root: 'root', intj: 'interjection', infix: 'infix', phrase: 'phrase' };
 
-let IX = [], BYID = new Map(), RX = null;
+let IX = [], BYID = new Map(), TOP_USED = [], RX_BY2 = null, rxLoading = false, searchIndexed = false, lettersIndexed = false;
+function ensureSearchIndex() {
+  if (searchIndexed || !IX.length) return;
+  searchIndexed = true;
+  for (let i = 0; i < IX.length; i++) {
+    const e = IX[i];
+    e.f = fold(e.form);
+    e.l = loose(e.form);
+    e.w = words(e.g);
+    e.s = senses(e.g);
+  }
+}
+function ensureLetters() {
+  if (lettersIndexed || !IX.length) return;
+  lettersIndexed = true;
+  const count = new Map();
+  for (let i = 0; i < IX.length; i++) {
+    const L = IX[i].L = letterOf(IX[i].form);
+    if (L) count.set(L, (count.get(L) || 0) + 1);
+  }
+  document.querySelectorAll('#letters button').forEach(b => {
+    const n = count.get(b.dataset.l);
+    if (n) b.title = `${n.toLocaleString()} entries`;
+  });
+}
+function ensureReflex() {
+  if (RX_BY2 || rxLoading) return;
+  rxLoading = true;
+  fetch('data/dict/reflex.json').then(r => r.json()).then(rx => {
+    const by2 = new Map();
+    for (let i = 0; i < rx.length; i++) {
+      const r = rx[i], k2 = r[0].slice(0, 2);
+      let b = by2.get(k2); if (!b) { b = []; by2.set(k2, b); }
+      b.push(r);
+    }
+    RX_BY2 = by2;
+    if (qi.value.trim()) setQuery(qi.value);
+  }).catch(() => { rxLoading = false; });
+}
 const shards = new Map();
 function crc32(str) {
   let c, crc = 0xFFFFFFFF; const b = new TextEncoder().encode(str);
@@ -87,7 +124,8 @@ function letterOf(form) {
 
 // ------------------------------------------------------------------------------------------------ search
 function search(q) {
-  q = q.trim(); if (!q) return [];
+  q = q.trim(); if (!q || !IX.length) return [];
+  ensureSearchIndex();
   const qf = fold(q), ql = loose(q), qw = words(q), qa = foldAny(q), out = [];
   const english = /^[a-z\s'-]+$/i.test(q) && qw.length > 0;
   for (let k = 0; k < IX.length; k++) {
@@ -108,10 +146,12 @@ function search(q) {
     if (!s && qf.length >= 3 && e.f.includes(qf)) s = 26;
     if (s) out.push({ k, s: s + Math.log1p(e.u) * 3 + Math.min(e.n, 24) * .3 + (e.c === 'W' || e.c === 'G' ? 4 : e.c === 'D' ? -2 : 0), why });
   }
-  // a descendant's form leads to its ancestor
-  if (RX && qa.length >= 3) {
+  // a descendant's form leads to its ancestor (O(1) 2-char prefix bucket lookup over 22,842 reflexes)
+  const bucket = RX_BY2 && qa.length >= 3 ? RX_BY2.get(qa.slice(0, 2)) : null;
+  if (bucket) {
     const seen = new Map(out.map(o => [o.k, o]));
-    for (const [key, shown, lang, k] of RX) {
+    for (let i = 0; i < bucket.length; i++) {
+      const [key, shown, lang, k] = bucket[i];
       const exact = key === qa; if (!exact && !(qa.length >= 4 && key.startsWith(qa))) continue;
       const s = (exact ? 74 : 34) + Math.log1p(IX[k].u) * 2 + Math.min(IX[k].n, 24) * .35, o = seen.get(k);
       if (!o) { const n = { k, s, why: `${lang} ${shown}` }; out.push(n); seen.set(k, n); }
@@ -127,7 +167,7 @@ let shown = [], limit = 60, current = null, heading = '';
 function row(o) {
   const e = IX[o.k], cls = e.c === 'C' ? 'project' : e.c === 'G' ? (POSN[e.p] || e.p || 'grammar') : e.c === 'R' ? 'root' : e.c === 'A' ? 'affix' : (POSN[e.p] || (e.c === 'D' ? 'derivative' : ''));
   return `<a class="r ${e.id === current ? 'on' : ''} c-${e.c}" href="?e=${encodeURIComponent(e.id)}" data-id="${esc(e.id)}">
-    <span class="r-f pie">*${ts(e.form)}</span>
+    <span class="r-f pie">*${e._ts ??= ts(e.form)}</span>
     <span class="r-g serif">${esc(e.g) || '<span class="none">no gloss</span>'}${e.g && e.fl.includes('a') ? '<span class="approx" title="composed from the root and suffix">≈</span>' : ''}</span>
     <span class="r-c data">${esc(cls)}${o.why ? ` · ${esc(o.why)}` : ''}</span></a>`;
 }
@@ -158,7 +198,7 @@ function translate(q) {
       let html;
       if (pie) {
         const d = await post('pie2en', q); if (my !== trSeq) return;
-        html = `<p class="trc-main serif">${esc(d.rough_english || '—')}</p><div class="trc-words">${d.words.map(w => wordCell(w.word, (w.analyses || [])[0]?.gloss || 'not found', lexOf(w))).join('')}</div>`;
+        html = `<p class="trc-main serif">${esc(d.rough_english || '–')}</p><div class="trc-words">${d.words.map(w => wordCell(w.word, (w.analyses || [])[0]?.gloss || 'not found', lexOf(w))).join('')}</div>`;
       } else {
         const out = await post('en2pie', q); if (my !== trSeq) return;
         const parts = await Promise.all(out.map(sn => sn.pie ? post('pie2en', sn.pie).catch(() => null) : null));
@@ -186,19 +226,19 @@ function paintResults() {
     (list.length ? list.map(row).join('') : trHTML ? '' : `<p class="r-none serif">Nothing found. Try an English word, a PIE form without accents, or a word in a daughter language.</p>`) +
     (shown.length > limit ? `<button class="r-more data">Show more (${(shown.length - limit).toLocaleString()})</button>` : '');
   $('.r-more', res)?.addEventListener('click', () => { limit += 120; paintResults(); });
-  if (!reduce && window.gsap) gsap.from(res.querySelectorAll('.r'), { y: 10, opacity: 0, duration: .45, stagger: .012, ease: 'power3.out', clearProps: 'all' });
 }
 function setQuery(q, { push = false } = {}) {
   limit = 60;
   const L = q.startsWith('letter:') ? q.slice(7) : null;
   if (L) {
+    ensureLetters();
     shown = IX.map((e, k) => ({ k, e })).filter(x => x.e.L === L).map(({ k }) => ({ k, s: 0 }));
     heading = `${shown.length.toLocaleString()} entries under ${ts(L)}`;
   } else if (q.trim()) {
     shown = search(q); heading = shown.length ? `${shown.length.toLocaleString()} ${shown.length === 1 ? 'entry' : 'entries'}` : '';
   } else {
-    // nothing typed: the words the corpus uses most
-    shown = IX.map((e, k) => ({ k, s: e.u })).filter(x => x.s > 0 && IX[x.k].c !== 'A').sort((a, b) => b.s - a.s);
+    // nothing typed: cached corpus-frequency order
+    shown = TOP_USED;
     heading = 'Most used in the corpus';
   }
   document.querySelectorAll('#letters button').forEach(b => b.classList.toggle('on', b.dataset.l === L));
@@ -286,9 +326,9 @@ function sourceLine(s, d) {
   if (s.name === 'Wiktionary') return `From <a href="${esc(s.url)}" rel="noopener">Wiktionary</a>.`;
   if (s.name === 'LIV²') return `From LIV²${s.page ? `, p. ${esc(s.page)}` : ''}${s.iew ? ` ${esc(s.iew)}` : ''}.`;
   if (s.name === 'NIL') return `From NIL${s.page ? `, p. ${esc(s.page)}` : ''}.`;
-  if (s.name === 'coinage') return `Coined for the project, since no PIE word is reconstructed for this meaning. ${esc(s.note || '')}`;
-  if (s.name === 'project') return `Reconstructed by the project from its descendants${s.cite ? ` (${esc(s.cite)})` : ''}.`;
-  if (s.name === 'supplement') return `Added by the project${s.cite ? ` from ${esc(s.cite)}` : ''}.`;
+  if (s.name === 'coinage') return `Coined for this project, since no PIE word is reconstructed for this meaning. ${esc(s.note || '')}`;
+  if (s.name === 'project') return `Reconstructed for this project from its descendants${s.cite ? ` (${esc(s.cite)})` : ''}.`;
+  if (s.name === 'supplement') return `Added here${s.cite ? ` from ${esc(s.cite)}` : ''}.`;
   if (s.name === 'closed') return `From the grammar engine's tables of pronouns, particles and numerals, checked against Fortson (2010) and Ringe (2017).`;
   return '';
 }
@@ -353,17 +393,22 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
   });
   ent.querySelector('.e-back').onclick = () => history.length > 1 && history.state?.dict ? history.back() : closeEntry();
   document.documentElement.classList.add('entry-open');
-  const tweens = !reduce && window.gsap ? [
-    gsap.from(ent.querySelectorAll('.e-head > *'), { y: 26, opacity: 0, duration: .8, stagger: .06, ease: 'power4.out', clearProps: 'all' }),
-    gsap.from(ent.querySelectorAll('.e-sec, .e-src'), { y: 18, opacity: 0, duration: .7, delay: .18, stagger: .07, ease: 'power3.out', clearProps: 'all' })] : [];
-  // the carving: measured once the entry stands still (the tweens done), and only if it is still the open entry
-  if (CARVE) Promise.all(tweens).then(() => current === id && carve(ent.querySelector('.e-in'), { select: { initial: '.e-capp .ini', drop: '.e-capp .ini', heading: NONE, paraph: NONE, figure: NONE, quote: NONE, filler: '.e-gloss:not(.none)', break: 'hr.e-br' } }))
-    .then(r => { if (!r) return; if (current === id && !carved) carved = r; else r.destroy(); });
+  // Pure-CSS opacity fade; carve on the next frame with cache:false to avoid per-entry main-thread PNG band serialization
+  // (illum's in-memory piece cache still reuses carved rock pieces across entries).
+  const ein = ent.querySelector('.e-in');
+  if (!reduce && ein) ein.classList.add('e-anim');
+  if (CARVE) {
+    requestAnimationFrame(() => {
+      if (current !== id) return;
+      carve(ein, { eager: push, cache: false, select: { initial: '.e-capp .ini', drop: '.e-capp .ini', heading: NONE, paraph: NONE, figure: NONE, quote: NONE, filler: '.e-gloss:not(.none)', break: 'hr.e-br' } })
+        .then(r => { if (!r) return; if (current === id && !carved) carved = r; else r.destroy(); });
+    });
+  }
   if (scroll) {
     if (phone()) ent.scrollTo({ top: 0 });
     else { const top = $('.dict-main').getBoundingClientRect().top + scrollY - 10; if (scrollY > top) scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' }); }
   }
-  document.title = `*${d.form} — Dictionary — *PIE`;
+  document.title = `*${d.form} · Dictionary · *PIE`;
   const u = new URL(location.href); u.searchParams.set('e', id);
   if (u.href !== location.href) history[push ? 'pushState' : 'replaceState']({ dict: 1 }, '', u);
 }
@@ -374,45 +419,76 @@ function closeEntry() {
 }
 
 // ------------------------------------------------------------------------------------------------ boot
+let indexReady = false;
 async function boot() {
   initType();
   nav(); colophon();
-  // the entry the address names (or the one a desktop opens first) is in a shard the id alone locates: fetched
-  // alongside the index rather than after it
-  { const e = new URLSearchParams(location.search).get('e') || (phone() ? null : 'pie-lex-h1ekjwos'); if (e) detail(e).catch(() => {}); }
-  const [raw, au] = await Promise.all([fetch('data/dict/index.json').then(r => r.json()), fetch('data/dict/audio/index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])]);
-  const ai = Array.isArray(au) ? { shards: au } : au;   // index.json: {v, shards} (a bare list before the v2 voices)
-  AUDIO = new Set(ai.shards || []); AV = ai.v ? `?v=${ai.v}` : '';
-  IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u, f: fold(form), l: loose(form), w: words(g), s: senses(g), L: letterOf(form) }));
-  IX.forEach((e, k) => BYID.set(e.id, k));
-  // the count stands in the HTML (so the paragraph's height, and the page below it, hold while the index loads); set here from the index
-  { const n = $('#dhP .dh-n'), t = `${IX.length.toLocaleString()} entries.`; if (n) n.textContent = t; else $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${t}</span>`); }
-  // letters
-  const count = new Map(); IX.forEach(e => count.set(e.L, (count.get(e.L) || 0) + 1));
-  $('#letters').innerHTML = LETTERS.filter(L => count.get(L)).map(L => `<button data-l="${L}" title="${count.get(L)} entries">${ts(L)}</button>`).join('');
-  $('#letters').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; qi.value = ''; setQuery(b.classList.contains('on') ? '' : 'letter:' + b.dataset.l, { push: true }); });
-  // search as you type
-  let tm; qi.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => setQuery(qi.value), 90); });
+  const p = new URLSearchParams(location.search);
+  const initE = p.get('e') || (phone() ? null : 'pie-lex-h1ekjwos');
+  const initQ = p.get('q') || '';
+  qi.value = initQ.startsWith('letter:') ? '' : initQ;
+  if (qi.value.trim()) ensureReflex();
+
+  // Start all fetches in parallel right away; reveal the header as soon as fonts are ready (don't block on 592 KB index.json)
+  const ixP = fetch('data/dict/index.json').then(r => r.json());
+  const auP = fetch('data/dict/audio/index.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => []);
+  const entryP = initE ? detail(initE).catch(() => null) : Promise.resolve(null);
+
+  // Wire controls immediately so typing works even before index.json finishes
+  $('#letters').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || !indexReady) return;
+    qi.value = ''; setQuery(b.classList.contains('on') ? '' : 'letter:' + b.dataset.l, { push: true });
+  });
+  qi.addEventListener('focus', () => { ensureSearchIndex(); ensureReflex(); }, { once: true });
+  let tm, lastTyped = qi.value;
+  qi.addEventListener('input', () => {
+    ensureReflex();
+    if (!indexReady) return;
+    clearTimeout(tm);
+    tm = setTimeout(() => { if (qi.value !== lastTyped) { lastTyped = qi.value; setQuery(qi.value); } }, 60);
+  });
   qi.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = res.querySelector('.r'); if (f) openEntry(f.dataset.id); } });
   addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== qi) { e.preventDefault(); qi.focus(); } });
-  // links to entries anywhere on the page
+  // Hover/focus prefetch: warm the entry shard before click lands so switching entries feels instant
+  const prefetch = e => { const a = e.target?.closest?.('a[data-id]'); if (a) detail(a.dataset.id).catch(() => {}); };
+  document.addEventListener('pointerenter', prefetch, true);
+  document.addEventListener('focusin', prefetch, true);
   document.addEventListener('click', e => { const a = e.target.closest('a[data-id]'); if (!a || e.metaKey || e.ctrlKey) return; e.preventDefault(); openEntry(a.dataset.id); });
   addEventListener('popstate', () => route(false));
-  const p = new URLSearchParams(location.search);
-  qi.value = p.get('q')?.startsWith('letter:') ? '' : (p.get('q') || '');
-  setQuery(p.get('q') || '');
-  await route(false);
-  document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
-  { const fb = $('.foot-by'); if (fb) fb.style.setProperty('--streak', `url(${brushStroke('#b81d0e', 4242, { w: 900, h: 170 })})`); }
+
+  // Fast first paint: reveal header on fonts.ready, paint initial entry as soon as its shard lands
+  await document.fonts?.ready;
+  document.documentElement.classList.remove('arriving');
+  document.documentElement.classList.add('arrived');
   garden();
-  // descendant forms, for searching by a daughter-language word: the largest file, fetched once the page is idle
-  const idle = window.requestIdleCallback || (f => setTimeout(f, 1500));
-  idle(() => fetch('data/dict/reflex.json').then(r => r.json()).then(rx => { RX = rx; if (qi.value.trim()) setQuery(qi.value); }), { timeout: 4000 });
+
+  const au = await auP;
+  const ai = Array.isArray(au) ? { shards: au } : au;
+  AUDIO = new Set(ai.shards || []); AV = ai.v ? `?v=${ai.v}` : '';
+
+  // Render the initial entry immediately if its shard beat index.json (usually 3x smaller)
+  const firstEntryP = initE ? entryP.then(d => { if (d && !current) return openEntry(initE, { push: false, scroll: false }); }) : Promise.resolve();
+
+  const raw = await ixP;
+  IX = raw.map(([id, form, g, c, p, fl, n, u]) => ({ id, form, g, c, p, fl, n, u }));
+  for (let k = 0; k < IX.length; k++) BYID.set(IX[k].id, k);
+  TOP_USED = IX.map((e, k) => ({ k, s: e.u })).filter(x => x.s > 0 && IX[x.k].c !== 'A').sort((a, b) => b.s - a.s);
+  indexReady = true;
+
+  { const n = $('#dhP .dh-n'), t = `${IX.length.toLocaleString()} entries.`; if (n) n.textContent = t; else $('#dhP').insertAdjacentHTML('beforeend', ` <span class="dh-n">${t}</span>`); }
+  const qNow = qi.value.trim() || (initQ.startsWith('letter:') ? initQ : '');
+  lastTyped = qi.value;
+  setQuery(qNow);
+  await firstEntryP;
+  if (!current) await route(false);
+
+  // Warm letter counts and search keys in idle time so the very first keystroke or letter click has zero warm-up cost
+  (window.requestIdleCallback || (fn => setTimeout(fn, 250)))(() => { ensureLetters(); ensureSearchIndex(); }, { timeout: 1500 });
 }
 async function route(push) {
   const p = new URLSearchParams(location.search), id = p.get('e');
   const q = p.get('q') || '';
-  if (q !== (qi.value || '') && !q.startsWith('letter:')) { qi.value = q; setQuery(q); }
+  if (q !== (qi.value || '') && !q.startsWith('letter:')) { qi.value = q; if (q.trim()) ensureReflex(); setQuery(q); }
   if (id && BYID.has(id)) await openEntry(id, { push: false, scroll: false });
   else if (!phone()) await openEntry('pie-lex-h1ekjwos', { push: false, scroll: false });
   else closeEntry();
@@ -423,10 +499,15 @@ function garden() {
   if (innerWidth < 700) return;          // a phone's header is all text: no room for a garden
   const probe = document.createElement('video');
   const alpha = probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  const still = () => { const im = new Image(); im.className = 'gv'; im.alt = ''; im.src = `art/garden-dict${sfx}.webp`; im.onerror = () => im.remove(); host.append(im); };
+  const still = then => { const im = new Image(); im.className = 'gv'; im.alt = ''; im.src = `art/garden-dict${sfx}.webp`; im.onerror = () => im.remove(); im.decode().catch(() => {}).then(() => { host.append(im); then?.(); }); };
   if (location.search.includes('nogarden')) return;
-  if (alpha && !reduce) { const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.className = 'gv'; v.src = `art/growth-dict${sfx}.webm`; host.append(v);
-    v.addEventListener('canplay', () => v.play().catch(() => {}), { once: true }); v.addEventListener('error', () => { v.remove(); still(); }, { once: true }); }
-  else still();
+  if (alpha && !reduce) {
+    const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.className = 'gv'; v.src = `art/growth-dict${sfx}.webm`; host.append(v);
+    const finish = () => { if (v._done) return; v._done = true; still(() => { v.removeAttribute('src'); v.load(); v.remove(); }); };
+    v.addEventListener('canplay', () => v.play().catch(finish), { once: true });
+    v.addEventListener('ended', finish, { once: true });
+    v.addEventListener('error', finish, { once: true });
+    setTimeout(finish, 20000);
+  } else still();
 }
 boot();

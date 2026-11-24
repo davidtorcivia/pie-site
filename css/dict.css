@@ -23,9 +23,8 @@ body.dict { background: var(--paper); }
 .dh-hint { max-width: 62ch; font-size: clamp(15px, 1.05vw, 18px); opacity: .8; margin: 1.5em 0 1.1em; }
 .dh-letters { display: flex; flex-wrap: wrap; gap: 2px 4px; max-width: 1180px; }
 .dh-letters button { position: relative; border: 0; background: none; cursor: pointer; color: var(--ink); font: inherit; font-size: clamp(17px, 1.4vw, 22px); padding: .18em .42em; }
-.dh-letters button::before { content: ''; position: absolute; inset: 4% -8%; z-index: -1; background: var(--chalk); opacity: 0; transition: opacity .2s ease;
-  -webkit-mask: url(../art/brush/30.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/30.webp) 0 0 / 100% 100% no-repeat; }
-.dh-letters button:hover::before { opacity: .6; }
+.dh-letters button:hover::before, .dh-letters button.on::before { content: ''; position: absolute; inset: 4% -8%; z-index: -1; background: var(--chalk);
+  -webkit-mask: url(../art/brush/30.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/30.webp) 0 0 / 100% 100% no-repeat; opacity: .6; }
 .dh-letters button.on::before { opacity: 1; }
 html.arriving .dh-inner > * { opacity: 0; }
 html.arrived .dh-inner > * { animation: arrive 1s cubic-bezier(.2, .7, .2, 1) both; }
@@ -36,10 +35,9 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
 .dict-main { display: grid; grid-template-columns: minmax(300px, 31%) 1fr; gap: clamp(24px, 4vw, 72px); padding: 0 var(--gut); align-items: start; }
 .dict-results { position: sticky; top: 0; max-height: 100vh; overflow: auto; padding: 36px 10px 60px 0; margin-left: -14px; scrollbar-width: thin; scrollbar-color: rgba(14,13,11,.25) transparent; overscroll-behavior: contain; }
 .r-head { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; margin: 0 0 12px 14px; opacity: .6; }
-.r { position: relative; display: block; padding: 10px 14px 11px; text-decoration: none; color: var(--ink); }
-.r::before { content: ''; position: absolute; inset: 2px -2px; z-index: -1; background: var(--yellow); opacity: 0; transition: opacity .2s ease;
-  -webkit-mask: url(../art/brush/05.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/05.webp) 0 0 / 100% 100% no-repeat; }
-.r:hover::before { opacity: .45; }
+.r { position: relative; display: block; padding: 10px 14px 11px; text-decoration: none; color: var(--ink); content-visibility: auto; contain-intrinsic-size: auto 76px; }
+.r:hover::before, .r.on::before { content: ''; position: absolute; inset: 2px -2px; z-index: -1; background: var(--yellow);
+  -webkit-mask: url(../art/brush/05.webp) 0 0 / 100% 100% no-repeat; mask: url(../art/brush/05.webp) 0 0 / 100% 100% no-repeat; opacity: .45; }
 .r.on::before { opacity: 1; }
 .r-f { display: block; font-size: clamp(19px, 1.45vw, 24px); line-height: 1.12; }
 .r-g { display: block; font-size: 16.5px; line-height: 1.25; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -195,5 +193,9 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
   line-height: calc(var(--sq) / 4); font-size: calc(var(--sq) / 5); font-family: var(--f-book); }
 .e-capp .ini { font-weight: 600; color: #b81d0e; }
 html:not(.illum) .e-capp .ini { float: left; font-size: calc(var(--sq) * 1.3); line-height: .78; }
-hr.e-br { clear: both; border: 0; height: clamp(48px, 5vw, 76px); margin: clamp(22px, 2.6vw, 34px) 0 0; }
+hr.e-br { clear: both; border: 0; height: clamp(48px, 5vw, 76px); margin: clamp(26px, 3vw, 40px) 0 clamp(14px, 1.8vw, 22px); }
 hr.e-br + .e-sec { margin-top: clamp(12px, 1.4vw, 20px); }
+/* lightweight CSS entry fade (opacity-only so illum can carve immediately without waiting for transform settle) */
+.e-in.e-anim { animation: dictIn .18s ease-out both; }
+@keyframes dictIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .e-in.e-anim { animation: none; } }

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Proto-Indo-European dictionary — *PIE</title>
+<title>Proto-Indo-European dictionary · *PIE</title>
 <meta name="description" content="A searchable dictionary of reconstructed Proto-Indo-European: 8,434 roots and words with inflection tables, descendants in the daughter languages, corpus examples and spoken forms in two voices.">
 <link rel="canonical" href="https://wekwos.com/dictionary">
 <meta name="theme-color" content="#ffd21a">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="*PIE">
-<meta property="og:title" content="Proto-Indo-European dictionary — *PIE">
+<meta property="og:title" content="Proto-Indo-European dictionary · *PIE">
 <meta property="og:description" content="A searchable dictionary of reconstructed Proto-Indo-European: 8,434 roots and words with inflection tables, descendants in the daughter languages, corpus examples and spoken forms in two voices.">
 <meta property="og:url" content="https://wekwos.com/dictionary">
 <meta property="og:image" content="https://wekwos.com/art/og/dictionary.jpg">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The dictionary entry for *ph₂tḗr, father, with an illuminated initial P.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Proto-Indo-European dictionary — *PIE">
+<meta name="twitter:title" content="Proto-Indo-European dictionary · *PIE">
 <meta name="twitter:description" content="A searchable dictionary of reconstructed Proto-Indo-European: 8,434 roots and words with inflection tables, descendants in the daughter languages, corpus examples and spoken forms in two voices.">
 <meta name="twitter:image" content="https://wekwos.com/art/og/dictionary.jpg">
 <meta name="twitter:image:alt" content="The dictionary entry for *ph₂tḗr, father, with an illuminated initial P.">
@@ -36,17 +36,17 @@
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/dict.css">
 <link rel="stylesheet" href="css/dark.css">
-<!-- the page's whole module graph at once (one round trip, not one per import level) -->
+<!-- the page's module graph -->
 <link rel="modulepreload" href="js/dict.js">
 <link rel="modulepreload" href="js/type.js">
 <link rel="modulepreload" href="js/nav.js">
 <link rel="modulepreload" href="js/theme.js">
 <link rel="modulepreload" href="js/colophon.js">
-<link rel="modulepreload" href="js/brush.js">
 <link rel="modulepreload" href="js/translate-api.js">
 <link rel="modulepreload" href="js/initials.js">
 <link rel="modulepreload" href="js/rubric.js">
 <link rel="preload" href="data/dict/index.json" as="fetch" crossorigin>
+<noscript><style>html.arriving .dh-inner > * { opacity: 1 !important; }</style></noscript>
 </head>
 <body class="dict">
 
@@ -54,13 +54,13 @@
   <div class="dh-garden" aria-hidden="true"></div>
   <div class="dh-inner">
     <h1 class="display dh-title">Dictionary</h1>
-    <p class="serif dh-p" id="dhP">Every word the project's grammar engine, corpus and translator use. Roots and words come from Wiktionary, verbal roots from LIV², nouns from NIL. Pronouns, particles and numerals come from the engine's own tables. A small number of words were reconstructed or coined by the project, and are marked. Each entry gives the engine's inflection, the forms in the daughter languages, and sentences from the corpus that use the word. <span class="dh-n">8,434 entries.</span></p>
+    <p class="serif dh-p" id="dhP">Every word my grammar engine, corpus, and translator use. Roots and words come from Wiktionary, verbal roots from LIV², nouns from NIL, and pronouns, particles, and numerals from the engine's own tables. A handful of words were reconstructed or coined for this project and are marked as such. Each entry shows its inflections, descendants across the daughter languages, and corpus sentences using the word. <span class="dh-n">8,434 entries.</span></p>
     <div class="dh-search">
       <label for="q" class="sr">Search the dictionary</label>
       <input id="q" class="pie" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="horse, h1ekwos, pater, or a sentence…">
       <span class="dh-count data" id="count"></span>
     </div>
-    <p class="serif dh-hint">Search in English, in PIE or in a daughter language. On a keyboard, type h1 h2 h3 for the laryngeals, k' g' for the palatals, kw gw for the labiovelars and bh dh gh for the breathy-voiced stops. Accents are optional. A whole sentence, in English or in PIE, is translated above the matches, each word linked to its entry.</p>
+    <p class="serif dh-hint">Search in English, in PIE, or in a daughter language. On a keyboard, type h1 h2 h3 for laryngeals, k' g' for palatals, kw gw for labiovelars, and bh dh gh for breathy-voiced stops (accents are optional). Type a full sentence in English or PIE and it'll translate above the matches, with every word linked to its entry.</p>
     <!-- the letters as js/dict.js lays them out (it rebuilds the row with each letter's count), so the page below does not shift when the index arrives -->
     <div class="dh-letters pie" id="letters" role="group" aria-label="Browse by letter"><button data-l="a">a</button><button data-l="b">b</button><button data-l="bʰ">b<span class="mod">h</span></button><button data-l="d">d</button><button data-l="dʰ">d<span class="mod">h</span></button><button data-l="e">e</button><button data-l="g">g</button><button data-l="gʰ">g<span class="mod">h</span></button><button data-l="ǵ">ǵ</button><button data-l="ǵʰ">ǵ<span class="mod">h</span></button><button data-l="gʷ">g<span class="mod">w</span></button><button data-l="gʷʰ">g<span class="mod">w</span><span class="mod">h</span></button><button data-l="h₁">h<span class="lar">1</span></button><button data-l="h₂">h<span class="lar">2</span></button><button data-l="h₃">h<span class="lar">3</span></button><button data-l="H">H</button><button data-l="i">i</button><button data-l="k">k</button><button data-l="ḱ">ḱ</button><button data-l="kʷ">k<span class="mod">w</span></button><button data-l="l">l</button><button data-l="m">m</button><button data-l="n">n</button><button data-l="o">o</button><button data-l="p">p</button><button data-l="r">r</button><button data-l="s">s</button><button data-l="t">t</button><button data-l="u">u</button><button data-l="w">w</button><button data-l="y">y</button></div>
   </div>
@@ -79,12 +79,11 @@
   <p class="foot-by serif">A <a href="https://disinfo.zone">disinfo.zone</a> project by <a href="https://davidtorcivia.com">David Torcivia</a>.</p>
   <div class="colo-notes serif">
     <p>Wiktionary entries are shared under CC BY-SA 4.0, and each links to its page. Verbal roots and their stems: H. Rix et al., <i>Lexikon der indogermanischen Verben</i>, 2nd ed., 2001 (LIV²). Nouns: D. S. Wodtko, B. Irslinger and C. Schneider, <i>Nomina im Indogermanischen Lexikon</i>, 2008 (NIL).</p>
-    <p>Inflection tables are generated by the project's grammar engine, and pronunciations by its IPA rules. Descendant forms come from the Wiktionary entries. Example sentences are from the project's corpus, which is composed in PIE and is not recovered text.</p>
+    <p>Inflection tables are generated by my grammar engine, and pronunciations by its IPA rules. Descendant forms come from the Wiktionary entries. Example sentences are from my corpus, composed in PIE rather than recovered text.</p>
     <p>Initials carved by <a href="https://illum.davidtorcivia.com">illum</a>, after the pecked and painted rock carvings of Tanum, Bohuslän (Vitlycke, Tanumshede). Figures traced from photographs by Bengt A. Lundberg, Riksantikvarieämbetet (<a href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>), Bjoertvedt (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>) and Tulipasylvestris (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>), Wikimedia Commons.</p>
   </div>
 </footer>
 
-<script src="js/vendor/gsap.min.js"></script>
 <script type="module" src="js/dict.js"></script>
 </body>
 </html>

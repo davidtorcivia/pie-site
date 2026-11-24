@@ -35,7 +35,7 @@ export function mapPlate(root, { onNear } = {}) {
   const P = PROJ;
   const xy = (lon, lat) => [(lon - P.lon0) * P.pxd, (P.y1 - 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * lat * Math.PI / 180))) * P.r];
   const stage = root.querySelector('.plate'), svg = root.querySelector('.plate svg');
-  const PHONE = innerWidth < 900, SC = PHONE ? .3 : .75, M = PHONE ? '-m' : '';
+  const PHONE = innerWidth < 900, SC = PHONE ? .3 : .5, M = PHONE ? '-m' : '';
   const paintCv = document.createElement('canvas');
   paintCv.className = 'paint'; paintCv.width = Math.round(P.w * SC); paintCv.height = Math.round(P.h * SC);
   svg.before(paintCv);
@@ -70,20 +70,23 @@ export function mapPlate(root, { onNear } = {}) {
   };
   const curves = ROUTES.map(route);
 
-  // the arrow drawn to t = k: broad at the steppe, narrowing as it goes, with a head at its tip
+  // the arrow drawn to t = k: broad at the steppe, narrowing as it goes, with a head at its tip (direct Path2D, zero string alloc)
   const W0 = 44, W1 = 9, HEAD = 62;
-  const arrow = (f, k) => {
-    if (k <= 0.002) return '';
-    const CAP = .02, N = 140, L = [], R = [];
+  const addArrow = (path, f, k) => {
+    if (k <= 0.002) return;
+    const CAP = .02, N = 48, rx = new Float32Array(N + 1), ry = new Float32Array(N + 1);
     const wOf = t => t < 0 ? W0 / 2 * 1.1 * Math.sqrt(Math.max(0, 1 - (t / CAP) ** 2)) : (W0 * (1 + .1 * Math.exp(-t * 40)) + (W1 - W0) * Math.pow(t, .8)) / 2;
     for (let i = 0; i <= N; i++) {
-      const t = -CAP + (k + CAP) * i / N, [x, y, a] = f(t), w = wOf(t);
-      L.push([x - Math.sin(a) * w, y + Math.cos(a) * w]); R.push([x + Math.sin(a) * w, y - Math.cos(a) * w]);
+      const t = -CAP + (k + CAP) * i / N, [x, y, a] = f(t), w = wOf(t), sx = Math.sin(a) * w, cx = Math.cos(a) * w;
+      if (i === 0) path.moveTo(x - sx, y + cx); else path.lineTo(x - sx, y + cx);
+      rx[i] = x + sx; ry[i] = y - cx;
     }
-    const [tx, ty, ta] = f(k), hw = Math.max(W1 * 1.9, wOf(k) * 2.3);
-    const hx = tx + Math.cos(ta) * HEAD * .9, hy = ty + Math.sin(ta) * HEAD * .9;
-    const pt = ([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`;
-    return `M${L.map(pt).join('L')}L${pt([tx - Math.sin(ta) * hw, ty + Math.cos(ta) * hw])}L${pt([hx, hy])}L${pt([tx + Math.sin(ta) * hw, ty - Math.cos(ta) * hw])}L${R.reverse().map(pt).join('L')}Z`;
+    const [tx, ty, ta] = f(k), hw = Math.max(W1 * 1.9, wOf(k) * 2.3), sh = Math.sin(ta) * hw, ch = Math.cos(ta) * hw;
+    path.lineTo(tx - sh, ty + ch);
+    path.lineTo(tx + Math.cos(ta) * HEAD * .9, ty + Math.sin(ta) * HEAD * .9);
+    path.lineTo(tx + sh, ty - ch);
+    for (let i = N; i >= 0; i--) path.lineTo(rx[i], ry[i]);
+    path.closePath();
   };
   const [hx, hy] = xy(40, 48);
 
@@ -162,7 +165,7 @@ export function mapPlate(root, { onNear } = {}) {
     if (painted) {
       pc.setTransform(SC, 0, 0, SC, 0, 0);
       const clip = new Path2D();
-      ks.forEach((k, i) => { if (k > .002) clip.addPath(new Path2D(arrow(curves[i], k))); });
+      ks.forEach((k, i) => { if (k > .002) addArrow(clip, curves[i], k); });
       pc.save(); pc.clip(clip); pc.setTransform(1, 0, 0, 1, 0, 0); pc.drawImage(painted, 0, 0); pc.restore();
     }
   };
@@ -212,6 +215,7 @@ export function mapPlate(root, { onNear } = {}) {
   };
 
   const yearEl = root.querySelector('.mig-year');
+  let lastPaintP = -1;
   const update = p => {
     window.__migP = p;
     if (p > 0 && !assetsStarted) loadMapAssets();
@@ -228,10 +232,12 @@ export function mapPlate(root, { onNear } = {}) {
       ends[i].querySelector('.tag').style.clipPath = `inset(-20px ${(100 - q * 100).toFixed(1)}% -20px -20px)`;
       ends[i].querySelector('circle').style.transform = `scale(${q})`;
     });
-    paintArrows(ks);
+    if (Math.abs(p - lastPaintP) >= .0015 || p === 0 || p === 1) { lastPaintP = p; paintArrows(ks); }
     const k0 = p < .08 ? -1 : Math.min(n - 1, Math.floor((p - .08) / span));
     yearEl.textContent = p < .08 ? 'c. 4000 BCE' : fmtYear(ROUTES[Math.max(0, k0)].y);
-    root.querySelectorAll('.mig-p').forEach(el => { const on = +el.dataset.step === Math.min(3, Math.floor(p * 4.2)); el.classList.toggle('on', on); });
+    const step = Math.min(3, Math.floor(p * 4.2));
+    root.querySelectorAll('.mig-p').forEach(el => { el.classList.toggle('on', +el.dataset.step === step); });
+    root.querySelectorAll('.mig-dots i').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); });
     let anyHorse = false;
     ROUTES.forEach((r, i) => {
       const k = ks[i], h = horses[i];

@@ -86,7 +86,7 @@ function score(F) {
 // ------------------------------------------------------------------------------------------------ figures 3 and 4
 function strip(c, label, extra = '') {
   return `<li class="st"><button class="st-play" aria-label="Play: ${esc(label)}"><span class="st-i"></span></button>
-    <div class="st-body"><p class="st-l data">${esc(label)}${extra}</p><div class="st-spec"><img src="${c.spec}" alt="" loading="lazy" decoding="async"><span class="st-head"></span></div></div></li>`;
+    <div class="st-body"><p class="st-l data">${esc(label)}${extra}</p><div class="st-spec"><span class="st-img" style="background-image:url('${esc(c.spec)}')"></span><span class="st-head"></span></div></div></li>`;
 }
 function wireStrips(root, clips) {
   root.querySelectorAll('.st').forEach((li, i) => {
@@ -192,18 +192,22 @@ async function herd() {
 
 // ------------------------------------------------------------------------------------------------ boot
 async function boot() {
-  initType(); nav(); colophon(); typesetAll(); rubric();
+  initType(); nav(); colophon(); typesetAll();
   const [F, cfg] = await Promise.all([fetch('data/voices-figs.json').then(r => r.json()), fetch('data/voices.json', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))]);
   await document.fonts?.ready;
   document.documentElement.classList.remove('arriving'); document.documentElement.classList.add('arrived');
-  score(F); stages(F); ladder(F); materials(cfg);
+  score(F); stages(F); ladder(F); materials(cfg); rubric();
   document.querySelectorAll('.lad-voices button').forEach(b => b.onclick = () => { stop(); ladderVoice = b.dataset.v; document.querySelectorAll('.lad-voices button').forEach(x => x.classList.toggle('on', x === b)); ladder(F); });
   // headings on painted grounds, each its own stroke
   document.querySelectorAll('.v-art .v-h2 span').forEach((s, i) => s.style.setProperty('--stroke', `url(${new URL(`art/brush/${String((i * 7 + 9) % 64).padStart(2, '0')}.webp`, location.href).href})`));
   garden(); herd(); live(cfg);
-  if (!reduce && window.gsap) {
-    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { gsap.from(e.target, { y: 24, opacity: 0, duration: .9, ease: 'power3.out', clearProps: 'all' }); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-    document.querySelectorAll('.fig, .recipes > div').forEach(el => io.observe(el));
+  if (!reduce) {
+    const els = document.querySelectorAll('.fig, .recipes > div');
+    els.forEach(el => el.classList.add('m-reveal'));
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -6% 0px' });
+    els.forEach(el => io.observe(el));
   }
 }
 boot();

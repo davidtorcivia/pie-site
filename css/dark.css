@@ -4,11 +4,12 @@
 
 /* text on the yellow brush strokes: section headings, play buttons, the pipeline's steps, links, the word being read */
 html.dark .v-art .v-h2 span, html.dark .fig-play, html.dark .st-play, html.dark .pipe-row li, html.dark .v-go a,
-html.dark .vw.on, html.dark .vl-go, html.dark .score-svg .g text { color: var(--night); --ink: var(--night); }
+html.dark .vw.on, html.dark .vl-go, html.dark .score-svg .g text, html.dark .leaf .lis, html.dark .leaf .lis button { color: var(--night); --ink: var(--night); }
 html.dark .score-svg .g text { fill: var(--night); }
+html.dark .leaf { box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 28px 56px -20px rgba(0, 0, 0, .78); }
 
 /* the spectrograms are ink with an alpha (they sit on any paper by multiplying): on the night, inverted and screened */
-html.dark .st-spec img, html.dark .score-svg image { filter: invert(1); mix-blend-mode: screen; }
+html.dark .st-spec img, html.dark .st-spec .st-img, html.dark .score-svg image { filter: invert(1); mix-blend-mode: screen; }
 
 /* Figure 1's rows: a fainter wash of yellow on the night */
 html.dark .mx tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .13), rgba(255, 210, 26, .04) 80%, transparent); }
@@ -24,6 +25,9 @@ html.dark .r.on, html.dark .trc, html.dark .ex-pie mark, html.dark .e-play, html
 html.dark .para tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .14), rgba(255, 210, 26, .05) 75%, rgba(255, 210, 26, 0)); }
 
 /* warm red accents lifted slightly for dark-paper legibility */
-html.dark .nums b, html.dark .m-toc a em, html.dark .tier-i { color: #e0452a; }
-html.dark .mb-row.mb-ours { background: rgba(224, 69, 42, .12); }
+html.dark .nums b, html.dark .m-toc a em, html.dark .tier-i, html.dark .bex-seg, html.dark .mx thead .mx-us, html.dark .mx td:last-child { color: #e0452a; }
+html.dark .mx td.p { color: #b8a684; } html.dark .mx td.n { color: #7a705f; }
+html.dark .mb-row.mb-ours, html.dark .bex-row.bex-mine { background: rgba(224, 69, 42, .12); }
 html.dark .m-stop { stroke: #e0452a; }
+html.dark .ex-miss { text-decoration-color: #e0452a; }
+html.dark .bex-sc.ok { color: #6fc19a; }

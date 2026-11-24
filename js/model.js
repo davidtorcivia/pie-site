@@ -64,26 +64,34 @@ function sweep(F) {
       <div class="dr-axis data"><span></span><span class="dr-ends"><em>82</em><em>90</em></span><span></span></div></div></div></div>`;
 }
 
-// two small multiples over the same steps: reward, and KL with its stop line
+// two small multiples over the same steps in one SVG so illum frames both panels cleanly at full width
 function curve(F) {
-  const P = F.rl8_curve, W = 600, H = 180, pad = { l: 44, r: 16, t: 16, b: 28 };
-  const panel = (title, idx, lo, hi, color, line) => {
-    const X = s => pad.l + (s - P[0][0]) / (P[P.length - 1][0] - P[0][0]) * (W - pad.l - pad.r), Y = v => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
+  const P = F.rl8_curve, narrow = innerWidth <= 760;
+  const PW = 580, PH = 205, gapX = 64, gapY = 36, pad = { l: 44, r: 16, t: 42, b: 28 };
+  const panel = (title, idx, lo, hi, color, line, ox, oy) => {
+    const X = s => ox + pad.l + (s - P[0][0]) / (P[P.length - 1][0] - P[0][0]) * (PW - pad.l - pad.r);
+    const Y = v => oy + pad.t + (1 - (v - lo) / (hi - lo)) * (PH - pad.t - pad.b);
     const pts = P.map(p => `${X(p[0]).toFixed(1)},${Y(p[idx]).toFixed(1)}`).join(' ');
     const baseY = Y(lo).toFixed(1);
     const area = `${X(P[0][0]).toFixed(1)},${baseY} ${pts} ${X(P[P.length - 1][0]).toFixed(1)},${baseY}`;
     const last = P[P.length - 1];
     const ticks = [lo, (lo + hi) / 2, hi];
-    return `<div><h4 class="m-h data">${title}</h4><svg viewBox="0 0 ${W} ${H}" class="m-svg" role="img" aria-label="${esc(title)} over 150 steps">
-      ${ticks.map(t => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(t)}" y2="${Y(t)}" class="m-grid"/><text x="${pad.l - 8}" y="${Y(t) + 4}" class="m-tick" text-anchor="end">${t.toFixed(2)}</text>`).join('')}
-      ${line ? `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(line)}" y2="${Y(line)}" class="m-stop"/><text x="${W - pad.r}" y="${Y(line) - 6}" class="m-tick" text-anchor="end">stop at ${line}</text>` : ''}
+    return `<g>
+      <text x="${ox}" y="${oy + 18}" class="m-svg-h">${esc(title)}</text>
+      ${ticks.map(t => `<line x1="${ox + pad.l}" x2="${ox + PW - pad.r}" y1="${Y(t)}" y2="${Y(t)}" class="m-grid"/><text x="${ox + pad.l - 8}" y="${Y(t) + 4}" class="m-tick" text-anchor="end">${t.toFixed(2)}</text>`).join('')}
+      ${line ? `<line x1="${ox + pad.l}" x2="${ox + PW - pad.r}" y1="${Y(line)}" y2="${Y(line)}" class="m-stop"/><text x="${ox + PW - pad.r}" y="${Y(line) - 6}" class="m-tick" text-anchor="end">stop at ${line}</text>` : ''}
       <polygon points="${area}" fill="${color}" fill-opacity=".1"/>
       <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="${X(last[0]).toFixed(1)}" cy="${Y(last[idx]).toFixed(1)}" r="4" fill="${color}"/>
       ${P.map(p => `<circle cx="${X(p[0]).toFixed(1)}" cy="${Y(p[idx]).toFixed(1)}" r="9" fill="transparent"><title>step ${p[0]}: ${p[idx]}</title></circle>`).join('')}
-      ${[P[0][0], 50, 100, 150].map(s => `<text x="${X(s)}" y="${H - 6}" class="m-tick" text-anchor="middle">${s === P[0][0] ? 'step ' + s : s}</text>`).join('')}</svg></div>`;
+      ${[P[0][0], 50, 100, 150].map(s => `<text x="${X(s)}" y="${oy + PH - 6}" class="m-tick" text-anchor="middle">${s === P[0][0] ? 'step ' + s : s}</text>`).join('')}
+    </g>`;
   };
-  $('#chCurve').innerHTML = `<div class="m-two">${panel('Mean reward', 2, .6, 1, C[0])}${panel('KL from the starting weights', 1, 0, .3, C[1], .3)}</div>`;
+  const W = narrow ? PW : PW * 2 + gapX, H = narrow ? PH * 2 + gapY : PH;
+  $('#chCurve').innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="m-svg" role="img" aria-label="Mean reward and KL divergence from starting weights over 150 steps">
+    ${panel('Mean reward', 2, .6, 1, C[0], null, 0, 0)}
+    ${panel('KL from the starting weights', 1, 0, .3, C[1], .3, narrow ? 0 : PW + gapX, narrow ? PH + gapY : 0)}
+  </svg>`;
 }
 
 function stages(F) {
@@ -154,11 +162,13 @@ async function boot() {
   document.documentElement.classList.add('arrived');
 
   document.querySelectorAll('.v-art .v-h2 span').forEach((s, i) => s.style.setProperty('--stroke', `url(${new URL(`art/brush/${String((i * 7 + 13) % 64).padStart(2, '0')}.webp`, location.href).href})`));
-  garden(); herd(); wireToc(); rubric();
+  garden(); herd(); wireToc();
 
   const F = await figsP;
   const figs = () => { C = isDark() ? DARK : LIGHT; bench(F); engine(F); corpus(F); exportMix(F); sweep(F); curve(F); stages(F); };
   figs(); addEventListener('themechange', figs);
+  matchMedia('(max-width: 760px)').addEventListener('change', () => curve(F));
+  rubric();
   cfgP.then(materials);
 
   if (!reduce) {

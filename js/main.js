@@ -26,16 +26,6 @@ const $ = (s, r = document) => r.querySelector(s);
 initType();
 gsap.registerPlugin(ScrollTrigger);
 
-// smooth scroll, driven by GSAP's ticker so ScrollTrigger stays in step
-let lenis = null;
-if (!reduce && window.Lenis && !matchMedia('(pointer: coarse)').matches && innerWidth >= 900) {
-  lenis = new Lenis({ lerp: .09, wheelMultiplier: .9 });
-  lenis.on('scroll', ScrollTrigger.update);
-  window.lenis = lenis;
-  gsap.ticker.add(t => lenis.raf(t * 1000));
-  gsap.ticker.lagSmoothing(0);
-}
-
 // ---------------------------------------------------------------------------------------------------- paper tooth
 // One compact paper-weave tile, generated lazily only on desktop when the map nears (never blocking first paint)
 let toothDone = false;
@@ -86,6 +76,12 @@ function svgPie(text) {
   return out;
 }
 
+const WHEEL_IDS = {
+  'ph₂tḗr': 'pie-lex-ph2texr', 'h₁éḱwos': 'pie-lex-h1ekjwos', 'h₂ówis': 'pie-lex-h2owis',
+  'méh₂tēr': 'pie-lex-meh2texr', 'dyḗws': 'pie-lex-dyexws', 'wĺ̥kʷos': 'pie-lex-wlkwos',
+  'ḱwṓ': 'pie-lex-kjwox', 'h₂stḗr': 'pie-lex-h2stexr', 'nókʷts': 'pie-lex-nokwts', 'dwóh₁': 'pie-lex-dwoh1',
+};
+
 function wheel(words) {
   const svg = $('#wheel');
   const R0 = 150, R1 = 470;
@@ -118,7 +114,9 @@ function wheel(words) {
         <text font-size="15" class="w-br"><textPath href="#arm${k}" startOffset="${off[0]}">${br}</textPath></text>
         <text font-size="34" class="w-form" dy="-10"><textPath href="#arm${k}" startOffset="${off[1]}">${svgPie(d.form)}</textPath></text>`;
     }).join('');
-    $('#wheelCap').textContent = `*${w.form} (“${w.meaning}”) across ${ds.length} branches.`;
+    const eid = WHEEL_IDS[w.form.normalize('NFC')];
+    const href = eid ? `dictionary.html?e=${encodeURIComponent(eid)}` : `dictionary.html?q=${encodeURIComponent(w.form)}`;
+    $('#wheelCap').innerHTML = `<a class="pie-link" href="${href}">*${typeset(w.form, { words: false })}</a> (“${w.meaning}”) across ${ds.length} branches · <a class="inline-go" href="${href}">open entry →</a>`;
   };
   let cur = -1, tl = null;
   const armsIn = () => {
@@ -188,18 +186,18 @@ function wheel(words) {
 // ---------------------------------------------------------------------------------------------------- machine
 function machine(s) {
   const tiers = [
-    ['I', s.lexicon_entries, '', 'Lexicon', '7,401 entries from Wiktionary, 829 verbal roots transcribed from LIV², and 135 nouns from NIL—each tied back to its source.'],
-    ['II', s.engine_agreement, '%', 'Grammar engine', `Inflects nouns, adjectives and verbs by rule, reproducing ${s.engine_cells} cells from Wiktionary's published paradigms.`],
-    ['III', s.records, '', 'Corpus', `${s.pie_words.toLocaleString('en')} words across ~50 genres—hymns, laws, riddles, laments, oaths, and everyday talk.`],
-    ['IV', 86.2, '', 'Model', 'Strict score on my held-out benchmark, where frontier models drop into the 40s and 50s.'],
+    ['I', s.lexicon_entries, '', 'Lexicon', 'dictionary.html', '7,401 entries from Wiktionary, 829 verbal roots transcribed from LIV², and 135 nouns from NIL, each tied back to its source.'],
+    ['II', s.engine_agreement, '%', 'Grammar engine', 'model.html#engine', `Inflects nouns, adjectives and verbs by rule, reproducing ${s.engine_cells} cells from Wiktionary's published paradigms.`],
+    ['III', s.records, '', 'Corpus', 'model.html#corpus', `${s.pie_words.toLocaleString('en')} words across ~50 genres: hymns, laws, riddles, laments, oaths, and everyday talk.`],
+    ['IV', 86.2, '', 'Model', 'model.html', 'Strict score on my held-out benchmark, where frontier models drop into the 40s and 50s.'],
   ];
-  $('#cascade').innerHTML = tiers.map(([rm, n, u, l, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display"><em class="tier-i data">${rm}</em>${l}</b><span class="serif">${d}</span></div></div>`).join('');
+  $('#cascade').innerHTML = tiers.map(([rm, n, u, l, href, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display"><em class="tier-i data">${rm}</em><a class="tier-go" href="${href}">${l}<span> →</span></a></b><span class="serif">${d}</span></div></div>`).join('');
   document.querySelectorAll('.tier .num').forEach(el => {
     const n = +el.dataset.n, dec = n % 1 ? 1 : 0, o = { v: 0 };
     el.textContent = n.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u;
     if (reduce) return;
-    ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () =>
-      gsap.to(o, { v: n, duration: 1.25, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
+    ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () =>
+      gsap.to(o, { v: n, duration: .85, ease: 'power3.out', onUpdate: () => { el.textContent = o.v.toLocaleString('en', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + el.dataset.u; } }) });
   });
 }
 
@@ -207,10 +205,11 @@ function machine(s) {
 function results(bench) {
   const ours = bench.find(b => b.id === 'ours-nemotron35-e3-bf16');
   const best = fam => bench.filter(b => b.id.startsWith(fam)).sort((a, b) => b.lenient - a.lenient)[0];
-  const rows = [{ ...ours, name: 'Mine · PIE e3' }, ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best).filter(Boolean)];
+  const rows = [{ ...ours, name: 'Wekwos-120B' }, ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best).filter(Boolean)];
   const box = $('#bars');
   box.innerHTML = rows.map(r => `<div class="bar ${r.family === 'ours' ? 'ours' : ''}"><div class="who">${r.name}<div class="nums"><span class="sv">${r.strict.toFixed(1)}</span><span class="lv">/ ${r.lenient.toFixed(1)} lenient</span></div></div><div class="track"><canvas></canvas></div></div>`).join('')
-    + `<div class="legend data small"><span><i style="background:${C.yellow}"></i>strict</span><span><i style="background:repeating-linear-gradient(45deg,rgba(255,210,26,.62) 0 1.5px,transparent 1.5px 7px)"></i>lenient</span><span>0 — 100</span></div>`;
+    + `<div class="bar-axis data"><span></span><span class="bar-ticks"><em>0</em><em>25</em><em>50</em><em>75</em><em>100</em></span></div>`
+    + `<div class="legend data small"><span><i style="background:${C.yellow}"></i>strict</span><span><i style="background:repeating-linear-gradient(45deg,rgba(255,210,26,.62) 0 1.5px,transparent 1.5px 7px)"></i>lenient</span><span>0–100</span></div>`;
   const draws = [...box.querySelectorAll('.bar')].map((el, i) => {
     const r = rows[i], cv = el.querySelector('canvas');
     const paint = k => {
@@ -225,15 +224,17 @@ function results(bench) {
       ctx.fillStyle = r.family === 'ours' ? C.yellow : C.deep; ctx.fillRect(0, 2, S, h - 4);
     };
     paint(0);
-    return { el, paint };
+    return { el, paint, o: { k: reduce ? 1 : 0 } };
   });
-  draws.forEach(({ el, paint }, i) => {
-    const o = { k: reduce ? 1 : 0 };
-    if (reduce) { paint(1); } else {
-      ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => gsap.to(o, { k: 1, duration: 1.2, delay: i * .07, ease: 'power3.out', onUpdate: () => paint(o.k) }) });
-    }
-    addEventListener('repaint', () => paint(o.k));
-  });
+  if (reduce) {
+    draws.forEach(d => d.paint(1));
+  } else {
+    ScrollTrigger.create({
+      trigger: box, start: 'top 86%', once: true,
+      onEnter: () => draws.forEach((d, i) => gsap.to(d.o, { k: 1, duration: 1.05, delay: i * .06, ease: 'power3.out', onUpdate: () => d.paint(d.o.k) })),
+    });
+  }
+  draws.forEach(d => addEventListener('repaint', () => d.paint(d.o.k)));
 }
 
 // ---------------------------------------------------------------------------------------------------- voice
@@ -319,7 +320,7 @@ function voice(h) {
     audio.src = h.audio[voiceName]; audio.currentTime = t; if (playing) audio.play();
   }));
   spans.forEach((s, i) => s.addEventListener('click', async () => { setupAudio(); await actx.resume(); const T = h.timing ? h.timing[voiceName === 'male' ? 'm' : 'f'] : h.words; audio.currentTime = T[i].start; audio.play(); }));
-  spans.forEach(s => s.style.cursor = 'pointer');
+  spans.forEach(s => { s.style.cursor = 'pointer'; s.title = 'Click to jump to this word'; });
 }
 
 // ---------------------------------------------------------------------------------------------------- specimens
@@ -335,10 +336,29 @@ function specimens(list) {
       ${s.audio ? `<p class="lis serif"><button class="play" aria-label="Listen">listen</button> · <button data-v="male" class="on">male</button> / <button data-v="female">female</button></p>` : ''}</div></article>`;
   }).join('');
   const leaves = [...track.querySelectorAll('.leaf')];
-  const near = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src; } near.unobserve(e.target); } }), { rootMargin: '0px 60% 0px 60%' });
-  leaves.forEach(l => near.observe(l));
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const v = e.target.querySelector('.leaf-garden'); if (!v.src) v.src = v.dataset.src;
-    v.play().catch(() => { v.poster = v.dataset.still; }); e.target.classList.add('grown'); io.unobserve(e.target); } }), { threshold: .35 });
+  const swapLeaf = v => {
+    if (!v || v._done || v.tagName !== 'VIDEO') return;
+    v._done = true;
+    const im = new Image(); im.className = 'leaf-garden'; im.alt = ''; im.src = v.dataset.still;
+    im.decode().catch(() => {}).then(() => { v.replaceWith(im); v.removeAttribute('src'); v.load(); });
+  };
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target.querySelector('video.leaf-garden');
+    if (e.isIntersecting) {
+      e.target.classList.add('grown');
+      if (!v) return;
+      if (reduce) { swapLeaf(v); return; }
+      if (!v.src) {
+        v.preload = 'auto'; v.src = v.dataset.src;
+        v.addEventListener('ended', () => swapLeaf(v), { once: true });
+        v.addEventListener('error', () => swapLeaf(v), { once: true });
+        setTimeout(() => swapLeaf(v), 12000);
+      }
+      v.play().catch(() => swapLeaf(v));
+    } else if (v && !v.paused) {
+      v.pause();
+    }
+  }), { threshold: .2 });
   leaves.forEach(l => io.observe(l));
 
   const build = (el, i) => {
@@ -390,11 +410,47 @@ const EXAMPLES = {
 };
 function translator() {
   const inp = $('#trIn'), out = $('#trOut'), ex = $('#trEx');
-  let dir = 'en2pie', tm, seq = 0;
+  let dir = 'en2pie', tm, seq = 0, ttsOn = false, ttsVoice = 'm', ttsAudio = null;
+  const ttsPreview = new URLSearchParams(location.search).has('tts');
+  const checkTts = async () => {
+    if (ttsPreview) { ttsOn = true; return; }
+    try {
+      const ctl = new AbortController(); setTimeout(() => ctl.abort(), 2000);
+      const r = await fetch('/api/tts/health', { signal: ctl.signal, cache: 'no-store' });
+      if (r.ok && (await r.json()).ok) ttsOn = true;
+    } catch {}
+  };
+  const speakLine = async (text, btn, lineEl) => {
+    if (btn.classList.contains('busy')) return;
+    if (ttsAudio && !ttsAudio.paused && ttsAudio._btn === btn) { ttsAudio.pause(); btn.classList.remove('on'); btn.textContent = 'Hear it'; return; }
+    if (ttsAudio) { ttsAudio.pause(); ttsAudio._btn?.classList.remove('on'); if (ttsAudio._btn) ttsAudio._btn.textContent = 'Hear it'; }
+    btn.classList.add('busy'); btn.textContent = 'Speaking…';
+    try {
+      const r = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, voice: ttsVoice }) });
+      const js = await r.json(); if (!r.ok || js.error) throw new Error(js.error || 'unavailable');
+      ttsAudio ||= new Audio(); ttsAudio._btn = btn;
+      ttsAudio.src = 'data:audio/mpeg;base64,' + js.audio; ttsAudio.currentTime = 0;
+      await ttsAudio.play();
+      btn.classList.add('on'); btn.textContent = 'Stop';
+      const ws = lineEl ? [...lineEl.querySelectorAll('.w')] : [];
+      const tick = () => {
+        if (!ttsAudio || ttsAudio._btn !== btn || ttsAudio.paused) { ws.forEach(w => w.classList.remove('now')); return; }
+        const t = ttsAudio.currentTime;
+        ws.forEach((el, i) => el.classList.toggle('now', js.words?.[i] && t >= js.words[i].start && t < js.words[i].end + .05));
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      ttsAudio.onended = () => { btn.classList.remove('on'); btn.textContent = 'Hear it'; ws.forEach(w => w.classList.remove('now')); };
+    } catch {
+      btn.textContent = ttsPreview ? 'TTS engine offline' : 'Unavailable';
+      setTimeout(() => { if (!btn.classList.contains('on')) btn.textContent = 'Hear it'; }, 2400);
+    } finally { btn.classList.remove('busy'); }
+  };
   const examples = () => { ex.innerHTML = 'Try: ' + EXAMPLES[dir].map(e => `<button>${dir === 'pie2en' ? typeset(e, { words: false }) : e}</button>`).join(' · ');
     ex.querySelectorAll('button').forEach((b, i) => b.onclick = () => { inp.value = EXAMPLES[dir][i]; run(); }); };
   const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const q = x => `“${esc(x)}”`;
+  const dictHref = (form, id) => id ? `dictionary.html?e=${encodeURIComponent(id)}` : `dictionary.html?q=${encodeURIComponent(form.replace(/[.,;:!?]+$/g, ''))}`;
   const nothing = s => { const u = s.unknown || []; return `<div class="tr-notes serif">${u.length ? `No reconstructed PIE word for ${u.map(q).join(u.length > 2 ? ', ' : ' or ').replace(/, ([^,]*)$/, ', or $1')}, so there is nothing to translate.` : 'Nothing here the engine could translate.'}</div>`; };
   const run = async () => {
     const text = inp.value.trim(), my = ++seq;
@@ -406,14 +462,21 @@ function translator() {
       if (dir === 'en2pie') {
         const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
         out.innerHTML = js.map(s => { if (!s.pie) return nothing(s); const sub = subOf(s);
-          return `<div class="tr-line pie">${typeset(s.pie)}</div>
+          return `<div class="tr-sent"><div class="tr-line pie">${typeset(s.pie)}</div>
+          ${ttsOn ? `<div class="tr-say"><button class="tr-hear data" type="button" data-pie-say="${esc(s.pie)}">Hear it</button><span class="tr-vv serif" role="group" aria-label="Voice"><button type="button" data-tv="m" class="${ttsVoice === 'm' ? 'on' : ''}">male</button> · <button type="button" data-tv="f" class="${ttsVoice === 'f' ? 'on' : ''}">female</button></span></div>` : ''}
           <div class="tr-words">${s.words.map(w => { const gl = w.gloss || '', base = gl.split('-')[0].replace(/_/g, ' '), was = sub[base];
-            return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><span class="f">${typeset(w.form, { words: false })}</span><span class="gl">${esc(gl.replace(/_/g, ' ').replace(/~/g, ''))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
+            return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><a class="f" href="${dictHref(w.form, w.lex_id)}" title="Open in dictionary">${typeset(w.form, { words: false })}</a><span class="gl">${esc(gl.replace(/_/g, ' ').replace(/~/g, ''))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
           ${s.ipa ? `<div class="tr-ipa">[${esc(s.ipa)}]</div>` : ''}
-          ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for ${q(en)}; the nearest, ${q(pie)}, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(q).join(', ')}.` : ''}</div>` : ''}`; }).join('');
+          ${Object.keys(sub).length || (s.unknown || []).length ? `<div class="tr-notes serif">${Object.entries(sub).map(([pie, en]) => `There is no reconstructed word for ${q(en)}; the nearest, ${q(pie)}, stands in.`).join(' ')}${(s.unknown || []).length ? ` Left out, with no word to stand in: ${s.unknown.map(q).join(', ')}.` : ''}</div>` : ''}</div>`; }).join('');
+        out.querySelectorAll('.tr-hear').forEach(b => b.onclick = () => speakLine(b.dataset.pieSay, b, b.closest('.tr-sent')?.querySelector('.tr-line')));
+        out.querySelectorAll('[data-tv]').forEach(b => b.onclick = () => {
+          ttsVoice = b.dataset.tv;
+          out.querySelectorAll('[data-tv]').forEach(x => x.classList.toggle('on', x.dataset.tv === ttsVoice));
+        });
       } else {
-        out.innerHTML = `<div class="tr-line serif">${esc(js.rough_english || '—')}</div>
-          <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0]; return `<div class="tw"><span class="f">${typeset(w.word, { words: false })}</span><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ').replace(/~/g, '')) : 'not found'}</span></div>`; }).join('')}</div>
+        out.innerHTML = `<div class="tr-line serif">${esc(js.rough_english || '–')}</div>
+          <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0];
+            return `<div class="tw"><a class="f" href="${dictHref(w.spelled || w.word, a?.lex_id)}" title="Open in dictionary">${typeset(w.word, { words: false })}</a><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ').replace(/~/g, '')) : 'not found'}</span></div>`; }).join('')}</div>
           ${js.ipa ? `<div class="tr-ipa">[${esc(js.ipa)}]</div>` : ''}`;
       }
       if (!reduce) gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .45, stagger: .03, ease: 'power3.out' });
@@ -430,7 +493,7 @@ function translator() {
   inp.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(run, 700); });
   $('#trGo').onclick = run;
   inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } });
-  ScrollTrigger.create({ trigger: '#s-apps', start: 'top 70%', once: true, onEnter: run });
+  ScrollTrigger.create({ trigger: '#s-apps', start: 'top 70%', once: true, onEnter: async () => { await checkTts(); run(); } });
 }
 
 // ---------------------------------------------------------------------------------------------------- gardens
@@ -438,25 +501,36 @@ function gardens() {
   if (location.search.includes('nogarden')) return;
   const probe = document.createElement('video');
   const phone = innerWidth < 700, sfx = phone ? '-m' : '';
-  let busy = false; const waiting = [];
-  const queue = job => { if (!phone) return job(() => {}); waiting.push(job); next(); };
-  function next() { if (busy || !waiting.length) return; busy = true; waiting.shift()(() => { busy = false; next(); }); }
+  let active = 0; const maxActive = phone ? 1 : 2, waiting = [];
+  const queue = job => { waiting.push(job); next(); };
+  function next() { while (active < maxActive && waiting.length) { active++; waiting.shift()(() => { active--; next(); }); } }
   const alphaVideo = !!probe.canPlayType && probe.canPlayType('video/webm; codecs="vp9"') !== '' && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   for (const [name, sel] of [['open', '#s-open'], ['opentop', '#s-open'], ['wheel', '#s-wheel .wheel-pin'], ['machine', '#s-machine'], ['voice', '#s-voice'], ['apps', '#s-apps'], ['foot', 'footer']]) {
     const host = $(sel); if (!host) continue;
     const g = document.createElement('div'); g.className = 'garden ' + (host.classList.contains('ms-right') ? 'g-right' : host.classList.contains('ms-left') ? 'g-left' : 'g-field'); host.prepend(g);
+    const still = then => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`;
+      im.decode().catch(() => {}).then(() => { g.append(im); then?.(); }); };
     const play = done => {
+      // If the reader already scrolled past this section while waiting, swap directly to the still (zero wasted VP9 decode)
+      const r = host.getBoundingClientRect();
+      if (r.bottom < -120 || r.top > innerHeight + 120) { still(done); return; }
       const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.className = 'gv';
       v.src = `art/growth-${name}${sfx}.webm`; g.append(v);
-      const finish = () => { if (v._done) return; v._done = true; still(() => { v.removeAttribute('src'); v.load(); v.remove(); }); done(); };
+      let visIo;
+      const finish = () => {
+        if (v._done) return; v._done = true; visIo?.disconnect();
+        still(() => { v.removeAttribute('src'); v.load(); v.remove(); });
+        done();
+      };
+      // Stop CPU VP9-alpha decoding immediately once the section scrolls out of view
+      visIo = new IntersectionObserver(es => { if (!es[0].isIntersecting) finish(); }, { rootMargin: '120px 0px' });
+      visIo.observe(host);
       v.addEventListener('canplay', () => v.play().catch(finish), { once: true });
       v.addEventListener('ended', finish, { once: true });
       v.addEventListener('error', finish, { once: true });
-      setTimeout(finish, 20000);
+      setTimeout(finish, 18000);
     };
     const start = () => (alphaVideo && !reduce) ? queue(play) : still();
-    const still = then => { const im = new Image(); im.className = 'gv'; im.src = `art/garden-${name}${sfx}.webp`;
-      im.decode().catch(() => {}).then(() => { g.append(im); then?.(); }); };
     if (name.startsWith('open')) { start(); continue; }
     const target = phone ? (() => { const s = document.createElement('div'); s.className = 'g-sentinel'; host.append(s); return s; })() : host;
     new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { rootMargin: '0px 0px -10% 0px' }).observe(target);
@@ -494,6 +568,16 @@ async function boot() {
   document.documentElement.classList.remove('arriving');
   document.documentElement.classList.add('arrived');
 
+  const sc = $('.hero-scroll');
+  if (sc) {
+    sc.addEventListener('click', e => {
+      e.preventDefault();
+      const target = $('#s-mig');
+      if (target) window.lenis ? window.lenis.scrollTo(target, { duration: 1.2 }) : target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    });
+    const fade = () => { if (scrollY > 60) { sc.classList.add('gone'); removeEventListener('scroll', fade); } };
+    addEventListener('scroll', fade, { passive: true });
+  }
   nav();
   gardens();
   document.querySelectorAll('.mig-p, .mig-year').forEach((el, i) => brushGround(el, 70 + i, '#ffd21a'));

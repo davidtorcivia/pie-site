@@ -17,7 +17,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 /* the live section */
 .v-live { padding: clamp(60px, 8vw, 110px) var(--gut); }
 .v-live[hidden] { display: none; }
-.vl-inner { max-width: 1100px; }
+.vl-inner { max-width: 1100px; margin: 0 auto; }
 .vl-p { max-width: 58ch; font-size: clamp(17px, 1.3vw, 21px); margin: 0 0 1.4em; opacity: .9; }
 .vl-box { display: flex; align-items: stretch; gap: 0; max-width: 980px; }
 .vl-box textarea { flex: 1; min-width: 0; border: 0; resize: vertical; background: color-mix(in srgb, var(--chalk) 9%, transparent); color: var(--chalk); padding: .45em .6em; font-size: clamp(22px, 2.6vw, 38px); line-height: 1.2; outline: 0; caret-color: var(--yellow); }
@@ -39,7 +39,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 
 /* the article */
 .v-art { padding: clamp(60px, 8vw, 120px) var(--gut) clamp(40px, 6vw, 90px); }
-.sec { max-width: 1180px; margin: 0 auto clamp(70px, 9vw, 140px); }
+.sec { position: relative; max-width: 1180px; margin: 0 auto clamp(36px, 4.5vw, 64px); }
 .sec > p, .sec > dl { max-width: 680px; margin-left: auto; margin-right: auto; }
 .v-h2 { font-size: clamp(34px, 4.9vw, 82px); line-height: .94; letter-spacing: -.035em; margin: 0 auto .6em; max-width: 980px; text-wrap: balance; }
 .v-art .v-h2 span { position: relative; isolation: isolate; display: inline-block; padding: .04em .18em .08em .14em; }
@@ -52,12 +52,14 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 .sec .data { font-size: .82em; letter-spacing: .01em; }
 
 
-/* figures */
-.fig { margin: clamp(36px, 4vw, 60px) auto clamp(44px, 5vw, 76px); max-width: 1180px; }
+/* figures: generous padding and margins so illum's top/bottom rules stay well clear of prose and chart headers */
+.fig { margin: clamp(54px, 6vw, 88px) auto clamp(60px, 6.8vw, 98px); padding: clamp(18px, 2.2vw, 28px) 0 clamp(10px, 1.4vw, 18px); max-width: 1180px; }
+.fig + .fig { margin-top: clamp(72px, 8vw, 116px); }
+.fig-shot { padding-top: 8px; }
 .sec .book a, .mat-credit a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
 .sec .book a:hover, .mat-credit a:hover { text-decoration-thickness: 2px; }
 .fig-shot img { display: block; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 18px 40px -24px rgba(0,0,0,.45); }
-.fig figcaption { font-size: clamp(15px, 1.1vw, 18px); max-width: 680px; margin: 1.1em auto 0; line-height: 1.4; }
+.fig figcaption { font-size: clamp(15px, 1.1vw, 18px); max-width: 680px; margin: 1.35em auto 0; line-height: 1.44; }
 .fig figcaption b { font-family: var(--f-data); font-style: normal; font-size: .72em; letter-spacing: .14em; text-transform: uppercase; margin-right: .5em; }
 .fig-play, .st-play { position: relative; isolation: isolate; border: 0; background: none; cursor: pointer; color: var(--ink); }
 .fig-play { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 6px 18px 6px 14px; margin-left: .4em; font-style: normal; }
@@ -66,7 +68,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 
 /* figure 1: the inventory matrix */
 .mx { width: 100%; max-width: 980px; margin: 0 auto; border-collapse: collapse; }
-.mx thead th { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; text-align: left; padding: 0 12px 14px; vertical-align: bottom; }
+.mx thead th { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; text-align: left; padding: 0 12px 14px; vertical-align: bottom; border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); }
 .mx thead th span { display: block; font-weight: 400; letter-spacing: .06em; text-transform: none; font-size: 12px; opacity: .6; margin-top: 3px; }
 .mx thead .mx-us { color: #b81d0e; }
 .mx tbody th { text-align: left; padding: 10px 14px 10px 0; white-space: nowrap; }
@@ -89,10 +91,10 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 .score { min-width: 860px; }
 .score-svg { width: 100%; height: auto; display: block; font-family: var(--f-data); overflow: visible; }
 .score-svg .sw { font-family: var(--f-pie); font-size: 15px; fill: var(--ink); }
-.score-svg .sp line { stroke: rgba(14, 13, 11, .16); stroke-width: 1; }
+.score-svg .sp line { stroke: color-mix(in srgb, var(--ink) 18%, transparent); stroke-width: 1; }
 .score-svg .sp text { font-family: var(--f-book); font-size: 13px; fill: var(--ink); }
 .score-svg .sp.nuc text { font-weight: 700; }
-.score-svg .tl { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; fill: rgba(14, 13, 11, .62); }
+.score-svg .tl { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; fill: color-mix(in srgb, var(--ink) 64%, transparent); }
 .score-svg .g rect { fill: var(--yellow); }
 .score-svg .g:hover rect { fill: #f2b705; }
 .score-svg .g text { font-size: 9.5px; fill: var(--ink); pointer-events: none; }
@@ -110,7 +112,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 .st-l { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 6px; }
 .st-l span { font-weight: 400; opacity: .55; margin-left: .6em; }
 .st-spec { position: relative; height: clamp(64px, 7vw, 96px); }
-.st-spec img { display: block; width: 100%; height: 100%; object-fit: fill; }
+.st-spec img, .st-spec .st-img { display: block; width: 100%; height: 100%; object-fit: fill; background-size: 100% 100%; background-repeat: no-repeat; }
 .st-head { position: absolute; top: -4px; bottom: -4px; left: 0; width: 2px; background: #b81d0e; pointer-events: none; }
 .ladder-top { max-width: 1000px; margin: 0 auto 14px; font-size: 17px; }
 .ladder-top button { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; opacity: .6; }
@@ -136,13 +138,13 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 
 /* materials */
 .v-mat { padding: clamp(70px, 9vw, 140px) var(--gut); }
-.v-mat .v-h2 { margin-left: 0; max-width: 1100px; }
-.mat { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 3vw, 54px); max-width: 1180px; margin-top: 1.6em; }
+.v-mat .v-h2 { margin: 0 auto .6em; max-width: 1180px; text-align: center; }
+.mat { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 3vw, 54px); max-width: 1180px; margin: 1.8em auto 0; }
 .m-item h3 { font-size: clamp(24px, 2.2vw, 34px); margin: 0 0 .4em; letter-spacing: -.02em; }
 .m-item h3 a { color: var(--yellow); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .18em; }
 .m-item p { margin: 0; font-size: clamp(16px, 1.15vw, 19px); opacity: .9; }
 .m-item .m-soon { margin-top: .9em; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--yellow); opacity: .9; }
-.mat-credit { max-width: 72ch; margin-top: clamp(40px, 5vw, 70px); font-size: clamp(15px, 1.05vw, 17px); opacity: .7; }
+.mat-credit { max-width: 72ch; margin: clamp(44px, 5vw, 76px) auto 0; font-size: clamp(15px, 1.05vw, 17px); opacity: .7; text-align: center; }
 .v-foot { padding: clamp(50px, 7vw, 100px) var(--gut); }
 
 /* phones */
@@ -169,7 +171,7 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
 }
 @media (prefers-reduced-motion: reduce) { html.arrived .v-inner > * { animation: none; } }
 /* images painted on paper take the page's own paper (it is darker in dark mode) */
-.st-spec img, .score-svg image { mix-blend-mode: multiply; }
+.st-spec img, .st-spec .st-img, .score-svg image { mix-blend-mode: multiply; }
 
 
 .v-live .v-h2 { margin-left: 0; }
@@ -187,9 +189,17 @@ html.arrived .v-inner > :nth-child(2) { animation-delay: .14s; }
   .pipe-row li + li::after { left: 26px; top: -15px; width: 2px; height: 12px; }
 }
 
-/* illum's rubrication (js/rubric.js; the carved letters' own rule is in main.css): the host for its canvases */
+/* illum's rubrication (js/rubric.js; the carved letters' own rule is in main.css): carved per-section so GPU memory stays small */
 main.v-art { position: relative; }
+.v-brk { position: relative; max-width: 1180px; margin: clamp(16px, 2vw, 28px) auto clamp(36px, 4.5vw, 64px); }
+.v-brk:last-of-type { margin-bottom: 0; }
 /* the breaks: illum draws its sign or scene in the hr's own box, which must have height (at 0 it measures no room and
-   its figure comes out NaN wide); without illum, a quiet rule in the middle of that box */
+   its figure comes out NaN wide) */
 main.v-art hr { border: 0; height: clamp(64px, 8vw, 110px); margin: 0 auto; }
 html:not(.illum) main.v-art hr { max-width: 120px; background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent), color-mix(in srgb, var(--ink) 18%, transparent)) center / 100% 1px no-repeat; }
+/* lightweight CSS scroll reveal shared by /voices and /model (replaces 71 KB GSAP).
+   Figures fade in place (no translateY) so illum always measures their true resting coordinates. */
+.m-reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2, .7, .2, 1), transform .7s cubic-bezier(.2, .7, .2, 1); }
+.fig.m-reveal { transform: none; transition: opacity .7s cubic-bezier(.2, .7, .2, 1); }
+.m-reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .m-reveal { opacity: 1; transform: none; transition: none; } }
