@@ -2,7 +2,7 @@
  "_about": "Links for model.html's 'Model, corpus and benchmark' section. null means not published yet (the item shows its name and 'Publishing soon').",
  "links": {
   "model": "https://huggingface.co/disinfozone/wekwos-120b",
-  "corpus": null,
-  "benchmark": null
+  "corpus": "https://huggingface.co/datasets/disinfozone/wekwos-corpus",
+  "benchmark": "https://github.com/davidtorcivia/wekwos-bench"
  }
 }
