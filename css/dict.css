@@ -20,7 +20,14 @@ body.dict { background: var(--paper); }
 .dh-search input::placeholder { color: rgba(14, 13, 11, .34); }
 .dh-search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 .dh-count { position: relative; z-index: 1; font-size: 12px; letter-spacing: .14em; padding-right: 1.6em; opacity: .6; }
-.dh-hint { max-width: 62ch; font-size: clamp(15px, 1.05vw, 18px); opacity: .8; margin: 1.5em 0 1.1em; }
+.dh-picks { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 1.15em 0 0; font-size: clamp(16px, 1.15vw, 19px); max-width: 940px; }
+.dh-picks-l { opacity: .75; }
+.dh-picks a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: rgba(14, 13, 11, .35); transition: color .18s ease, text-decoration-color .18s ease; }
+.dh-picks a:hover, .dh-picks a:focus-visible { color: #b81d0e; text-decoration-color: #b81d0e; }
+.dh-rand { margin-left: 6px; padding: 4px 10px; border: 1px solid rgba(14, 13, 11, .32); border-radius: 2px; background: rgba(246, 241, 228, .48); color: var(--ink);
+  font-size: 10.5px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; cursor: pointer; transition: background-color .18s ease, border-color .18s ease, color .18s ease; }
+.dh-rand:hover, .dh-rand:focus-visible { background: var(--ink); border-color: var(--ink); color: var(--yellow); }
+.dh-hint { max-width: 62ch; font-size: clamp(15px, 1.05vw, 18px); opacity: .8; margin: 1em 0 1.1em; }
 .dh-letters { display: flex; flex-wrap: wrap; gap: 2px 4px; max-width: 1180px; }
 .dh-letters button { position: relative; border: 0; background: none; cursor: pointer; color: var(--ink); font: inherit; font-size: clamp(17px, 1.4vw, 22px); padding: .18em .42em; }
 .dh-letters button:hover::before, .dh-letters button.on::before { content: ''; position: absolute; inset: 4% -8%; z-index: -1; background: var(--chalk);
@@ -28,8 +35,9 @@ body.dict { background: var(--paper); }
 .dh-letters button.on::before { opacity: 1; }
 html.arriving .dh-inner > * { opacity: 0; }
 html.arrived .dh-inner > * { animation: arrive 1s cubic-bezier(.2, .7, .2, 1) both; }
-html.arrived .dh-inner > :nth-child(2) { animation-delay: .08s; } html.arrived .dh-inner > :nth-child(3) { animation-delay: .16s; }
-html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .dh-inner > :nth-child(5) { animation-delay: .3s; }
+html.arrived .dh-inner > :nth-child(2) { animation-delay: .08s; } html.arrived .dh-inner > :nth-child(3) { animation-delay: .14s; }
+html.arrived .dh-inner > :nth-child(4) { animation-delay: .2s; } html.arrived .dh-inner > :nth-child(5) { animation-delay: .26s; }
+html.arrived .dh-inner > :nth-child(6) { animation-delay: .32s; }
 
 /* results beside the entry */
 .dict-main { display: grid; grid-template-columns: minmax(300px, 31%) 1fr; gap: clamp(24px, 4vw, 72px); padding: 0 var(--gut); align-items: start; }
@@ -76,9 +84,16 @@ html.arrived .dh-inner > :nth-child(4) { animation-delay: .24s; } html.arrived .
 .xl:hover .pie { text-decoration-color: #b81d0e; }
 .xl .serif { opacity: .75; }
 
-/* the spoken headword */
-.e-say { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; margin: .9em 0 0; }
+/* the spoken headword + copy tools */
+.e-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; margin: .95em 0 0; }
+.e-say { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
 .e-say[hidden] { display: none; }
+.e-tools { display: inline-flex; align-items: center; gap: 8px; }
+.e-act { border: 1px solid rgba(14, 13, 11, .24); background: transparent; color: var(--ink); border-radius: 2px; padding: 5px 10px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; opacity: .78;
+  transition: opacity .18s ease, background-color .18s ease, border-color .18s ease, color .18s ease; }
+.e-act:hover, .e-act:focus-visible { opacity: 1; border-color: var(--ink); }
+.e-act.copied { opacity: 1; background: var(--yellow); border-color: var(--yellow); color: var(--night); }
 .e-play { position: relative; display: inline-flex; align-items: center; gap: 10px; border: 0; background: none; cursor: pointer; color: var(--ink);
   font-size: 11.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 10px 26px 10px 18px; }
 .e-play::before { content: ''; position: absolute; inset: 0 -6px 0 -4px; z-index: -1; background: var(--yellow);

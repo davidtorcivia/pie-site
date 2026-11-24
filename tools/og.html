@@ -28,9 +28,9 @@
   .dict p { position: absolute; left: 56px; bottom: 44px; font-size: 30px; }
   /* model */
   .model h1 { position: absolute; left: 56px; top: 56px; font-size: 168px; }
-  .model .row { position: absolute; left: 60px; top: 262px; display: flex; gap: 44px; }
+  .model .row { position: absolute; left: 60px; top: 262px; display: flex; gap: 38px; }
   .model .row div b { display: block; font-family: 'Archivo'; font-weight: 900; font-variation-settings: 'wdth' 110; font-size: 92px; line-height: .9; letter-spacing: -.03em; }
-  .model .row div span { display: block; font-family: 'JetBrains Mono'; font-weight: 700; font-size: 17px; letter-spacing: .14em; text-transform: uppercase; margin-top: 12px; }
+  .model .row div span { display: block; font-family: 'JetBrains Mono'; font-weight: 700; font-size: 16px; letter-spacing: .12em; text-transform: uppercase; margin-top: 12px; }
   .model .row .ours b { color: #b81d0e; }
   .model p { position: absolute; left: 56px; bottom: 44px; width: 640px; font-size: 30px; line-height: 1.2; }
   /* voices */
@@ -59,7 +59,7 @@ if (page === 'home') {
 } else if (page === 'model') {
   B.className = 'yellow model';
   B.innerHTML = `<img class="garden" src="../art/garden-model.webp" style="object-position: right top; width: 33%"><h1 class="display">Model</h1>
-    <div class="row"><div class="ours"><b>86.2</b><span>ours, strict</span></div><div><b>50.0</b><span>Claude Opus 5.5</span></div><div><b>47.0</b><span>GPT-6.1 Sol</span></div></div>
+    <div class="row"><div class="ours"><b>86.2</b><span>Wekwos-120B, strict</span></div><div><b>50.0</b><span>Claude Opus 5.5</span></div><div><b>47.0</b><span>GPT-6.1 Sol</span></div></div>
     <p class="serif">A language model trained to read and write reconstructed Proto-Indo-European, in the scholars' own notation</p>
     <span class="data url">wekwos.com/model</span>`;
 } else {

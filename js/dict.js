@@ -340,6 +340,13 @@ function initialFor(form) {
 const CARVE = canCarve();     // the entry's initial and breaks carved by illum (js/rubric.js), else the printed plates
 const initialSrc = L => `art/initials/dict/${[...L.normalize('NFD')].map(c => c.codePointAt(0).toString(16)).join('-')}.webp?v=${ART_V}`;
 
+const copyText = (btn, text) => {
+  const label = btn.dataset.label || btn.textContent;
+  const ok = () => { btn.textContent = 'Copied'; btn.classList.add('copied'); clearTimeout(btn._t); btn._t = setTimeout(() => { btn.textContent = label; btn.classList.remove('copied'); }, 1500); };
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(ok).catch(() => {});
+  else { const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.append(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch {} ta.remove(); }
+};
+
 let carved = null;     // the open entry's carving (js/rubric.js)
 async function openEntry(id, { push = true, scroll = true } = {}) {
   const d = await detail(id); if (!d) return;
@@ -369,8 +376,11 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
       ${!ini ? '' : CARVE ? `<p class="e-cap e-capp" aria-hidden="true"><span class="ini drop" data-lines="4">${esc(ini.letter)}</span></p>` : `<img class="e-cap" src="${initialSrc(ini.letter)}" alt="" onerror="this.remove(); this.closest('.e-head')?.classList.add('no-cap')">`}
       <h2 class="e-form pie">${star ? '<span class="e-star">*</span>' : ''}${ts(d.form)}</h2>
       <p class="e-meta data">${meta.map(esc).join(' · ')}${d.ipa ? `<span class="e-ipa">[${esc(d.ipa)}]</span>` : ''}</p>
-      <div class="e-say" hidden><button class="e-play data" aria-label="Listen"><span class="e-play-i" aria-hidden="true"></span>Listen</button>
-        <span class="e-voices serif" role="group" aria-label="Voice"><button data-v="m">male voice</button> · <button data-v="f">female voice</button></span></div>
+      <div class="e-bar">
+        <div class="e-say" hidden><button class="e-play data" aria-label="Listen"><span class="e-play-i" aria-hidden="true"></span>Listen</button>
+          <span class="e-voices serif" role="group" aria-label="Voice"><button data-v="m">male voice</button> · <button data-v="f">female voice</button></span></div>
+        <div class="e-tools data"><button type="button" class="e-act" data-act="pie" data-label="Copy PIE">Copy PIE</button><button type="button" class="e-act" data-act="link" data-label="Copy link">Copy link</button></div>
+      </div>
       ${d.gloss ? `<p class="e-gloss serif">${esc(d.gloss)}</p>` : `<p class="e-gloss serif none">Wiktionary gives no meaning for this form.</p>`}
       ${d.senses?.length > 1 ? `<ol class="e-senses serif">${d.senses.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
     </header>
@@ -392,6 +402,11 @@ async function openEntry(id, { push = true, scroll = true } = {}) {
     box.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { voice = b.dataset.v; try { localStorage.setItem('pie-voice', voice); } catch {} mark(); say(id, voice, box.querySelector('.e-play')); });
   });
   ent.querySelector('.e-back').onclick = () => history.length > 1 && history.state?.dict ? history.back() : closeEntry();
+  ent.querySelector('[data-act="pie"]')?.addEventListener('click', e => copyText(e.currentTarget, `*${d.form}`));
+  ent.querySelector('[data-act="link"]')?.addEventListener('click', e => {
+    const u = new URL(location.href); u.search = `?e=${encodeURIComponent(id)}`;
+    copyText(e.currentTarget, u.href);
+  });
   document.documentElement.classList.add('entry-open');
   // Pure-CSS opacity fade; carve on the next frame with cache:false to avoid per-entry main-thread PNG band serialization
   // (illum's in-memory piece cache still reuses carved rock pieces across entries).
@@ -438,6 +453,12 @@ async function boot() {
   $('#letters').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || !indexReady) return;
     qi.value = ''; setQuery(b.classList.contains('on') ? '' : 'letter:' + b.dataset.l, { push: true });
+  });
+  $('#randBtn')?.addEventListener('click', () => {
+    if (!indexReady || !IX.length) return;
+    const pool = IX.filter(e => e.g && e.c !== 'A' && e.id !== current);
+    const pick = (pool.length ? pool : IX)[Math.floor(Math.random() * (pool.length || IX.length))];
+    if (pick) openEntry(pick.id);
   });
   qi.addEventListener('focus', () => { ensureSearchIndex(); ensureReflex(); }, { once: true });
   let tm, lastTyped = qi.value;

@@ -157,6 +157,10 @@ function wheel(words) {
   navEl.querySelector('.wn-next').onclick = () => go(cur + 1);
   navEl.querySelectorAll('.wn-w').forEach(b => b.onclick = () => go(+b.dataset.i));
   navEl.querySelector('.wn-w').classList.add('on');
+  $('.wheel-wrap')?.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(cur - 1); }
+  });
 
   const spin = svg.querySelector('.spin');
   svg.classList.add('grabbable'); svg.style.touchAction = matchMedia('(pointer: coarse)').matches ? 'pan-y' : 'none';
@@ -452,6 +456,13 @@ function translator() {
   const q = x => `“${esc(x)}”`;
   const dictHref = (form, id) => id ? `dictionary.html?e=${encodeURIComponent(id)}` : `dictionary.html?q=${encodeURIComponent(form.replace(/[.,;:!?]+$/g, ''))}`;
   const nothing = s => { const u = s.unknown || []; return `<div class="tr-notes serif">${u.length ? `No reconstructed PIE word for ${u.map(q).join(u.length > 2 ? ', ' : ' or ').replace(/, ([^,]*)$/, ', or $1')}, so there is nothing to translate.` : 'Nothing here the engine could translate.'}</div>`; };
+  const copyBtn = btn => {
+    const text = btn.dataset.copy || '', label = btn.dataset.label || btn.textContent;
+    if (!text) return;
+    const ok = () => { btn.textContent = 'Copied'; btn.classList.add('copied'); clearTimeout(btn._t); btn._t = setTimeout(() => { btn.textContent = label; btn.classList.remove('copied'); }, 1600); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(ok).catch(() => {});
+    else { const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.append(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch {} ta.remove(); }
+  };
   const run = async () => {
     const text = inp.value.trim(), my = ++seq;
     if (!text) { out.innerHTML = ''; return; }
@@ -463,7 +474,10 @@ function translator() {
         const subOf = s => { const m = {}; (s.notes || []).forEach(n => { const x = n.match(/^'([^']+)' ≈ '([^']+)'/); if (x) m[x[2]] = x[1]; }); return m; };
         out.innerHTML = js.map(s => { if (!s.pie) return nothing(s); const sub = subOf(s);
           return `<div class="tr-sent"><div class="tr-line pie">${typeset(s.pie)}</div>
-          ${ttsOn ? `<div class="tr-say"><button class="tr-hear data" type="button" data-pie-say="${esc(s.pie)}">Hear it</button><span class="tr-vv serif" role="group" aria-label="Voice"><button type="button" data-tv="m" class="${ttsVoice === 'm' ? 'on' : ''}">male</button> · <button type="button" data-tv="f" class="${ttsVoice === 'f' ? 'on' : ''}">female</button></span></div>` : ''}
+          <div class="tr-say">
+            <button class="tr-copy data" type="button" data-copy="${esc(s.pie)}" data-label="Copy PIE">Copy PIE</button>
+            ${ttsOn ? `<button class="tr-hear data" type="button" data-pie-say="${esc(s.pie)}">Hear it</button><span class="tr-vv serif" role="group" aria-label="Voice"><button type="button" data-tv="m" class="${ttsVoice === 'm' ? 'on' : ''}">male</button> · <button type="button" data-tv="f" class="${ttsVoice === 'f' ? 'on' : ''}">female</button></span>` : ''}
+          </div>
           <div class="tr-words">${s.words.map(w => { const gl = w.gloss || '', base = gl.split('-')[0].replace(/_/g, ' '), was = sub[base];
             return `<div class="tw ${was ? 'sub' : ''} st-${esc(w.status)}"><a class="f" href="${dictHref(w.form, w.lex_id)}" title="Open in dictionary">${typeset(w.form, { words: false })}</a><span class="gl">${esc(gl.replace(/_/g, ' ').replace(/~/g, ''))}</span>${was ? `<span class="was">for ${q(was)}</span>` : ''}</div>`; }).join('')}</div>
           ${s.ipa ? `<div class="tr-ipa">[${esc(s.ipa)}]</div>` : ''}
@@ -474,11 +488,14 @@ function translator() {
           out.querySelectorAll('[data-tv]').forEach(x => x.classList.toggle('on', x.dataset.tv === ttsVoice));
         });
       } else {
-        out.innerHTML = `<div class="tr-line serif">${esc(js.rough_english || '–')}</div>
+        const enOut = js.rough_english || '';
+        out.innerHTML = `<div class="tr-line serif">${esc(enOut || '–')}</div>
+          ${enOut ? `<div class="tr-say"><button class="tr-copy data" type="button" data-copy="${esc(enOut)}" data-label="Copy English">Copy English</button></div>` : ''}
           <div class="tr-words">${(js.words || []).map(w => { const a = (w.analyses || [])[0];
             return `<div class="tw"><a class="f" href="${dictHref(w.spelled || w.word, a?.lex_id)}" title="Open in dictionary">${typeset(w.word, { words: false })}</a><span class="gl">${a ? esc((a.gloss || '').replace(/_/g, ' ').replace(/~/g, '')) : 'not found'}</span></div>`; }).join('')}</div>
           ${js.ipa ? `<div class="tr-ipa">[${esc(js.ipa)}]</div>` : ''}`;
       }
+      out.querySelectorAll('.tr-copy').forEach(b => b.onclick = () => copyBtn(b));
       if (!reduce) gsap.from(out.querySelectorAll('.tr-line, .tw'), { y: 14, opacity: 0, duration: .45, stagger: .03, ease: 'power3.out' });
     } catch (e) {
       if (my === seq) out.innerHTML = `<div class="err">${failText(e)}</div>`;

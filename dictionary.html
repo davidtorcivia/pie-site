@@ -49,6 +49,7 @@
 <noscript><style>html.arriving .dh-inner > * { opacity: 1 !important; }</style></noscript>
 </head>
 <body class="dict">
+<a class="skip-link data" href="#main">Skip to content</a>
 
 <header class="dict-head yellow" data-tone="yellow">
   <div class="dh-garden" aria-hidden="true"></div>
@@ -60,13 +61,23 @@
       <input id="q" class="pie" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="horse, h1ekwos, pater, or a sentence…">
       <span class="dh-count data" id="count"></span>
     </div>
+    <div class="dh-picks serif" id="picks">
+      <span class="dh-picks-l">Try:</span>
+      <a href="?e=pie-lex-h1ekjwos" data-id="pie-lex-h1ekjwos" class="pie">*h<span class="lar">1</span>éḱwos</a> ·
+      <a href="?e=pie-lex-ph2texr" data-id="pie-lex-ph2texr" class="pie">*ph<span class="lar">2</span>tḗr</a> ·
+      <a href="?e=pie-lex-kjlewos" data-id="pie-lex-kjlewos" class="pie">*ḱléwos</a> ·
+      <a href="?e=pie-lex-wekwos" data-id="pie-lex-wekwos" class="pie">*wék<span class="mod">w</span>os</a> ·
+      <a href="?e=pie-lex-h2ewsoxs" data-id="pie-lex-h2ewsoxs" class="pie">*h<span class="lar">2</span>éwsōs</a> ·
+      <a href="?e=pie-lex-dhegjhoxm" data-id="pie-lex-dhegjhoxm" class="pie">*d<span class="mod">h</span>éǵ<span class="mod">h</span>ōm</a>
+      <button type="button" class="dh-rand data" id="randBtn">Random word</button>
+    </div>
     <p class="serif dh-hint">Search in English, in PIE, or in a daughter language. On a keyboard, type h1 h2 h3 for laryngeals, k' g' for palatals, kw gw for labiovelars, and bh dh gh for breathy-voiced stops (accents are optional). Type a full sentence in English or PIE and it'll translate above the matches, with every word linked to its entry.</p>
     <!-- the letters as js/dict.js lays them out (it rebuilds the row with each letter's count), so the page below does not shift when the index arrives -->
     <div class="dh-letters pie" id="letters" role="group" aria-label="Browse by letter"><button data-l="a">a</button><button data-l="b">b</button><button data-l="bʰ">b<span class="mod">h</span></button><button data-l="d">d</button><button data-l="dʰ">d<span class="mod">h</span></button><button data-l="e">e</button><button data-l="g">g</button><button data-l="gʰ">g<span class="mod">h</span></button><button data-l="ǵ">ǵ</button><button data-l="ǵʰ">ǵ<span class="mod">h</span></button><button data-l="gʷ">g<span class="mod">w</span></button><button data-l="gʷʰ">g<span class="mod">w</span><span class="mod">h</span></button><button data-l="h₁">h<span class="lar">1</span></button><button data-l="h₂">h<span class="lar">2</span></button><button data-l="h₃">h<span class="lar">3</span></button><button data-l="H">H</button><button data-l="i">i</button><button data-l="k">k</button><button data-l="ḱ">ḱ</button><button data-l="kʷ">k<span class="mod">w</span></button><button data-l="l">l</button><button data-l="m">m</button><button data-l="n">n</button><button data-l="o">o</button><button data-l="p">p</button><button data-l="r">r</button><button data-l="s">s</button><button data-l="t">t</button><button data-l="u">u</button><button data-l="w">w</button><button data-l="y">y</button></div>
   </div>
 </header>
 
-<main class="dict-main paper dict-sec" data-tone="paper">
+<main id="main" class="dict-main paper dict-sec" data-tone="paper">
   <aside class="dict-results" id="results" aria-label="Results"></aside>
   <article class="dict-entry" id="entry" aria-live="polite"></article>
 </main>

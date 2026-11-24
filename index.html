@@ -52,9 +52,10 @@
 <noscript><style>html.arriving #s-open > * { opacity: 1 !important; }</style></noscript>
 </head>
 <body>
+<a class="skip-link data" href="#s-open">Skip to content</a>
 
 <!-- 0 · overture -->
-<section id="s-open" class="s yellow">
+<section id="s-open" class="s yellow" tabindex="-1">
   <div class="hero-title">
     <div class="hero-cap"></div>
     <h1 class="open-h"><span class="line">roto-</span><span class="line">Indo-</span><span class="line">European</span></h1>
@@ -87,9 +88,9 @@
       <p class="serif">What reconstruction recovers least well is syntax: word order, how questions were framed, the little particles gluing clauses together. Some pieces are solid (<a class="pie-link nobr" href="dictionary.html?e=pie-lex-kwe">*-kʷe</a> “and” tacked onto the end of a word, verbs tending to land last), while much of the rest is inferred from the oldest daughters and stays educated guesswork.</p>
       <p class="serif cap" id="wheelCap"></p>
     </div>
-    <div class="wheel-wrap">
-      <svg id="wheel" class="wheel" viewBox="-500 -500 1000 1000" aria-label="A PIE word and its descendants"></svg>
-      <p class="wheel-hint data" aria-hidden="true">Drag wheel to spin</p>
+    <div class="wheel-wrap" tabindex="0" role="group" aria-roledescription="interactive word wheel" aria-label="A PIE word and its descendants. Drag or press left and right arrow keys to spin.">
+      <svg id="wheel" class="wheel" viewBox="-500 -500 1000 1000" aria-hidden="true"></svg>
+      <p class="wheel-hint data" aria-hidden="true">Drag wheel or use arrow keys</p>
     </div>
   </div>
 </section>

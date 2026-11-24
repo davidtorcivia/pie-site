@@ -26,7 +26,9 @@ export function nav() {
   // light and dark: the toggle closes the row (and stays beside Menu when the row folds); a second one in the menu
   n.querySelector('.nav-bar').append(themeButton('nt'));
   sheet.prepend(themeButton('st'));
-  document.body.prepend(sheet); document.body.prepend(n);
+  // keep any skip-to-content link first in keyboard tab order
+  const skip = document.body.querySelector(':scope > .skip-link');
+  if (skip) { skip.after(sheet); skip.after(n); } else { document.body.prepend(sheet); document.body.prepend(n); }
 
   // Home from the home page goes back to the top
   const top = e => { if (PAGE !== 'index' || !e.target.closest('a[href="index.html"]')) return; e.preventDefault(); close();

@@ -22,6 +22,9 @@ html.dark .v-art .v-h2 span { display: inline-block; }
 /* the dictionary: the same rule for what sits on yellow (the open entry in the list, a translation card, the word
    marked in a corpus sentence, Listen, Back), and a fainter wash on the paradigm's rows */
 html.dark .r.on, html.dark .trc, html.dark .ex-pie mark, html.dark .e-play, html.dark .e-back { color: var(--night); --ink: var(--night); }
+html.dark .e-act { border-color: rgba(233, 224, 204, .26); }
+html.dark .e-act:hover, html.dark .e-act:focus-visible { border-color: var(--yellow); color: var(--yellow); }
+html.dark .e-act.copied { background: var(--yellow); border-color: var(--yellow); color: var(--night); }
 html.dark .para tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgba(255, 210, 26, .14), rgba(255, 210, 26, .05) 75%, rgba(255, 210, 26, 0)); }
 
 /* warm red accents lifted slightly for dark-paper legibility */
