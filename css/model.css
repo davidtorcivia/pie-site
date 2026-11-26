@@ -40,8 +40,8 @@
 .mb-head em { font-style: normal; font-weight: 500; opacity: .6; margin-left: .6em; }
 .mb-row { display: grid; grid-template-columns: 156px 1fr 122px; align-items: center; gap: 14px; padding: 3px 6px; margin: 0 -6px; border-radius: 3px; transition: background-color .18s ease; }
 .mb-row:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
-.mb-row.mb-ours { background: color-mix(in srgb, #b81d0e 6.5%, transparent); }
-.mb-row.mb-ours .mb-who { font-weight: 600; color: var(--ink); }
+.mb-row.mb-ours, .dr-row.mb-ours { background: color-mix(in srgb, #b81d0e 6.5%, transparent); }
+.mb-row.mb-ours .mb-who, .dr-row.mb-ours .dr-l { font-weight: 600; color: var(--ink); }
 .mb-who { font-size: 16px; }
 .mb-track { position: relative; height: 16px; border-radius: 2px;
   background-color: color-mix(in srgb, var(--ink) 5%, transparent);

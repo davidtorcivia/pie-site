@@ -30,7 +30,7 @@ html.dark .para tbody tr:nth-child(odd) { background: linear-gradient(90deg, rgb
 /* warm red accents lifted slightly for dark-paper legibility */
 html.dark .nums b, html.dark .m-toc a em, html.dark .tier-i, html.dark .bex-seg, html.dark .mx thead .mx-us, html.dark .mx td:last-child { color: #e0452a; }
 html.dark .mx td.p { color: #b8a684; } html.dark .mx td.n { color: #7a705f; }
-html.dark .mb-row.mb-ours, html.dark .bex-row.bex-mine { background: rgba(224, 69, 42, .12); }
+html.dark .mb-row.mb-ours, html.dark .dr-row.mb-ours, html.dark .bex-row.bex-mine { background: rgba(224, 69, 42, .12); }
 html.dark .m-stop { stroke: #e0452a; }
 html.dark .ex-miss { text-decoration-color: #e0452a; }
 html.dark .bex-sc.ok { color: #6fc19a; }

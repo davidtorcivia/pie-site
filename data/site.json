@@ -1399,6 +1399,13 @@
    "family": "ours",
    "lenient": 83.9,
    "strict": 81.0
+  },
+  {
+   "id": "ours-inkling2-mini-cot-v1-optionA-rl-v3-s90",
+   "name": "Wekwos-2-Mini",
+   "family": "ours",
+   "lenient": 90.5,
+   "strict": 88.2
   }
  ],
  "stats": {

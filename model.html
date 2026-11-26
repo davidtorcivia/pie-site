@@ -5,24 +5,24 @@
 <script>/* light unless the reader chose dark (js/theme.js), set before the first paint */(function(r){var t;try{t=localStorage.getItem("pie-theme")}catch(e){}r.setAttribute("data-theme",t==="dark"?"dark":"light");if(t==="dark")r.classList.add("dark")})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>How I trained a model to speak Proto-Indo-European · *PIE</title>
-<meta name="description" content="How I taught a language model to read and write Proto-Indo-European: an 8,368-entry lexicon, a deterministic grammar engine, a 133,982-word corpus, fine-tuning Nemotron 3.5 Super, and reinforcement learning, scoring 86.2 strict against 50.0 for the best frontier run.">
+<meta name="description" content="How I taught language models to read and write Proto-Indo-European: an 8,368-entry lexicon, a deterministic grammar engine, a 133,982-word corpus, fine-tuning, chain-of-thought, and reinforcement learning, with Wekwos-2-Mini scoring 88.2 strict against 50.0 for the best frontier run.">
 <link rel="canonical" href="https://wekwos.com/model">
 <meta name="theme-color" content="#ffd21a">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="*PIE">
 <meta property="og:title" content="How I trained a model to speak Proto-Indo-European · *PIE">
-<meta property="og:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and reinforcement learning: Wekwos-120B scores 86.2 strict on my benchmark against 50.0 for Claude Opus 5.5.">
+<meta property="og:description" content="A lexicon, a grammar engine, a corpus composed through it, engine-verified CoT fine-tuning and GRPO reinforcement learning: Wekwos-2-Mini scores 88.2 strict (90.5 lenient) on my benchmark against 50.0 for Claude Opus 5.5.">
 <meta property="og:url" content="https://wekwos.com/model">
 <meta property="og:image" content="https://wekwos.com/art/og/model.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The word Model above the benchmark scores: 86.2 strict for Wekwos-120B against 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol.">
+<meta property="og:image:alt" content="The word Model above the benchmark scores: 88.2 strict for Wekwos-2-Mini against 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How I trained a model to speak Proto-Indo-European · *PIE">
-<meta name="twitter:description" content="A lexicon, a grammar engine, a corpus composed through it, fine-tuning and reinforcement learning: Wekwos-120B scores 86.2 strict against 50.0 for the best frontier run.">
+<meta name="twitter:description" content="A lexicon, a grammar engine, a corpus composed through it, engine-verified CoT fine-tuning and GRPO RL: Wekwos-2-Mini scores 88.2 strict against 50.0 for the best frontier run.">
 <meta name="twitter:image" content="https://wekwos.com/art/og/model.jpg">
-<meta name="twitter:image:alt" content="The word Model above the benchmark scores: 86.2 strict for Wekwos-120B against 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol.">
+<meta name="twitter:image:alt" content="The word Model above the benchmark scores: 88.2 strict for Wekwos-2-Mini against 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol.">
 <link rel="apple-touch-icon" href="art/icon-180.png">
 <link rel="manifest" href="site.webmanifest">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How I trained a model to speak Proto-Indo-European", "url": "https://wekwos.com/model", "inLanguage": "en", "author": {"@type": "Person", "name": "David Torcivia", "url": "https://davidtorcivia.com"}, "about": ["Proto-Indo-European", "language model", "fine-tuning", "reinforcement learning", "historical linguistics"], "isPartOf": {"@type": "WebSite", "name": "*PIE", "url": "https://wekwos.com/"}}</script>
@@ -73,37 +73,37 @@
 
   <section class="sec" id="result">
     <h2 class="display v-h2"><span>The result</span></h2>
-    <p class="lead book"><span class="ini drop">O</span>n my held-out benchmark, the final model scores 88.5 lenient and 86.2 strict. The strongest frontier runs I tested (Claude Opus 5.5 at xhigh and GPT-6.1 Sol at high) hit 86.0 and 84.4 lenient, then drop to 50.0 and 47.0 strict. Lenient scoring ignores notation (accents, vowel length, ASCII spellings like h2 for h₂) and only checks the grammar. Strict scoring requires the actual scholarly form. Frontier models lose more than 35 points under strict grading; mine loses 2.3.</p>
+    <p class="lead book"><span class="ini drop">O</span>n my held-out benchmark, my top model, Wekwos-2-Mini (trained on Thinking Machines' Inkling 2 Mini with engine-verified chain of thought and GRPO RL), scores 90.5 lenient and 88.2 strict. It edges past my earlier 120B flagship, Wekwos-120B (Nemotron 3.5 Super, 88.5 lenient and 86.2 strict), at a fraction of the size. The strongest frontier runs I tested (Claude Opus 5.5 at xhigh and GPT-6.1 Sol at high) hit 86.0 and 84.4 lenient, then drop to 50.0 and 47.0 strict. Lenient scoring ignores notation (accents, vowel length, ASCII spellings like h2 for h₂) and only checks the grammar. Strict scoring requires the actual scholarly form. Frontier models lose more than 35 points under strict grading; mine lose 2.3.</p>
     <div class="nums" aria-label="Headline numbers">
-      <div><b class="display">86.2</b><span class="serif">strict benchmark score, vs. 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol</span></div>
+      <div><b class="display">88.2</b><span class="serif">strict benchmark score for Wekwos-2-Mini (90.5 lenient), vs. 50.0 for Claude Opus 5.5 and 47.0 for GPT-6.1 Sol</span></div>
       <div><b class="display">98.8%</b><span class="serif">of Wiktionary's inflection cells regenerated from scratch by the grammar engine</span></div>
-      <div><b class="display" style="white-space:nowrap">78 → 3</b><span class="serif">English words the model failed to produce in PIE, before and after the last training rounds</span></div>
+      <div><b class="display" style="white-space:nowrap">+8.5</b><span class="serif">strict points gained on Inkling 2 Mini just from adding engine-verified chain of thought before RL</span></div>
       <div><b class="display">133,982</b><span class="serif">words of PIE composed through the engine and checked in adversarial review</span></div>
     </div>
     <p class="book">The hard part was building the training data. There are no native speakers, no recordings, and no ancient texts to scrape, only a century and a half of comparative scholarship written in a dense notation: three laryngeals (h₁, h₂, h₃), three rows of back consonants (ḱ, k, kʷ), breathy-voiced stops, syllabic resonants, and pitch accents. Because PIE was only ever spoken, even the handbooks disagree on details of pronunciation and spelling. A model can't pick that up from Common Crawl the way it picks up French. I was honestly surprised how well frontier models did on lenient grading (mostly thanks to famous reconstructions like Schleicher's fable floating around in pretraining), but getting a model to write clean, consistent PIE took a proper lexicon, a deterministic grammar engine, and a corpus built through both.</p>
     <figure class="fig" id="fig1">
       <div class="chart" id="chBench"></div>
-      <figcaption class="serif"><b>Figure 1.</b> The benchmark. Solid bars are the strict score, the hatched extension is lenient. The overall score weights English → PIE 30, inflection and PIE → English 20 each, paradigms and dialogue 15 each. Wekwos-120B is a fine-tuned Nemotron 3.5 Super.</figcaption>
+      <figcaption class="serif"><b>Figure 1.</b> The benchmark. Solid bars are the strict score, the hatched extension is lenient. The overall score weights English → PIE 30, inflection and PIE → English 20 each, paradigms and dialogue 15 each. Wekwos-2-Mini is Inkling 2 Mini (CoT SFT + GRPO RL, scored by the Opus judge with engine tools, where Wekwos-120B scores 86.1 strict / 88.3 lenient); Wekwos-120B is a fine-tuned Nemotron 3.5 Super.</figcaption>
     </figure>
     <figure class="fig fig-ex" id="fig1b">
       <div class="bex">
         <article class="bex-card">
           <header class="bex-head"><span class="bex-seg data">English → PIE</span><span class="bex-prompt serif">“May good fame be his.”</span></header>
-          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-120B</span><span class="bex-ans pie" data-pie>h₁wésu ḱléwos h₁ésmey h₁syéh₁t.</span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
+          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-2-Mini</span><span class="bex-ans pie" data-pie>h₁wésu ḱléwos h₁ésmey h₁syéh₁t.</span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">Claude Opus 5.5</span><span class="bex-ans pie">h₁wésu <u class="ex-miss">soi</u> ḱléwos <u class="ex-miss">h₁siéh₁t</u>.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">GPT-6.1 Sol</span><span class="bex-ans pie">*h₁ésu ḱléwos <u class="ex-miss">tósmai</u> <u class="ex-miss">h₁siéh₁t</u>.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
           <p class="bex-note serif">Both frontier models get the meaning and optative verb right, but miss on notation (writing <i>soi</i> for <i>soy</i>, <i>tósmai</i> for <i>tósmey</i>, and syllabic <i>i</i> in <i>h₁siéh₁t</i> instead of glide <i>y</i>).</p>
         </article>
         <article class="bex-card">
           <header class="bex-head"><span class="bex-seg data">English → PIE</span><span class="bex-prompt serif">“I fashion words for him.”</span></header>
-          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-120B</span><span class="bex-ans pie" data-pie>tósmey wékʷesh₂ tḗtḱmi.</span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
+          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-2-Mini</span><span class="bex-ans pie" data-pie>h₁ésmey wékʷesh₂ tḗtḱmi.</span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">Claude Opus 5.5</span><span class="bex-ans pie">wékʷesh₂ <u class="ex-miss">soi</u> téḱsoh₂.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">GPT-6.1 Sol</span><span class="bex-ans pie">*<u class="ex-miss">h₁eǵṓ</u> wékʷesh₂ <u class="ex-miss">tósmai</u> <u class="ex-miss">téḱsō</u>.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
-          <p class="bex-note serif">Opus misses on <i>soi</i>; GPT drops final laryngeals in <i>h₁eǵṓ</i> (<i>h₁eǵóh₂</i>) and <i>téḱsō</i> (<i>-oh₂</i>), and writes <i>tósmai</i>. Wekwos-120B uses the Narten present <i>tḗtḱmi</i> and dative <i>tósmey</i>.</p>
+          <p class="bex-note serif">Opus misses on <i>soi</i>; GPT drops final laryngeals in <i>h₁eǵṓ</i> (<i>h₁eǵóh₂</i>) and <i>téḱsō</i> (<i>-oh₂</i>), and writes <i>tósmai</i>. Wekwos-2-Mini uses the Narten present <i>tḗtḱmi</i> and anaphoric dative <i>h₁ésmey</i>.</p>
         </article>
         <article class="bex-card">
           <header class="bex-head"><span class="bex-seg data">Dialogue</span><span class="bex-prompt serif">“Brother, what is fame?”</span></header>
-          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-120B</span><span class="bex-ans pie"><span data-pie>h₁íd tód h₁léwdʰis h₁yód ḱlush₁yéti. h₂nḗr mért h₁ésyo h₁nómn̥ ne mért.</span><small class="bex-gloss serif">“It is what the people hear. A man died; his name did not die.”</small></span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
+          <div class="bex-row bex-mine"><span class="bex-who serif">Wekwos-2-Mini</span><span class="bex-ans pie"><span data-pie>h₁íd tód h₁léwdʰis h₁yód ḱlush₁yéti. h₂nḗr mért h₁ésyo h₁nómn̥ ne mért.</span><small class="bex-gloss serif">“It is what the people hear. A man died; his name did not die.”</small></span><span class="bex-sc data ok">strict ✓ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">Claude Opus 5.5</span><span class="bex-ans pie">bʰréh₂ter, ḱléwos h₁ésti wékʷos, <u class="ex-miss">yód</u> h₂néres ḱl̥nwénti. h₂nḗr mr̥yétor; ḱléwos tu n̥dʰgʷʰitóm h₁ésti.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
           <div class="bex-row"><span class="bex-who serif">GPT-6.1 Sol</span><span class="bex-ans pie">bʰréh₂ter, ḱléwos <u class="ex-miss">wésu</u> h₁nómn̥ h₁ésti.</span><span class="bex-sc data miss">strict ✗ · lenient ✓</span></div>
           <p class="bex-note serif">All three write grammatical PIE; both frontier models drop initial laryngeals (<i>yód</i> for <i>h₁yód</i>, <i>wésu</i> for <i>h₁wésu</i>).</p>
@@ -150,7 +150,7 @@
 
   <section class="sec" id="sft">
     <h2 class="display v-h2"><span>Fine-tuning</span></h2>
-    <p class="lead book"><span class="ini drop">I</span> ended up settling on Nemotron 3.5 Super, NVIDIA's 120-billion-parameter mixture of experts (12B active), as the final base. After fine-tuning it hit 88.5 lenient and 86.2 strict, taking first place on the benchmark overall, though it took a few smaller models and dead ends to get there.</p>
+    <p class="lead book"><span class="ini drop">I</span> scaled up through several bases before landing on my first flagship, Wekwos-120B (built on Nemotron 3.5 Super, NVIDIA's 120-billion-parameter mixture of experts with 12B active). After fine-tuning it hit 88.5 lenient and 86.2 strict, holding first place on the benchmark until a much smaller reasoning model caught up and passed it.</p>
     <p class="book">The corpus was exported into 47,088 conversation turns (system prompts included), with 713 held out for testing. Roughly half are translations in both directions; the rest cover English and PIE dialogue, interlinear glosses, single inflections, full paradigms, cognate-to-PIE reconstruction, and continuing hymns or charms.</p>
     <figure class="fig" id="fig4">
       <div class="chart" id="chExport"></div>
@@ -178,7 +178,13 @@
       <div class="chart" id="chStages"></div>
       <figcaption class="serif"><b>Figure 7.</b> Late training stages on the held-out sets: overall chrF, English → PIE chrF, paradigm cell accuracy, and how many of the 83 targeted words the model still couldn't produce.</figcaption>
     </figure>
-    <p class="book">The final round still trails the pre-vocab checkpoint by about a point of chrF and a sliver on paradigm cells. I tried blending the two adapters directly (taking a weighted sum of their weight deltas), but every ratio traded the new vocabulary straight off against grammar, and none beat the final round outright.</p>
+    <p class="book">The final round on Nemotron still trailed the pre-vocab checkpoint by about a point of chrF and a sliver on paradigm cells. I tried blending the two adapters directly (taking a weighted sum of their weight deltas), but every ratio traded the new vocabulary straight off against grammar, and none beat the final round outright.</p>
+    <p class="book">Then Thinking Machines released Inkling 2 Mini, a much smaller looped mixture-of-experts model with a native thinking channel (24 layers, 128 routed experts with 8 active, looping its 12-layer core three times). Plain direct fine-tuning on the same corpus only reached 76.9 strict (79.6 lenient), well behind the 120B model. The unlock was teaching it to actually use its scratchpad for PIE morphology: I generated 58,040 engine-verified chain-of-thought examples that decompose every English → PIE sentence into sense, lemma, grammatical features, and surface form, write out stem and ending deltas for inflections, and disambiguate homophones before answering. That single change jumped Inkling 2 Mini by 8.5 points to 85.4 strict (89.2 lenient).</p>
+    <p class="book">From that checkpoint, two rounds of GRPO reinforcement learning on Tinker (with 100% deterministic, zero-API rewards from the grammar engine and analyzer: 7,650 broad prompts in round 2, then 4,313 prompts focused on English → PIE and dialogue in round 3) pushed it past the 120B model to 88.2 strict and 90.5 lenient: 90.4 on inflection, 89.6 on paradigms, 85.7 strict on English → PIE (up 4.7 points over Wekwos-120B), 89.3 on PIE → English, and 87.5 on dialogue. That checkpoint is Wekwos-2-Mini.</p>
+    <figure class="fig" id="fig8">
+      <div class="chart" id="chInkling"></div>
+      <figcaption class="serif"><b>Figure 8.</b> From direct fine-tuning to Wekwos-2-Mini on Inkling 2 Mini (weighted strict ● and lenient ○ on the held-out benchmark, with Wekwos-120B shown for reference). Engine-verified chain of thought accounts for an 8.5-point strict jump; two deterministic GRPO RL rounds add another 2.8 points.</figcaption>
+    </figure>
   </section>
 
   <hr>
@@ -195,11 +201,11 @@
 <section class="v-mat ink" data-tone="ink" id="materials">
   <h2 class="display v-h2">Model, corpus and benchmark</h2>
   <div class="mat" id="mat">
-    <div class="m-item" data-link="model"><h3 class="display">The model</h3><p class="serif">Wekwos-120B, the fine-tuned Nemotron 3.5 Super that reads and writes PIE in the scholars' notation.</p></div>
+    <div class="m-item" data-link="model"><h3 class="display">The model</h3><p class="serif">Wekwos-120B (MLX, BF16, GGUF, and LoRA on Hugging Face) and the new flagship Wekwos-2-Mini (Inkling 2 Mini, CoT SFT + GRPO RL).</p></div>
     <div class="m-item" data-link="corpus"><h3 class="display">The corpus</h3><p class="serif">5,230 records in four tiers, each with its English and its source, and the 47,088 training conversations made from them.</p></div>
     <div class="m-item" data-link="benchmark"><h3 class="display">The benchmark</h3><p class="serif">The held-out questions and reference answers, the scorer and the judges' instructions, and every model's answers and scores.</p></div>
   </div>
-  <p class="serif mat-credit">Nemotron 3.5 Super by NVIDIA. Fine-tuned on Tinker by Thinking Machines; reinforcement learning with mlx-lm-lora. The lexicon draws on Wiktionary (CC BY-SA 4.0), LIV² and the <i>Nomina im Indogermanischen Lexikon</i>. Rubrication by <a href="https://illum.davidtorcivia.com">illum</a>, after the pecked and painted rock carvings of Tanum, Bohuslän (Vitlycke, Tanumshede). Figures traced from photographs by Bengt A. Lundberg, Riksantikvarieämbetet (<a href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>), Bjoertvedt (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>) and Tulipasylvestris (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>), Wikimedia Commons.</p>
+  <p class="serif mat-credit">Inkling 2 Mini and Tinker by Thinking Machines; Nemotron 3.5 Super by NVIDIA; local reinforcement learning with mlx-lm-lora. The lexicon draws on Wiktionary (CC BY-SA 4.0), LIV² and the <i>Nomina im Indogermanischen Lexikon</i>. Rubrication by <a href="https://illum.davidtorcivia.com">illum</a>, after the pecked and painted rock carvings of Tanum, Bohuslän (Vitlycke, Tanumshede). Figures traced from photographs by Bengt A. Lundberg, Riksantikvarieämbetet (<a href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>), Bjoertvedt (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>) and Tulipasylvestris (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>), Wikimedia Commons.</p>
 </section>
 
 

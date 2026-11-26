@@ -29,6 +29,46 @@
   ],
   "rows": [
    {
+    "id": "ours-inkling2-mini-cot-v1-optionA-rl-v3-s90",
+    "name": "Wekwos-2-Mini, Inkling 2 Mini",
+    "score": {
+     "strict": 88.2,
+     "lenient": 90.5
+    },
+    "seg": {
+     "inflection": {
+      "n": 335,
+      "of": 335,
+      "strict": 90.4,
+      "lenient": 91.9
+     },
+     "paradigm": {
+      "n": 124,
+      "of": 124,
+      "strict": 89.6,
+      "lenient": 91.7
+     },
+     "en_pie": {
+      "n": 42,
+      "of": 42,
+      "strict": 85.7,
+      "lenient": 90.5
+     },
+     "pie_en": {
+      "n": 42,
+      "of": 42,
+      "strict": 89.3,
+      "lenient": 89.3
+     },
+     "dialogue": {
+      "n": 64,
+      "of": 64,
+      "strict": 87.5,
+      "lenient": 89.1
+     }
+    }
+   },
+   {
     "id": "ours-nemotron35-e3-bf16",
     "name": "Wekwos-120B, Nemotron 3.5 Super",
     "score": {
@@ -151,6 +191,11 @@
   ]
  },
  "gap": [
+  {
+   "id": "ours-inkling2-mini-cot-v1-optionA-rl-v3-s90",
+   "lenient": 90.5,
+   "strict": 88.2
+  },
   {
    "id": "ours-nemotron35-e3-bf16",
    "lenient": 88.5,
@@ -682,6 +727,40 @@
    "en_pie": 78.6,
    "cells": 0.889,
    "never": 3
+  }
+ ],
+ "inkling": [
+  {
+   "name": "Inkling 2 Mini, direct SFT",
+   "strict": 76.9,
+   "lenient": 79.6
+  },
+  {
+   "name": "Direct SFT (effort 0.7)",
+   "strict": 78.8,
+   "lenient": 82.2
+  },
+  {
+   "name": "Engine-verified CoT SFT",
+   "strict": 85.4,
+   "lenient": 89.2
+  },
+  {
+   "name": "Wekwos-120B (Nemotron 3.5)",
+   "strict": 86.2,
+   "lenient": 88.5,
+   "ref": true
+  },
+  {
+   "name": "GRPO RL v2 (step 150)",
+   "strict": 87.5,
+   "lenient": 89.7
+  },
+  {
+   "name": "Wekwos-2-Mini (RL v3, step 90)",
+   "strict": 88.2,
+   "lenient": 90.5,
+   "top": true
   }
  ]
 }

@@ -193,7 +193,7 @@ function machine(s) {
     ['I', s.lexicon_entries, '', 'Lexicon', 'dictionary.html', '7,401 entries from Wiktionary, 829 verbal roots transcribed from LIV², and 135 nouns from NIL, each tied back to its source.'],
     ['II', s.engine_agreement, '%', 'Grammar engine', 'model.html#engine', `Inflects nouns, adjectives and verbs by rule, reproducing ${s.engine_cells} cells from Wiktionary's published paradigms.`],
     ['III', s.records, '', 'Corpus', 'model.html#corpus', `${s.pie_words.toLocaleString('en')} words across ~50 genres: hymns, laws, riddles, laments, oaths, and everyday talk.`],
-    ['IV', 86.2, '', 'Model', 'model.html', 'Strict score on my held-out benchmark, where frontier models drop into the 40s and 50s.'],
+    ['IV', 88.2, '', 'Model', 'model.html', 'Strict score on my held-out benchmark, where frontier models drop into the 40s and 50s.'],
   ];
   $('#cascade').innerHTML = tiers.map(([rm, n, u, l, href, d]) => `<div class="tier"><div class="num" data-n="${n}" data-u="${u}">0</div><div class="lab"><b class="display"><em class="tier-i data">${rm}</em><a class="tier-go" href="${href}">${l}<span> →</span></a></b><span class="serif">${d}</span></div></div>`).join('');
   document.querySelectorAll('.tier .num').forEach(el => {
@@ -207,9 +207,14 @@ function machine(s) {
 
 // ---------------------------------------------------------------------------------------------------- results
 function results(bench) {
-  const ours = bench.find(b => b.id === 'ours-nemotron35-e3-bf16');
+  const mini = bench.find(b => b.id === 'ours-inkling2-mini-cot-v1-optionA-rl-v3-s90');
+  const nem = bench.find(b => b.id === 'ours-nemotron35-e3-bf16');
   const best = fam => bench.filter(b => b.id.startsWith(fam)).sort((a, b) => b.lenient - a.lenient)[0];
-  const rows = [{ ...ours, name: 'Wekwos-120B' }, ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best).filter(Boolean)];
+  const rows = [
+    mini && { ...mini, name: 'Wekwos-2-Mini' },
+    nem && { ...nem, name: 'Wekwos-120B' },
+    ...['claude-opus', 'codex-gpt-6.1-sol', 'claude-sonnet', 'codex-gpt-6.1-terra', 'claude-haiku'].map(best),
+  ].filter(Boolean);
   const box = $('#bars');
   box.innerHTML = rows.map(r => `<div class="bar ${r.family === 'ours' ? 'ours' : ''}"><div class="who">${r.name}<div class="nums"><span class="sv">${r.strict.toFixed(1)}</span><span class="lv">/ ${r.lenient.toFixed(1)} lenient</span></div></div><div class="track"><canvas></canvas></div></div>`).join('')
     + `<div class="bar-axis data"><span></span><span class="bar-ticks"><em>0</em><em>25</em><em>50</em><em>75</em><em>100</em></span></div>`
